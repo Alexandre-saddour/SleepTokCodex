@@ -2,6 +2,9 @@ package com.example.domain.scoring
 
 import com.example.domain.model.NightResult
 import com.example.domain.model.NightStatus
+import com.example.domain.model.Talent
+import com.example.domain.model.TalentCondition
+import com.example.domain.model.TalentEffect
 import com.example.domain.model.XpBreakdown
 import kotlin.math.abs
 import kotlin.math.floor
@@ -60,7 +63,7 @@ class DefaultNightResultCalculator : NightResultCalculator {
             score = score,
             deltaStartMinutes = deltaStartMinutes,
             streakAfter = streakAfter,
-            unlockedTalentIds = input.unlockedTalentIds,
+            unlockedTalents = input.unlockedTalents,
         )
 
         return NightResult(
@@ -161,7 +164,7 @@ class DefaultNightResultCalculator : NightResultCalculator {
         score: Int,
         deltaStartMinutes: Int,
         streakAfter: Int,
-        unlockedTalentIds: Set<String>,
+        unlockedTalents: List<Talent>,
     ): XpBreakdown {
         val baseXp = when (status) {
             NightStatus.SUCCESS -> 100
@@ -172,10 +175,10 @@ class DefaultNightResultCalculator : NightResultCalculator {
         }
         val scoreBonus = (score / 10) * 2
         val perfectBonus = if (status == NightStatus.SUCCESS && score >= 90) 25 else 0
-        val talentAdditions = computeTalentAdditions(status, score, deltaStartMinutes, unlockedTalentIds)
+        val talentAdditions = computeTalentAdditions(status, score, deltaStartMinutes, streakAfter, unlockedTalents)
         val xpRaw = baseXp + scoreBonus + perfectBonus + talentAdditions
         val streakMultiplier = streakMultiplierFor(streakAfter)
-        val talentMultiplier = talentMultiplierFor(streakAfter, unlockedTalentIds)
+        val talentMultiplier = talentMultiplierFor(status, score, deltaStartMinutes, streakAfter, unlockedTalents)
         val totalXp = floor(xpRaw * streakMultiplier * talentMultiplier).toInt()
         return XpBreakdown(
             baseXp = baseXp,
@@ -192,19 +195,15 @@ class DefaultNightResultCalculator : NightResultCalculator {
         status: NightStatus,
         score: Int,
         deltaStartMinutes: Int,
-        unlockedTalentIds: Set<String>,
+        streakAfter: Int,
+        unlockedTalents: List<Talent>,
     ): Int {
-        var total = 0
-        if (unlockedTalentIds.contains("D1") && deltaStartMinutes <= 10) {
-            total += 5
-        }
-        if (unlockedTalentIds.contains("D2") && abs(deltaStartMinutes) <= 15) {
-            total += 10
-        }
-        if (unlockedTalentIds.contains("D3") && status == NightStatus.SUCCESS && score >= 90) {
-            total += 25
-        }
-        return total
+        return unlockedTalents
+            .asSequence()
+            .map { it.effect }
+            .filterIsInstance<TalentEffect.AddXp>()
+            .filter { evaluateCondition(it.condition, status, score, deltaStartMinutes, streakAfter) }
+            .sumOf { it.amount }
     }
 
     private fun streakMultiplierFor(streakAfter: Int): Double {
@@ -217,11 +216,35 @@ class DefaultNightResultCalculator : NightResultCalculator {
         }
     }
 
-    private fun talentMultiplierFor(streakAfter: Int, unlockedTalentIds: Set<String>): Double {
-        return when {
-            unlockedTalentIds.contains("S3") && streakAfter >= 7 -> 1.10
-            unlockedTalentIds.contains("S1") && streakAfter >= 3 -> 1.05
-            else -> 1.0
+    private fun talentMultiplierFor(
+        status: NightStatus,
+        score: Int,
+        deltaStartMinutes: Int,
+        streakAfter: Int,
+        unlockedTalents: List<Talent>,
+    ): Double {
+        return unlockedTalents
+            .asSequence()
+            .map { it.effect }
+            .filterIsInstance<TalentEffect.XpMultiplier>()
+            .filter { evaluateCondition(it.condition, status, score, deltaStartMinutes, streakAfter) }
+            .fold(1.0) { acc, effect -> acc * effect.multiplier }
+    }
+
+    private fun evaluateCondition(
+        condition: TalentCondition?,
+        status: NightStatus,
+        score: Int,
+        deltaStartMinutes: Int,
+        streakAfter: Int,
+    ): Boolean {
+        return when (condition) {
+            null -> true
+            is TalentCondition.Always -> true
+            is TalentCondition.StreakAtLeast -> streakAfter >= condition.days
+            is TalentCondition.StartWithinMinutes -> abs(deltaStartMinutes) <= condition.minutes
+            is TalentCondition.StartBeforeMinutes -> deltaStartMinutes <= condition.minutesAfterPlan
+            is TalentCondition.SuccessWithScoreAtLeast -> status == NightStatus.SUCCESS && score >= condition.score
         }
     }
 }

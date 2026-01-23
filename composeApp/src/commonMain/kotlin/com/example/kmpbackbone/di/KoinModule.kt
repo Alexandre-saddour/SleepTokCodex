@@ -16,6 +16,7 @@ import com.example.data.repository.StreakShieldRepositoryImpl
 import com.example.data.repository.TalentRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
 import com.example.data.repository.XpEventRepositoryImpl
+import com.example.data.local.RoomTransactionRunner
 import com.example.data.seed.SeedDataInitializer
 import com.example.data.seed.SeedDataProvider
 import com.example.domain.repository.NightRepository
@@ -23,6 +24,7 @@ import com.example.domain.repository.RewardRepository
 import com.example.domain.repository.SleepPlanRepository
 import com.example.domain.repository.StreakShieldRepository
 import com.example.domain.repository.TalentRepository
+import com.example.domain.repository.TransactionRunner
 import com.example.domain.repository.UserRepository
 import com.example.domain.repository.XpEventRepository
 import com.example.domain.scoring.DefaultNightResultCalculator
@@ -97,6 +99,7 @@ val dataModule = module {
     singleOf(::XpEventRepositoryImpl) bind XpEventRepository::class
 
     singleOf(::SeedDataInitializer)
+    singleOf(::RoomTransactionRunner) bind TransactionRunner::class
 }
 
 val domainModule = module {

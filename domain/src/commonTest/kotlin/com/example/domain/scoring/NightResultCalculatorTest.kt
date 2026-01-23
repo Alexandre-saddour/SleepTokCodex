@@ -3,6 +3,11 @@ package com.example.domain.scoring
 import com.example.domain.model.Night
 import com.example.domain.model.NightStatus
 import com.example.domain.model.SleepPlan
+import com.example.domain.model.Talent
+import com.example.domain.model.TalentBranch
+import com.example.domain.model.TalentCondition
+import com.example.domain.model.TalentEffect
+import com.example.domain.model.TalentTier
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.Instant
@@ -25,7 +30,7 @@ class NightResultCalculatorTest {
                 night = night,
                 timeZone = TimeZone.UTC,
                 streakBefore = 2,
-                unlockedTalentIds = emptySet(),
+                unlockedTalents = emptyList(),
             )
         )
         assertEquals(NightStatus.SUCCESS, result.status)
@@ -47,7 +52,7 @@ class NightResultCalculatorTest {
                 night = night,
                 timeZone = TimeZone.UTC,
                 streakBefore = 1,
-                unlockedTalentIds = emptySet(),
+                unlockedTalents = emptyList(),
             )
         )
         assertEquals(NightStatus.PARTIAL, result.status)
@@ -67,7 +72,7 @@ class NightResultCalculatorTest {
                 night = night,
                 timeZone = TimeZone.UTC,
                 streakBefore = 4,
-                unlockedTalentIds = emptySet(),
+                unlockedTalents = emptyList(),
             )
         )
         assertEquals(NightStatus.FAIL, result.status)
@@ -82,19 +87,49 @@ class NightResultCalculatorTest {
             startAt = Instant.parse("2025-01-01T23:35:00Z"),
             endAt = Instant.parse("2025-01-02T07:25:00Z"),
         )
+        
+        // Define talents with effects that match the old hardcoded logic
+        val talents = listOf(
+            createTalent("D1", TalentEffect.AddXp(5, TalentCondition.StartWithinMinutes(10))),
+            createTalent("D2", TalentEffect.AddXp(10, TalentCondition.StartWithinMinutes(15))),
+            createTalent("D3", TalentEffect.AddXp(25, TalentCondition.SuccessWithScoreAtLeast(90))),
+            createTalent("S1", TalentEffect.XpMultiplier(1.05, TalentCondition.StreakAtLeast(3))),
+            createTalent("S3", TalentEffect.XpMultiplier(1.10, TalentCondition.StreakAtLeast(7)))
+        )
+
         val result = calculator.calculate(
             NightScoreInput(
                 plan = plan,
                 night = night,
                 timeZone = TimeZone.UTC,
                 streakBefore = 6,
-                unlockedTalentIds = setOf("D1", "D2", "D3", "S1", "S3"),
+                unlockedTalents = talents,
             )
         )
+        
+        // streakBefore = 6. Status is SUCCESS (from prev test logic). streakAfter = 7.
+        // D1: deltaStart = 5 mins <= 10. +5 XP.
+        // D2: deltaStart = 5 mins <= 15. +10 XP.
+        // D3: score = 93 >= 90. +25 XP.
+        // Total Additions = 40.
         assertEquals(40, result.xpBreakdown.talentAdditionsXp)
+        
+        // Streak Multiplier for streak 7 is 1.2.
         assertEquals(1.2, result.xpBreakdown.streakMultiplier)
-        assertEquals(1.10, result.xpBreakdown.talentMultiplier)
-        assertEquals(241, result.xpBreakdown.totalXp)
+        
+        // Talent Multipliers:
+        // S1: streak 7 >= 3. -> 1.05.
+        // S3: streak 7 >= 7. -> 1.10.
+        // Total mult = 1.05 * 1.10 = 1.155.
+        assertEquals(1.155, result.xpBreakdown.talentMultiplier, 0.0001)
+        
+        // Base XP: 100 (Success)
+        // Score Bonus: (93/10)*2 = 9*2 = 18.
+        // Perfect Bonus (>=90): 25.
+        // Talent Additions: 40.
+        // Raw XP = 100 + 18 + 25 + 40 = 183.
+        // Total XP = floor(183 * 1.2 * 1.155) = floor(253.638) = 253.
+        assertEquals(253, result.xpBreakdown.totalXp)
     }
 
     private fun basePlan(): SleepPlan {
@@ -127,6 +162,19 @@ class NightResultCalculatorTest {
             streakAfter = null,
             createdAt = startAt,
             note = null,
+        )
+    }
+
+    private fun createTalent(id: String, effect: TalentEffect): Talent {
+        return Talent(
+            id = id,
+            branch = TalentBranch.DISCIPLINE,
+            tier = TalentTier.TIER_1,
+            nameKey = "key",
+            descriptionKey = "desc",
+            costPoints = 1,
+            effect = effect,
+            isActive = true
         )
     }
 }
