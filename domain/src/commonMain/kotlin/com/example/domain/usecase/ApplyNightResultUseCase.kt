@@ -9,6 +9,7 @@ import com.example.domain.repository.NightRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.repository.XpEventRepository
 import com.example.domain.result.AppResult
+import com.example.domain.scoring.LevelCalculator
 import kotlinx.datetime.Clock
 
 class ApplyNightResultUseCase(
@@ -34,12 +35,17 @@ class ApplyNightResultUseCase(
         }
         val user = (userResult as AppResult.Success).value
         val newXpTotal = user.xpTotal + result.xpBreakdown.totalXp
+        val levelUpdate = LevelCalculator.applyLevelUpdate(
+            currentLevel = user.level,
+            currentTalentPoints = user.talentPointsAvailable,
+            xpTotal = newXpTotal,
+        )
         val newBestStreak = maxOf(user.streakBest, result.streakAfter)
         val xpUpdateResult = userRepository.updateXp(
             userId = user.id,
             xpTotal = newXpTotal,
-            level = user.level,
-            talentPointsAvailable = user.talentPointsAvailable,
+            level = levelUpdate.level,
+            talentPointsAvailable = levelUpdate.talentPointsAvailable,
         )
         if (xpUpdateResult is AppResult.Error) {
             return xpUpdateResult
