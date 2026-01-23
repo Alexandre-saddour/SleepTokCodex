@@ -13,6 +13,9 @@ interface RewardDao {
     @Query("SELECT * FROM rewards")
     suspend fun getRewards(): List<RewardEntity>
 
+    @Query("SELECT COUNT(*) FROM rewards")
+    suspend fun countRewards(): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(rewards: List<RewardEntity>)
 
