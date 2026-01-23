@@ -1,17 +1,10 @@
 package com.example.kmpbackbone.di
 
-import com.example.data.repository.WelcomeMessageRepositoryImpl
-import com.example.domain.repository.WelcomeMessageRepository
-import com.example.domain.usecase.GetWelcomeMessageUseCase
-import com.example.kmpbackbone.home.HomeViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 /**
@@ -37,13 +30,10 @@ val networkModule = module {
 }
 
 val dataModule = module {
-    singleOf(::WelcomeMessageRepositoryImpl) bind WelcomeMessageRepository::class
 }
 
 val domainModule = module {
-    factoryOf(::GetWelcomeMessageUseCase)
 }
 
 val presentationModule = module {
-    factoryOf(::HomeViewModel)
 }

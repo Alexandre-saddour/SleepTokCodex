@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: NONE
-Next step to run: M0.1
+Last completed step: M0.1
+Next step to run: M0.2
 
 --------------------------------------------------------------------------------
 0) How to use this plan
