@@ -12,6 +12,9 @@ interface TalentDao {
     @Query("SELECT * FROM talents WHERE isActive = 1")
     suspend fun getAllTalents(): List<TalentEntity>
 
+    @Query("SELECT COUNT(*) FROM talents")
+    suspend fun countTalents(): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(talents: List<TalentEntity>)
 

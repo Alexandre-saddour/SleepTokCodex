@@ -1,0 +1,28 @@
+[
+  { "id": "badge_first_quest", "type": "BADGE", "rarity": "COMMON", "nameKey": "badge_first_quest_name", "assetRef": "badge_first_quest" },
+  { "id": "badge_night_starter", "type": "BADGE", "rarity": "COMMON", "nameKey": "badge_night_starter_name", "assetRef": "badge_night_starter" },
+  { "id": "badge_on_time", "type": "BADGE", "rarity": "COMMON", "nameKey": "badge_on_time_name", "assetRef": "badge_on_time" },
+  { "id": "badge_early_bird", "type": "BADGE", "rarity": "COMMON", "nameKey": "badge_early_bird_name", "assetRef": "badge_early_bird" },
+  { "id": "badge_streak_3", "type": "BADGE", "rarity": "COMMON", "nameKey": "badge_streak_3_name", "assetRef": "badge_streak_3" },
+  { "id": "badge_moonrunner", "type": "BADGE", "rarity": "RARE", "nameKey": "badge_moonrunner_name", "assetRef": "badge_moonrunner" },
+  { "id": "badge_perfect_night", "type": "BADGE", "rarity": "RARE", "nameKey": "badge_perfect_night_name", "assetRef": "badge_perfect_night" },
+  { "id": "badge_consistency", "type": "BADGE", "rarity": "RARE", "nameKey": "badge_consistency_name", "assetRef": "badge_consistency" },
+  { "id": "badge_streak_7", "type": "BADGE", "rarity": "RARE", "nameKey": "badge_streak_7_name", "assetRef": "badge_streak_7" },
+  { "id": "badge_comeback", "type": "BADGE", "rarity": "EPIC", "nameKey": "badge_comeback_name", "assetRef": "badge_comeback" },
+  { "id": "badge_level_5", "type": "BADGE", "rarity": "RARE", "nameKey": "badge_level_5_name", "assetRef": "badge_level_5" },
+  { "id": "badge_30_club", "type": "BADGE", "rarity": "EPIC", "nameKey": "badge_30_club_name", "assetRef": "badge_30_club" },
+
+  { "id": "theme_default_neon", "type": "THEME", "rarity": "COMMON", "nameKey": "theme_default_neon_name", "assetRef": "theme_default_neon" },
+  { "id": "theme_lavender_dream", "type": "THEME", "rarity": "RARE", "nameKey": "theme_lavender_dream_name", "assetRef": "theme_lavender_dream" },
+  { "id": "theme_matcha_night", "type": "THEME", "rarity": "RARE", "nameKey": "theme_matcha_night_name", "assetRef": "theme_matcha_night" },
+  { "id": "theme_sunrise_pop", "type": "THEME", "rarity": "RARE", "nameKey": "theme_sunrise_pop_name", "assetRef": "theme_sunrise_pop" },
+  { "id": "theme_cyber_moon", "type": "THEME", "rarity": "EPIC", "nameKey": "theme_cyber_moon_name", "assetRef": "theme_cyber_moon" },
+  { "id": "theme_cloudy_minimal", "type": "THEME", "rarity": "RARE", "nameKey": "theme_cloudy_minimal_name", "assetRef": "theme_cloudy_minimal" },
+
+  { "id": "sound_rain_lofi", "type": "SOUND", "rarity": "COMMON", "nameKey": "sound_rain_lofi_name", "assetRef": "sound_rain_lofi" },
+  { "id": "sound_ocean_hush", "type": "SOUND", "rarity": "COMMON", "nameKey": "sound_ocean_hush_name", "assetRef": "sound_ocean_hush" },
+  { "id": "sound_space_drone", "type": "SOUND", "rarity": "RARE", "nameKey": "sound_space_drone_name", "assetRef": "sound_space_drone" },
+  { "id": "sound_soft_chimes", "type": "SOUND", "rarity": "COMMON", "nameKey": "sound_soft_chimes_name", "assetRef": "sound_soft_chimes" },
+  { "id": "sound_hype_alarm_cute", "type": "SOUND", "rarity": "RARE", "nameKey": "sound_hype_alarm_cute_name", "assetRef": "sound_hype_alarm_cute" },
+  { "id": "sound_retro_arcade_ping", "type": "SOUND", "rarity": "RARE", "nameKey": "sound_retro_arcade_ping_name", "assetRef": "sound_retro_arcade_ping" }
+]

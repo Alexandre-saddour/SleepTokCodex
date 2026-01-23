@@ -1,0 +1,145 @@
+[
+  {
+    "id": "D1",
+    "branch": "DISCIPLINE",
+    "tier": 1,
+    "nameKey": "talent_d1_name",
+    "descriptionKey": "talent_d1_desc",
+    "costPoints": 1,
+    "effect": {
+      "type": "ADD_XP",
+      "amount": 5,
+      "condition": { "type": "START_BEFORE_MINUTES", "value": 10 }
+    },
+    "isActive": true
+  },
+  {
+    "id": "D2",
+    "branch": "DISCIPLINE",
+    "tier": 2,
+    "nameKey": "talent_d2_name",
+    "descriptionKey": "talent_d2_desc",
+    "costPoints": 2,
+    "effect": {
+      "type": "ADD_XP",
+      "amount": 10,
+      "condition": { "type": "START_WITHIN_MINUTES", "value": 15 }
+    },
+    "isActive": true
+  },
+  {
+    "id": "D3",
+    "branch": "DISCIPLINE",
+    "tier": 3,
+    "nameKey": "talent_d3_name",
+    "descriptionKey": "talent_d3_desc",
+    "costPoints": 3,
+    "effect": {
+      "type": "ADD_XP",
+      "amount": 25,
+      "condition": { "type": "SUCCESS_WITH_SCORE_AT_LEAST", "value": 90 }
+    },
+    "isActive": true
+  },
+  {
+    "id": "S1",
+    "branch": "STREAK",
+    "tier": 1,
+    "nameKey": "talent_s1_name",
+    "descriptionKey": "talent_s1_desc",
+    "costPoints": 1,
+    "effect": {
+      "type": "XP_MULTIPLIER",
+      "multiplier": 1.05,
+      "condition": { "type": "STREAK_AT_LEAST", "value": 3 }
+    },
+    "isActive": true
+  },
+  {
+    "id": "S2",
+    "branch": "STREAK",
+    "tier": 2,
+    "nameKey": "talent_s2_name",
+    "descriptionKey": "talent_s2_desc",
+    "costPoints": 2,
+    "effect": {
+      "type": "STREAK_SHIELD",
+      "chargesPerWeek": 1
+    },
+    "isActive": true
+  },
+  {
+    "id": "S3",
+    "branch": "STREAK",
+    "tier": 3,
+    "nameKey": "talent_s3_name",
+    "descriptionKey": "talent_s3_desc",
+    "costPoints": 3,
+    "effect": {
+      "type": "XP_MULTIPLIER",
+      "multiplier": 1.10,
+      "condition": { "type": "STREAK_AT_LEAST", "value": 7 }
+    },
+    "isActive": true
+  },
+  {
+    "id": "T1",
+    "branch": "STYLE",
+    "tier": 1,
+    "nameKey": "talent_t1_name",
+    "descriptionKey": "talent_t1_desc",
+    "costPoints": 1,
+    "effect": { "type": "UNLOCK_THEME_SLOT" },
+    "isActive": true
+  },
+  {
+    "id": "T2",
+    "branch": "STYLE",
+    "tier": 2,
+    "nameKey": "talent_t2_name",
+    "descriptionKey": "talent_t2_desc",
+    "costPoints": 2,
+    "effect": { "type": "UNLOCK_SOUND_PACK" },
+    "isActive": true
+  },
+  {
+    "id": "T3",
+    "branch": "STYLE",
+    "tier": 3,
+    "nameKey": "talent_t3_name",
+    "descriptionKey": "talent_t3_desc",
+    "costPoints": 3,
+    "effect": { "type": "RARE_DROP_LUCK", "bonusPercent": 20 },
+    "isActive": true
+  },
+  {
+    "id": "I1",
+    "branch": "INSIGHT",
+    "tier": 1,
+    "nameKey": "talent_i1_name",
+    "descriptionKey": "talent_i1_desc",
+    "costPoints": 1,
+    "effect": { "type": "ENABLE_WEEKLY_RECAP" },
+    "isActive": true
+  },
+  {
+    "id": "I2",
+    "branch": "INSIGHT",
+    "tier": 2,
+    "nameKey": "talent_i2_name",
+    "descriptionKey": "talent_i2_desc",
+    "costPoints": 2,
+    "effect": { "type": "ENABLE_ADVANCED_CALENDAR" },
+    "isActive": true
+  },
+  {
+    "id": "I3",
+    "branch": "INSIGHT",
+    "tier": 3,
+    "nameKey": "talent_i3_name",
+    "descriptionKey": "talent_i3_desc",
+    "costPoints": 3,
+    "effect": { "type": "ENABLE_TRENDLINE" },
+    "isActive": true
+  }
+]
