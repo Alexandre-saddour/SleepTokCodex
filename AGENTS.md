@@ -110,6 +110,14 @@ Avoid platform-specific dependencies unless there is no viable KMP alternative.
 
 If platform-specific code is required, isolate it behind expect/actual or clearly separated platform source sets.
 
+7.1) Serialization (Strict)
+
+Use **kotlinx.serialization** for JSON across all modules.
+
+Do **not** use Gson or other JVM-only serializers.
+
+Avoid manual JSON building/parsing when a serializable model can be used.
+
 8) Dependency Versions (Strict)
 
 All dependencies introduced must be:
