@@ -1,0 +1,182 @@
+{
+  "success": {
+    "chill": [
+      "Nice. Tu t'es offert une vraie nuit.",
+      "Ca, c'est du repos propre.",
+      "Ton futur toi te remercie.",
+      "Routine +1. Stress -1.",
+      "Tu as respecte le plan. Simple et fort.",
+      "Une nuit stable, c'est une victoire.",
+      "Tu avances, tranquillement mais surement.",
+      "Tu as garde le cap.",
+      "Tu viens d'empiler du repos.",
+      "Garde ce rythme, il te va bien.",
+      "Ton corps adore ce genre de nuit.",
+      "C'est exactement ca qu'on vise."
+    ],
+    "hype": [
+      "W. Quest cleared.",
+      "Let's gooo. +{xp} XP.",
+      "Streak power UP 🔥",
+      "Tu farmes du repos comme un pro.",
+      "Clean run. Zero debat.",
+      "GG. Niveau prochain bientot.",
+      "Big win. On continue.",
+      "C'est du gameplay parfait.",
+      "Tu viens de securiser ta journee.",
+      "Streak {streak}? Monster mode.",
+      "Tu viens de debloquer de l'energie.",
+      "Another one."
+    ],
+    "strict": [
+      "Objectif atteint. Bien.",
+      "Plan respecte. Continue.",
+      "C'est ca la constance.",
+      "Bonne execution.",
+      "Tu fais ce que tu dis.",
+      "Resultat valide.",
+      "Repete.",
+      "Bonne discipline.",
+      "Prochain objectif : pareil.",
+      "Streak maintenu. Parfait.",
+      "Nuit conforme.",
+      "Tu progresses."
+    ],
+    "factual": [
+      "Duree OK. Coucher dans la fenetre. Reveil dans la fenetre.",
+      "Score {score}/100. Tu as respecte le timing.",
+      "Tu es dans le bon rythme. Continue 3 jours pour stabiliser.",
+      "{sleep_gained_week_min} min gagnees cette semaine.",
+      "Streak {streak}. Prochain milestone : {next_milestone}.",
+      "XP: {xp}. Points talent au prochain niveau."
+    ],
+    "tips": [
+      "Demain : meme heure, meme victoire.",
+      "Garde l'ecran loin 15 minutes avant.",
+      "Hydrate-toi des le reveil.",
+      "Si tu veux, avance le coucher de 10 minutes demain.",
+      "Recompense-toi : choisis un theme/son.",
+      "Ne change rien. La regularite gagne."
+    ]
+  },
+  "partial": {
+    "chill": [
+      "Pas parfait, mais tu avances.",
+      "Tu t'es repose, meme si c'etait short.",
+      "On garde l'elan.",
+      "C'est une etape, pas un echec.",
+      "Tu as fait une partie du travail.",
+      "On ajuste, tranquille."
+    ],
+    "hype": [
+      "Almost. Next run = full clear.",
+      "Tu etais proche. On optimise.",
+      "Half win. On prend.",
+      "Tu as limite la casse. Bien joue.",
+      "Encore un effort pour le perfect.",
+      "Next night: redemption arc."
+    ],
+    "strict": [
+      "Objectif partiellement atteint.",
+      "Tu n'etais pas loin. Corrige.",
+      "Le plan est bon. L'execution non.",
+      "Ajuste l'heure. Recommence.",
+      "Progression acceptable.",
+      "Demain, on fait mieux."
+    ],
+    "factual": [
+      "Tu as dormi {actual} / {target}. Il manque {missing}.",
+      "Coucher decale de {delta_start_min} min.",
+      "Reveil decale de {delta_end_min} min.",
+      "Score {score}/100. Ca passe, mais pas optimal.",
+      "Streak: {streak_after} (si conservee) / cassee (si cassee).",
+      "XP: {xp}. Un SUCCESS demain relance tout.",
+      "Tu etais a {missing} min du SUCCESS.",
+      "Grosse difference = reduire la cible ce soir de 15 min."
+    ],
+    "tips": [
+      "Ce soir : vise +15 minutes seulement.",
+      "Pose une 'heure ecran off'.",
+      "Prepare le reveil: son doux, lumiere faible.",
+      "Si tu te couches tard, garde le reveil fixe.",
+      "Choisis une routine 5 minutes (eau, respiration).",
+      "Demain : start dans la fenetre +/-15 min.",
+      "Gagne d'abord la regularite, puis la duree.",
+      "Active un theme calme avant de lancer."
+    ]
+  },
+  "fail": {
+    "chill": [
+      "Nuit compliquee. Ca arrive.",
+      "On ne juge pas. On repart.",
+      "Le streak n'est pas toi.",
+      "Une nuit n'annule pas tes progres.",
+      "On respire. Demain est clean.",
+      "Tu as encore le controle."
+    ],
+    "hype": [
+      "Reset, pas defeat.",
+      "On a perdu la run, pas la game.",
+      "Tomorrow: comeback.",
+      "On analyse vite, on relance.",
+      "Tu reviens plus fort.",
+      "Next night = free win."
+    ],
+    "strict": [
+      "Objectif non atteint.",
+      "Streak cassee. Repart.",
+      "Pas grave. Mais corrige.",
+      "Demain : execution simple.",
+      "Reprends le plan.",
+      "On repart a 1."
+    ],
+    "factual": [
+      "Duree trop courte : {actual} / {target}.",
+      "Decalage coucher : {delta_start_min} min.",
+      "Decalage reveil : {delta_end_min} min.",
+      "Score {score}/100. On est hors fenetre.",
+      "Streak cassee a {streak_before}.",
+      "XP minimal: {xp}. On garde la continuite d'usage.",
+      "Demain : vise PARTIAL minimum.",
+      "Si tu as un shield, tu peux sauver ta streak."
+    ],
+    "tips": [
+      "Ce soir : objectif plus petit (-30 min).",
+      "Garde une seule regle : reveil fixe.",
+      "Prepare ton coucher 30 minutes avant.",
+      "Coupe cafe apres 14h (si tu en prends).",
+      "Pose le telephone hors du lit.",
+      "Lance PLAY des que tu te poses (meme si tard).",
+      "Respiration 1 minute avant de dormir.",
+      "Choisis un son 'sleep' doux.",
+      "Demain : focus sur l'heure de coucher.",
+      "Si c'est trop dur, on simplifie le plan."
+    ]
+  },
+  "recap": {
+    "highlight": [
+      "Tu as gagne {sleep_gained_week_min} min cette semaine.",
+      "Ton meilleur streak cette semaine: {best_streak}.",
+      "Ta regularite s'installe.",
+      "Tu as eu {perfect_count} nuits presque parfaites.",
+      "Tu es revenu(e) apres une nuit dure. Solide.",
+      "Tu as ameliore ton timing de coucher.",
+      "Tu avances sur le plus important : la constance.",
+      "Cette semaine etait stable. Continue.",
+      "Ton reveil devient plus regulier.",
+      "Tu as tenu le plan plus souvent que la semaine derniere.",
+      "Le progres est reel.",
+      "Tu construis une base."
+    ],
+    "objective": [
+      "Objectif : +1 SUCCESS de plus la semaine prochaine.",
+      "Objectif : start dans la fenetre 3 fois.",
+      "Objectif : garder le reveil fixe 5 jours.",
+      "Objectif : viser une nuit score >= 85.",
+      "Objectif : streak 3.",
+      "Objectif : 7 jours d'affilee avec PLAY.",
+      "Objectif : reduire l'ecart coucher de 15 min.",
+      "Objectif : maintenir la duree, ameliorer l'heure."
+    ]
+  }
+}
