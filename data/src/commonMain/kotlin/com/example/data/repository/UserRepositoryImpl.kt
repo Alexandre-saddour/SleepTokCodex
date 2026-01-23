@@ -16,8 +16,8 @@ class UserRepositoryImpl(
 ) : UserRepository {
     override suspend fun getActiveUser(): AppResult<User> {
         return try {
-            val user = userDao.getActiveUser() ?: return AppResult.Error(DomainError.NotFound)
-            AppResult.Success(user.toDomain())
+            userDao.getActiveUser()?.toDomain()?.let { AppResult.Success(it) }
+                ?: AppResult.Error(DomainError.NotFound)
         } catch (exception: Exception) {
             AppResult.Error(DomainError.Storage)
         }
