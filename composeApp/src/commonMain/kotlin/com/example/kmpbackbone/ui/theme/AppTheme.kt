@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kmpbackbone.composeapp.generated.resources.Res
+import kmpbackbone.composeapp.generated.resources.space_grotesk_regular
+import kmpbackbone.composeapp.generated.resources.space_grotesk_semibold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 
@@ -55,39 +57,50 @@ private val DarkColors = darkColorScheme(
 )
 
 @OptIn(ExperimentalResourceApi::class)
-private val AppFontFamily = FontFamily(
-    Font(Res.font.space_grotesk_regular, FontWeight.Normal),
-    Font(Res.font.space_grotesk_semibold, FontWeight.SemiBold),
-)
+@Composable
+private fun appFontFamily(): FontFamily {
+    return FontFamily(
+        Font(Res.font.space_grotesk_regular, FontWeight.Normal),
+        Font(Res.font.space_grotesk_semibold, FontWeight.SemiBold),
+    )
+}
 
-private val AppTypography = Typography(
-    defaultFontFamily = AppFontFamily,
-    displayLarge = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 44.sp,
-        lineHeight = 48.sp,
-    ),
-    headlineMedium = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 28.sp,
-        lineHeight = 32.sp,
-    ),
-    titleLarge = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-    ),
-    bodyLarge = TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
-    ),
-    labelLarge = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
-        lineHeight = 18.sp,
-    ),
-)
+@Composable
+private fun appTypography(): Typography {
+    val fontFamily = appFontFamily()
+    return Typography(
+        displayLarge = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 44.sp,
+            lineHeight = 48.sp,
+        ),
+        headlineMedium = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 28.sp,
+            lineHeight = 32.sp,
+        ),
+        titleLarge = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp,
+            lineHeight = 28.sp,
+        ),
+        bodyLarge = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            lineHeight = 22.sp,
+        ),
+        labelLarge = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            lineHeight = 18.sp,
+        ),
+    )
+}
 
 private val AppShapes = Shapes(
     small = RoundedCornerShape(8.dp),
@@ -102,7 +115,7 @@ fun AppTheme(
 ) {
     MaterialTheme(
         colorScheme = if (darkTheme) DarkColors else LightColors,
-        typography = AppTypography,
+        typography = appTypography(),
         shapes = AppShapes,
         content = content,
     )

@@ -6,7 +6,7 @@ android-targetSdk = "36"
 androidx-activity = "1.12.2"
 androidx-core = "1.17.0"
 androidx-lifecycle = "2.9.6"
-composeMultiplatform = "1.9.3"
+composeMultiplatform = "1.10.0"
 kotlin = "2.3.0"
 koin = "4.1.1"
 napier = "2.7.1"
@@ -52,4 +52,3 @@ androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.lib
 androidLint = { id = "com.android.lint", version.ref = "agp" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

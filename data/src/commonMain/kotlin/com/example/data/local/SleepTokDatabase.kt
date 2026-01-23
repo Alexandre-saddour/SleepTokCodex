@@ -1,6 +1,7 @@
 package com.example.data.local
 
 import androidx.room.Database
+import androidx.room.ConstructedBy
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.data.local.dao.NightDao
@@ -34,6 +35,7 @@ import com.example.data.local.entity.XpEventEntity
     ],
     version = 1,
 )
+@ConstructedBy(SleepTokDatabaseConstructor::class)
 @TypeConverters(Converters::class)
 abstract class SleepTokDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

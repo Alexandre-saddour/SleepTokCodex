@@ -14,7 +14,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.until
+import kotlinx.datetime.toInstant
 
 class DefaultNightResultCalculator : NightResultCalculator {
     override fun calculate(input: NightScoreInput): NightResult {
@@ -117,7 +117,10 @@ class DefaultNightResultCalculator : NightResultCalculator {
     }
 
     private fun minutesBetween(start: LocalDateTime, end: LocalDateTime, timeZone: TimeZone): Int {
-        return start.until(end, DateTimeUnit.MINUTE, timeZone).toInt()
+        val startInstant = start.toInstant(timeZone)
+        val endInstant = end.toInstant(timeZone)
+        val millis = endInstant.toEpochMilliseconds() - startInstant.toEpochMilliseconds()
+        return (millis / 60000L).toInt()
     }
 
     private fun computeStatus(
