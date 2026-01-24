@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M5.1
-Next step to run: M5.2
+Last completed step: M5.2
+Next step to run: M5.3
 
 --------------------------------------------------------------------------------
 0) How to use this plan

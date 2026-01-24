@@ -1,12 +1,10 @@
 package com.example.kmpbackbone.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import com.example.kmpbackbone.ui.onboarding.OnboardingScreen
 import com.example.kmpbackbone.viewmodel.OnboardingUiEvent
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -26,8 +24,15 @@ fun OnboardingRoot(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (uiState.isLoading) {
-        }
-    }
+    OnboardingScreen(
+        uiState = uiState,
+        onNext = viewModel::onNext,
+        onBack = viewModel::onBack,
+        onComplete = viewModel::onComplete,
+        onGoalSelected = viewModel::onGoalSelected,
+        onCoachStyleSelected = viewModel::onCoachStyleSelected,
+        onBedtimeChanged = viewModel::onBedtimeChanged,
+        onWakeTimeChanged = viewModel::onWakeTimeChanged,
+        onActiveDayToggled = viewModel::onActiveDayToggled,
+    )
 }

@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">SleepTok</string>
+    <string name="onboarding_step_indicator">Step %1$d of %2$d</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_back">Back</string>
+
+    <string name="onboarding_welcome_title">Level up your sleep</string>
+    <string name="onboarding_welcome_tagline">You do not just sleep better. You progress.</string>
+    <string name="onboarding_welcome_cta">Start</string>
+
+    <string name="onboarding_goal_title">Pick your goal</string>
+    <string name="goal_better_sleep">Better sleep</string>
+    <string name="goal_routine">Build a routine</string>
+    <string name="goal_productivity">Be more productive</string>
+    <string name="goal_early_wake">Wake up earlier</string>
+
+    <string name="onboarding_coach_title">Choose your coach</string>
+    <string name="coach_chill_title">Chill coach</string>
+    <string name="coach_hype_title">Hype coach</string>
+    <string name="coach_strict_title">Strict coach</string>
+    <string name="coach_chill_sample">Nice. You kept the plan.</string>
+    <string name="coach_hype_sample">Big win. Keep the streak.</string>
+    <string name="coach_strict_sample">Plan respected. Do it again.</string>
+
+    <string name="onboarding_plan_title">Set your sleep plan</string>
+    <string name="onboarding_plan_bedtime_label">Bedtime</string>
+    <string name="onboarding_plan_wake_label">Wake time</string>
+    <string name="onboarding_plan_active_days_label">Active days</string>
+    <string name="onboarding_plan_tolerance_label">Tolerance: 15 min bedtime / 20 min wake</string>
+
+    <string name="onboarding_gamification_title">How it works</string>
+    <string name="onboarding_gamification_slide1_title">XP to level up</string>
+    <string name="onboarding_gamification_slide1_body">Every good night gives XP. Level up to earn talent points.</string>
+    <string name="onboarding_gamification_slide2_title">Streaks matter</string>
+    <string name="onboarding_gamification_slide2_body">Keep a streak to unlock bonuses and rewards.</string>
+    <string name="onboarding_gamification_slide3_title">Talents unlock power</string>
+    <string name="onboarding_gamification_slide3_body">Spend points to unlock boosts, themes, and insights.</string>
+
+    <string name="onboarding_ready_title">Ready</string>
+    <string name="onboarding_ready_summary_title">Your plan</string>
+    <string name="onboarding_ready_goal_label">Goal</string>
+    <string name="onboarding_ready_coach_label">Coach</string>
+    <string name="onboarding_ready_plan_label">Plan</string>
+    <string name="onboarding_ready_days_label">Days</string>
+    <string name="onboarding_ready_cta">Go home</string>
+    <string name="onboarding_goal_placeholder">Not set</string>
+    <string name="onboarding_coach_placeholder">Not set</string>
+    <string name="onboarding_plan_summary_value">From %1$s to %2$s</string>
+
+    <string name="time_format_hh_mm">%1$02d:%2$02d</string>
+    <string name="list_separator">, </string>
+    <string name="symbol_plus">+</string>
+    <string name="symbol_minus">-</string>
+
+    <string name="day_mon_short">Mon</string>
+    <string name="day_tue_short">Tue</string>
+    <string name="day_wed_short">Wed</string>
+    <string name="day_thu_short">Thu</string>
+    <string name="day_fri_short">Fri</string>
+    <string name="day_sat_short">Sat</string>
+    <string name="day_sun_short">Sun</string>
+</resources>
