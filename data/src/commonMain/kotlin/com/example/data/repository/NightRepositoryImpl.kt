@@ -39,9 +39,9 @@ class NightRepositoryImpl(
         userId: Long,
         startDate: LocalDate,
         endDate: LocalDate,
+        timeZone: TimeZone,
     ): AppResult<List<Night>> {
         return try {
-            val timeZone = TimeZone.currentSystemDefault()
             val startInstant = LocalDateTime(startDate, LocalTime(hour = 0, minute = 0)).toInstant(timeZone)
             val endInstant = LocalDateTime(endDate, LocalTime(hour = 23, minute = 59, second = 59)).toInstant(timeZone)
             val nights = nightDao.getNightsBetween(

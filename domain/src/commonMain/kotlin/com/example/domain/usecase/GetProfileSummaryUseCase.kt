@@ -23,7 +23,7 @@ class GetProfileSummaryUseCase(
         val user = (userResult as AppResult.Success).value
         val startDate = user.createdAt.toLocalDateTime(timeZone).date
         val endDate = Clock.System.now().toLocalDateTime(timeZone).date
-        val nightsResult = nightRepository.getNightsBetween(user.id, startDate, endDate)
+        val nightsResult = nightRepository.getNightsBetween(user.id, startDate, endDate, timeZone)
         if (nightsResult is AppResult.Error) {
             return nightsResult
         }

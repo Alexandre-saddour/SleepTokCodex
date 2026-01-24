@@ -31,7 +31,7 @@ class GetWeeklyRecapUseCase(
         }
         val plan = (planResult as AppResult.Success).value
             ?: return AppResult.Error(DomainError.NotFound)
-        val nightsResult = nightRepository.getNightsBetween(user.id, weekStart, weekEnd)
+        val nightsResult = nightRepository.getNightsBetween(user.id, weekStart, weekEnd, timeZone)
         if (nightsResult is AppResult.Error) {
             return nightsResult
         }
