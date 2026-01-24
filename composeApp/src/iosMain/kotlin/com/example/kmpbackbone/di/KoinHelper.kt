@@ -1,5 +1,6 @@
 package com.example.kmpbackbone.di
 
+import com.example.data.local.IosDatabaseContext
 import org.koin.core.component.KoinComponent
 
 class KoinHelper : KoinComponent {
@@ -14,5 +15,5 @@ class KoinHelper : KoinComponent {
  * Call this from AppDelegate or App init.
  */
 fun doInitKoin() {
-    initKoin()
+    initKoin(IosDatabaseContext())
 }
