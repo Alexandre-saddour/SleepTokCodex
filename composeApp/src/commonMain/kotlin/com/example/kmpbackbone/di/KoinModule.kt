@@ -48,6 +48,7 @@ import com.example.domain.usecase.StopNightUseCase
 import com.example.domain.usecase.UnlockTalentUseCase
 import com.example.domain.usecase.UpdatePlanUseCase
 import com.example.kmpbackbone.resources.ResourceSeedDataProvider
+import com.example.kmpbackbone.viewmodel.OnboardingViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.core.context.startKoin
@@ -127,4 +128,5 @@ val domainModule = module {
 
 val presentationModule = module {
     single<SeedDataProvider> { ResourceSeedDataProvider() }
+    factoryOf(::OnboardingViewModel)
 }

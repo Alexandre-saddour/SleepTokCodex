@@ -1,0 +1,617 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "6de8d158b716025dbb5510eca14def7c",
+    "entities": [
+      {
+        "tableName": "users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createdAt` INTEGER NOT NULL, `timezone` TEXT NOT NULL, `coachStyle` TEXT NOT NULL, `premiumStatus` TEXT NOT NULL, `premiumUntil` INTEGER, `level` INTEGER NOT NULL, `xpTotal` INTEGER NOT NULL, `talentPointsAvailable` INTEGER NOT NULL, `streakCurrent` INTEGER NOT NULL, `streakBest` INTEGER NOT NULL, `lastNightId` INTEGER, `baselineSleepDurationMinutes` INTEGER NOT NULL, `settingsJson` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coachStyle",
+            "columnName": "coachStyle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "premiumStatus",
+            "columnName": "premiumStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "premiumUntil",
+            "columnName": "premiumUntil",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "level",
+            "columnName": "level",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xpTotal",
+            "columnName": "xpTotal",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "talentPointsAvailable",
+            "columnName": "talentPointsAvailable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "streakCurrent",
+            "columnName": "streakCurrent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "streakBest",
+            "columnName": "streakBest",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastNightId",
+            "columnName": "lastNightId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "baselineSleepDurationMinutes",
+            "columnName": "baselineSleepDurationMinutes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "settingsJson",
+            "columnName": "settingsJson",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "sleep_plans",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` INTEGER NOT NULL, `planStartLocalTime` TEXT NOT NULL, `planEndLocalTime` TEXT NOT NULL, `activeDaysMask` INTEGER NOT NULL, `toleranceStartMinutes` INTEGER NOT NULL, `toleranceEndMinutes` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `isActive` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planStartLocalTime",
+            "columnName": "planStartLocalTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planEndLocalTime",
+            "columnName": "planEndLocalTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activeDaysMask",
+            "columnName": "activeDaysMask",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toleranceStartMinutes",
+            "columnName": "toleranceStartMinutes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toleranceEndMinutes",
+            "columnName": "toleranceEndMinutes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "isActive",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_sleep_plans_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sleep_plans_userId` ON `${TABLE_NAME}` (`userId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "nights",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` INTEGER NOT NULL, `planId` INTEGER NOT NULL, `startAt` INTEGER NOT NULL, `endAt` INTEGER, `status` TEXT NOT NULL, `actualDurationMinutes` INTEGER, `planDurationMinutes` INTEGER NOT NULL, `score` INTEGER, `xpEarned` INTEGER, `streakBefore` INTEGER, `streakAfter` INTEGER, `createdAt` INTEGER NOT NULL, `note` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planId",
+            "columnName": "planId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startAt",
+            "columnName": "startAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endAt",
+            "columnName": "endAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actualDurationMinutes",
+            "columnName": "actualDurationMinutes",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "planDurationMinutes",
+            "columnName": "planDurationMinutes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "score",
+            "columnName": "score",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "xpEarned",
+            "columnName": "xpEarned",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "streakBefore",
+            "columnName": "streakBefore",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "streakAfter",
+            "columnName": "streakAfter",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_nights_userId_startAt",
+            "unique": false,
+            "columnNames": [
+              "userId",
+              "startAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_nights_userId_startAt` ON `${TABLE_NAME}` (`userId`, `startAt`)"
+          },
+          {
+            "name": "index_nights_planId",
+            "unique": false,
+            "columnNames": [
+              "planId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_nights_planId` ON `${TABLE_NAME}` (`planId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "xp_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` INTEGER NOT NULL, `nightId` INTEGER, `type` TEXT NOT NULL, `amount` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `metaJson` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nightId",
+            "columnName": "nightId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "metaJson",
+            "columnName": "metaJson",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_xp_events_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_xp_events_userId` ON `${TABLE_NAME}` (`userId`)"
+          },
+          {
+            "name": "index_xp_events_nightId",
+            "unique": false,
+            "columnNames": [
+              "nightId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_xp_events_nightId` ON `${TABLE_NAME}` (`nightId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "talents",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `branch` TEXT NOT NULL, `tier` TEXT NOT NULL, `nameKey` TEXT NOT NULL, `descriptionKey` TEXT NOT NULL, `costPoints` INTEGER NOT NULL, `effectJson` TEXT NOT NULL, `isActive` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "branch",
+            "columnName": "branch",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tier",
+            "columnName": "tier",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameKey",
+            "columnName": "nameKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descriptionKey",
+            "columnName": "descriptionKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "costPoints",
+            "columnName": "costPoints",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "effectJson",
+            "columnName": "effectJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "isActive",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_talents_branch_tier",
+            "unique": false,
+            "columnNames": [
+              "branch",
+              "tier"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_talents_branch_tier` ON `${TABLE_NAME}` (`branch`, `tier`)"
+          }
+        ]
+      },
+      {
+        "tableName": "user_talents",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `talentId` TEXT NOT NULL, `unlockedAt` INTEGER NOT NULL, PRIMARY KEY(`userId`, `talentId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "talentId",
+            "columnName": "talentId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unlockedAt",
+            "columnName": "unlockedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "userId",
+            "talentId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_user_talents_talentId",
+            "unique": false,
+            "columnNames": [
+              "talentId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_user_talents_talentId` ON `${TABLE_NAME}` (`talentId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "rewards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `type` TEXT NOT NULL, `rarity` TEXT NOT NULL, `nameKey` TEXT NOT NULL, `assetRef` TEXT, `metaJson` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rarity",
+            "columnName": "rarity",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameKey",
+            "columnName": "nameKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assetRef",
+            "columnName": "assetRef",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "metaJson",
+            "columnName": "metaJson",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "user_rewards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `rewardId` TEXT NOT NULL, `earnedAt` INTEGER NOT NULL, `source` TEXT NOT NULL, `consumedAt` INTEGER, PRIMARY KEY(`userId`, `rewardId`, `earnedAt`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rewardId",
+            "columnName": "rewardId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "earnedAt",
+            "columnName": "earnedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "consumedAt",
+            "columnName": "consumedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "userId",
+            "rewardId",
+            "earnedAt"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_user_rewards_userId_rewardId_earnedAt",
+            "unique": true,
+            "columnNames": [
+              "userId",
+              "rewardId",
+              "earnedAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_user_rewards_userId_rewardId_earnedAt` ON `${TABLE_NAME}` (`userId`, `rewardId`, `earnedAt`)"
+          }
+        ]
+      },
+      {
+        "tableName": "streak_shields",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `chargesAvailable` INTEGER NOT NULL, `refreshAt` INTEGER NOT NULL, `source` TEXT NOT NULL, PRIMARY KEY(`userId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chargesAvailable",
+            "columnName": "chargesAvailable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "refreshAt",
+            "columnName": "refreshAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "userId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6de8d158b716025dbb5510eca14def7c')"
+    ]
+  }
+}
