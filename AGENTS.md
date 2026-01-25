@@ -147,6 +147,7 @@ Define DI modules per layer:
 - composeApp bindings (ViewModels)
 Avoid service locator patterns outside Koin modules.
 Keep module wiring explicit and testable.
+For Android ViewModels, always inject using `viewModelOf`.
 
 11) Error Handling and Result Types
 
@@ -174,7 +175,11 @@ Avoid unnecessary abstractions.
 
 All new code must be formatted and lint-clean according to project tooling.
 
-14) Pull Request / Change Requirements for Agents
+14) Coroutines (Strict)
+
+If a dispatcher is required, use the `DispatcherProvider` abstraction instead of hardcoding a dispatcher.
+
+15) Pull Request / Change Requirements for Agents
 When generating changes, agents must include:
 - What was changed and why
 - Any architectural impact
