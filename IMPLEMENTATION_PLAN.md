@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M8.2
-Next step to run: M8.3
+Last completed step: M8.3
+Next step to run: M8.4
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -273,7 +273,7 @@ M8) Progress (calendar + weekly recap + night detail)
   - Legend
   - Done when: month changes update grid
 
-- [ ] M8.3 Weekly recap UI
+- [x] M8.3 Weekly recap UI
   - Slept vs target
   - Sleep gained vs baseline
   - Best streak this week

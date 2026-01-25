@@ -41,7 +41,15 @@ import kmpbackbone.composeapp.generated.resources.progress_previous_month
 import kmpbackbone.composeapp.generated.resources.progress_legend_fail
 import kmpbackbone.composeapp.generated.resources.progress_legend_partial
 import kmpbackbone.composeapp.generated.resources.progress_legend_success
+import kmpbackbone.composeapp.generated.resources.progress_weekly_avg_score
+import kmpbackbone.composeapp.generated.resources.progress_weekly_best_streak
+import kmpbackbone.composeapp.generated.resources.progress_weekly_sleep_gained
+import kmpbackbone.composeapp.generated.resources.progress_weekly_slept
+import kmpbackbone.composeapp.generated.resources.progress_weekly_title
 import kmpbackbone.composeapp.generated.resources.progress_title
+import kmpbackbone.composeapp.generated.resources.duration_hours
+import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
+import kmpbackbone.composeapp.generated.resources.duration_minutes
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.stringResource
@@ -86,6 +94,7 @@ fun ProgressScreen(
                 onDaySelected = onDaySelected,
             )
             LegendRow()
+            WeeklyRecapCard(uiState)
         }
     }
 }
@@ -264,5 +273,70 @@ private fun LegendItem(color: androidx.compose.ui.graphics.Color, label: String)
                 .background(color, shape = MaterialTheme.shapes.small),
         )
         Text(text = label, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+@Composable
+private fun WeeklyRecapCard(uiState: ProgressUiState) {
+    val recap = uiState.weeklyRecap ?: return
+    if (!uiState.showWeeklyRecap) return
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.progress_weekly_title),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                text = stringResource(
+                    Res.string.progress_weekly_slept,
+                    formatMinutes(recap.totalSleptMinutes),
+                    formatMinutes(recap.targetMinutes),
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = stringResource(
+                    Res.string.progress_weekly_sleep_gained,
+                    recap.sleepGainedMinutes,
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = stringResource(
+                    Res.string.progress_weekly_best_streak,
+                    recap.bestStreak,
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = stringResource(
+                    Res.string.progress_weekly_avg_score,
+                    recap.averageScore,
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+    }
+}
+
+@Composable
+private fun formatMinutes(totalMinutes: Int): String {
+    val hours = totalMinutes / 60
+    val minutes = totalMinutes % 60
+    return when {
+        hours > 0 && minutes > 0 -> stringResource(
+            Res.string.duration_hours_minutes,
+            hours,
+            minutes,
+        )
+        hours > 0 -> stringResource(Res.string.duration_hours, hours)
+        else -> stringResource(Res.string.duration_minutes, minutes)
     }
 }
