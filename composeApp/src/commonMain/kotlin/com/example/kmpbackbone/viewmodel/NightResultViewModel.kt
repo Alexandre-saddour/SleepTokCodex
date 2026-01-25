@@ -3,13 +3,10 @@ package com.example.kmpbackbone.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.CoachStyle
-import com.example.domain.model.HomeSummary
 import com.example.domain.model.Night
 import com.example.domain.model.NightResult
 import com.example.domain.model.NightStatus
-import com.example.domain.model.StreakShield
 import com.example.domain.model.Talent
-import com.example.domain.model.TalentTree
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
 import com.example.domain.scoring.NightScoreInput
@@ -21,7 +18,6 @@ import com.example.domain.usecase.GetStreakShieldUseCase
 import com.example.domain.usecase.GetTalentTreeUseCase
 import com.example.kmpbackbone.util.parseTimeZone
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -79,27 +75,22 @@ class NightResultViewModel(
                 _state.update { it.copy(isLoading = false, error = DomainError.NotFound) }
                 return@launch
             }
-            val summaryDeferred = async { getHomeSummaryUseCase.execute() }
-            val talentTreeDeferred = async { getTalentTreeUseCase.execute() }
-            val streakShieldDeferred = async { getStreakShieldUseCase.execute() }
-            val (summaryResult, talentTreeResult, shieldResult) = awaitAll(
-                summaryDeferred,
-                talentTreeDeferred,
-                streakShieldDeferred,
-            )
-            val summary = when (summaryResult) {
+            val summaryResult = async { getHomeSummaryUseCase.execute() }
+            val talentTreeResult = async { getTalentTreeUseCase.execute() }
+            val shieldResult = async { getStreakShieldUseCase.execute() }
+            val summary = when (val summaryResult = summaryResult.await()) {
                 is AppResult.Error -> {
                     _state.update { it.copy(isLoading = false, error = summaryResult.error) }
                     return@launch
                 }
-                is AppResult.Success<*> -> summaryResult.value as HomeSummary
+                is AppResult.Success -> summaryResult.value
             }
-            val talentTree = when (talentTreeResult) {
+            val talentTree = when (val talentTreeResult = talentTreeResult.await()) {
                 is AppResult.Error -> {
                     _state.update { it.copy(isLoading = false, error = talentTreeResult.error) }
                     return@launch
                 }
-                is AppResult.Success<*> -> talentTreeResult.value as TalentTree
+                is AppResult.Success -> talentTreeResult.value
             }
             val unlockedTalents = unlockedTalents(talentTree.talents, talentTree.unlockedTalentIds)
             val timeZone = parseTimeZone(summary.user.timezone)
@@ -131,8 +122,8 @@ class NightResultViewModel(
             if (storedStreakAfter != null && storedStreakAfter != result.streakAfter) {
                 result = result.copy(streakAfter = storedStreakAfter)
             }
-            val shield = when (shieldResult) {
-                is AppResult.Success<*> -> shieldResult.value as? StreakShield
+            val shield = when (val shieldResult = shieldResult.await()) {
+                is AppResult.Success -> shieldResult.value
                 else -> null
             }
             val shieldAvailable = (shield?.chargesAvailable ?: 0) > 0
