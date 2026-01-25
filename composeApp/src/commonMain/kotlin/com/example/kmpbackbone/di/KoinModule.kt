@@ -53,6 +53,7 @@ import com.example.kmpbackbone.resources.ResourceSeedDataProvider
 import com.example.kmpbackbone.viewmodel.HomeViewModel
 import com.example.kmpbackbone.viewmodel.NightResultViewModel
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
+import com.example.kmpbackbone.viewmodel.ProgressViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import com.example.domain.dispatchers.DispatcherProvider
@@ -145,4 +146,5 @@ val presentationModule = module {
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::NightResultViewModel)
+    viewModelOf(::ProgressViewModel)
 }

@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M7.4
-Next step to run: M8.1
+Last completed step: M8.1
+Next step to run: M8.2
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -261,7 +261,7 @@ M7) Night result (SUCCESS/PARTIAL/FAIL)
 
 M8) Progress (calendar + weekly recap + night detail)
 -----------------------------------------------------
-- [ ] M8.1 Progress ViewModel and state
+- [x] M8.1 Progress ViewModel and state
   - Month data grid (status per day)
   - Weekly recap card data
   - Night detail modal data
