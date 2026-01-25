@@ -32,7 +32,7 @@ object LevelCalculator {
             level = level,
             xpInLevel = xpInLevel,
             levelSpan = levelSpan,
-            xpTotal = xpTotal.toInt(),
+            xpTotal = xpTotal,
             nextLevelXp = nextThreshold.xpRequired,
         )
     }
@@ -79,6 +79,6 @@ data class LevelProgress(
     val level: Int,
     val xpInLevel: Int,
     val levelSpan: Int,
-    val xpTotal: Int,
+    val xpTotal: Long,
     val nextLevelXp: Int,
 )

@@ -59,20 +59,17 @@ class HomeViewModel(
     }
 
     fun onPlay() {
-        viewModelScope.launch {
-            _state.update { it.copy(isActionInProgress = true, error = null) }
-            when (val result = startNightUseCase.execute(Clock.System.now())) {
-                is AppResult.Success -> updateNight(result.value)
-                is AppResult.Error -> _state.update { it.copy(error = result.error) }
-            }
-            _state.update { it.copy(isActionInProgress = false) }
-        }
+        executeNightAction { startNightUseCase.execute(Clock.System.now()) }
     }
 
     fun onStop() {
+        executeNightAction { stopNightUseCase.execute(Clock.System.now()) }
+    }
+
+    private fun executeNightAction(action: suspend () -> AppResult<Night>) {
         viewModelScope.launch {
             _state.update { it.copy(isActionInProgress = true, error = null) }
-            when (val result = stopNightUseCase.execute(Clock.System.now())) {
+            when (val result = action()) {
                 is AppResult.Success -> updateNight(result.value)
                 is AppResult.Error -> _state.update { it.copy(error = result.error) }
             }
@@ -116,6 +113,7 @@ class HomeViewModel(
                     _state.update { it.copy(error = summaryResult.error) }
                 }
             }
+            // The call to getActiveNightUseCase here is redundant. The getHomeSummaryUseCase call just above already fetches the activeNight data, and the state is updated with it. Removing this block will make the data loading more efficient and prevent an unnecessary network/database request.
             when (val activeNightResult = getActiveNightUseCase.execute()) {
                 is AppResult.Success -> updateNight(activeNightResult.value)
                 is AppResult.Error -> {
