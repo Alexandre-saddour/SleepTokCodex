@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M8.4
-Next step to run: M9.1
+Last completed step: M9.1
+Next step to run: M9.2
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -287,7 +287,7 @@ M8) Progress (calendar + weekly recap + night detail)
 
 M9) Talents (tree)
 ------------------
-- [ ] M9.1 Talents ViewModel and state
+- [x] M9.1 Talents ViewModel and state
   - Points available
   - Branch sections with tiers
   - Locked/unlocked status
