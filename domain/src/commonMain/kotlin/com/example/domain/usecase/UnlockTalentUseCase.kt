@@ -67,15 +67,15 @@ class UnlockTalentUseCase(
                 if (existingResult is AppResult.Error) {
                     return existingResult
                 }
-                val existing = (existingResult as AppResult.Success).value
-                val refreshAt = existing?.refreshAt ?: now.plus(7, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+                val existing = existingResult.value
+                val refreshAt = existing?.refreshAt ?: now.plus(7, DateTimeUnit.DAY, TimeZone.UTC)
                 val charges = max(existing?.chargesAvailable ?: 0, effect.chargesPerWeek)
                 streakShieldRepository.upsertStreakShield(
                     StreakShield(
                         userId = userId,
                         chargesAvailable = charges,
                         refreshAt = refreshAt,
-                        source = ShieldSource.TALENT,
+                        source = existing?.source ?: ShieldSource.TALENT,
                     )
                 )
             }
