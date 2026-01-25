@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import com.example.kmpbackbone.navigation.AppNavigator
 import com.example.kmpbackbone.navigation.AppRoute
 import com.example.kmpbackbone.ui.theme.AppTheme
-import com.example.kmpbackbone.ui.nightresult.NightResultPlaceholderScreen
+import com.example.kmpbackbone.ui.nightresult.NightResultRoot
 
 @Composable
 fun AppRoot() {
@@ -18,7 +18,7 @@ fun AppRoot() {
                 onTabSelected = { navigator.goToMain(it) },
                 onOpenNightResult = { nightId -> navigator.goToNightResult(nightId) },
             )
-            is AppRoute.NightResult -> NightResultPlaceholderScreen(
+            is AppRoute.NightResult -> NightResultRoot(
                 nightId = route.nightId,
                 onBack = { navigator.goToMain() },
             )

@@ -72,10 +72,46 @@
     <string name="night_result_placeholder_body">Result screen for night %1$d is coming next.</string>
     <string name="night_result_placeholder_cta">Back to home</string>
 
+    <string name="night_result_loading">Loading result...</string>
+    <string name="night_result_label_success">SUCCESS</string>
+    <string name="night_result_label_partial">PARTIAL</string>
+    <string name="night_result_label_fail">FAIL</string>
+    <string name="night_result_score_label">Score %1$d / 100</string>
+    <string name="night_result_breakdown_title">XP breakdown</string>
+    <string name="night_result_xp_base">Base XP</string>
+    <string name="night_result_xp_score_bonus">Score bonus</string>
+    <string name="night_result_xp_perfect">Perfect bonus</string>
+    <string name="night_result_xp_talent_bonus">Talent bonus</string>
+    <string name="night_result_xp_streak_multiplier">Streak multiplier</string>
+    <string name="night_result_xp_talent_multiplier">Talent multiplier</string>
+    <string name="night_result_xp_multiplier_value">x%1$.2f</string>
+    <string name="night_result_xp_total">Total XP</string>
+    <string name="night_result_streak_label">Streak: %1$d -> %2$d</string>
+    <string name="night_result_continue_cta">Continue</string>
+    <string name="night_result_use_shield_cta">Use streak shield</string>
+    <string name="night_result_shield_available">Streak shield available (%1$d)</string>
+    <string name="night_result_shield_used">Shield used: streak preserved.</string>
+    <string name="night_result_success_chill">Nice. You kept the plan.</string>
+    <string name="night_result_success_hype">Big win. Keep the streak.</string>
+    <string name="night_result_success_strict">Plan respected. Do it again.</string>
+    <string name="night_result_partial_chill">Not perfect, but you moved forward.</string>
+    <string name="night_result_partial_hype">Almost. Next run = full clear.</string>
+    <string name="night_result_partial_strict">Partially done. Adjust and repeat.</string>
+    <string name="night_result_fail_chill">Rough night. Reset and go again.</string>
+    <string name="night_result_fail_hype">Reset, not defeat. Tomorrow comeback.</string>
+    <string name="night_result_fail_strict">Target missed. Restart tomorrow.</string>
+    <string name="night_result_error_not_found">We could not load this result.</string>
+    <string name="night_result_error_validation">Night timing is incomplete.</string>
+    <string name="night_result_error_storage">We could not save the result.</string>
+    <string name="night_result_error_generic">Something went wrong.</string>
+
     <string name="tab_home">Home</string>
     <string name="tab_progress">Progress</string>
     <string name="tab_talents">Talents</string>
     <string name="tab_profile">Profile</string>
+
+    <string name="progress_title">Your streak calendar</string>
+    <string name="progress_loading">Loading progress...</string>
 
     <string name="time_format_hh_mm">%1$02d:%2$02d</string>
     <string name="duration_hours">%1$dh</string>

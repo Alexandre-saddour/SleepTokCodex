@@ -42,6 +42,7 @@ import com.example.domain.usecase.GetHomeSummaryUseCase
 import com.example.domain.usecase.GetNightDetailUseCase
 import com.example.domain.usecase.GetOnboardingStateUseCase
 import com.example.domain.usecase.GetProfileSummaryUseCase
+import com.example.domain.usecase.GetStreakShieldUseCase
 import com.example.domain.usecase.GetTalentTreeUseCase
 import com.example.domain.usecase.GetWeeklyRecapUseCase
 import com.example.domain.usecase.StartNightUseCase
@@ -50,7 +51,9 @@ import com.example.domain.usecase.UnlockTalentUseCase
 import com.example.domain.usecase.UpdatePlanUseCase
 import com.example.kmpbackbone.resources.ResourceSeedDataProvider
 import com.example.kmpbackbone.viewmodel.HomeViewModel
+import com.example.kmpbackbone.viewmodel.NightResultViewModel
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
+import com.example.kmpbackbone.viewmodel.ProgressViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import com.example.domain.dispatchers.DispatcherProvider
@@ -130,6 +133,7 @@ val domainModule = module {
     factoryOf(::GetCalendarMonthUseCase)
     factoryOf(::GetWeeklyRecapUseCase)
     factoryOf(::GetNightDetailUseCase)
+    factoryOf(::GetStreakShieldUseCase)
     factoryOf(::GetTalentTreeUseCase)
     factoryOf(::UnlockTalentUseCase)
     factoryOf(::GetProfileSummaryUseCase)
@@ -141,4 +145,6 @@ val presentationModule = module {
     single<SeedDataProvider> { ResourceSeedDataProvider() }
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::NightResultViewModel)
+    viewModelOf(::ProgressViewModel)
 }
