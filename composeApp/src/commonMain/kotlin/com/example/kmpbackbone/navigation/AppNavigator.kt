@@ -17,4 +17,8 @@ class AppNavigator(
     fun goToMain(tab: AppTab = AppTab.HOME) {
         route = AppRoute.Main(tab)
     }
+
+    fun goToNightResult(nightId: Long) {
+        route = AppRoute.NightResult(nightId)
+    }
 }

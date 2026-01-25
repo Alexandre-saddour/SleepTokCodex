@@ -47,7 +47,35 @@
     <string name="onboarding_coach_placeholder">Not set</string>
     <string name="onboarding_plan_summary_value">From %1$s to %2$s</string>
 
+    <string name="home_title_tonight_quest">Tonight's quest</string>
+    <string name="home_plan_time">%1$s to %2$s (%3$s)</string>
+    <string name="home_streak_label">Streak %1$d</string>
+    <string name="home_level_label">Lv %1$d</string>
+    <string name="home_xp_progress_label">%1$d/%2$d XP</string>
+    <string name="home_primary_play">Play</string>
+    <string name="home_secondary_edit_plan">Edit plan</string>
+    <string name="home_teaser_next_reward">Next reward in %1$d wins</string>
+    <string name="home_night_mode_title">Quest in progress</string>
+    <string name="home_night_mode_hint">Screen stays minimal</string>
+    <string name="home_hold_to_stop">Hold to stop</string>
+    <string name="home_result_ready">Morning result ready</string>
+    <string name="home_claim_cta">View result</string>
+    <string name="home_timer_format">%1$02d:%2$02d</string>
+    <string name="home_empty_state">Complete onboarding to start</string>
+    <string name="home_error_not_found">We could not find your data.</string>
+    <string name="home_error_validation">Some inputs need attention.</string>
+    <string name="home_error_storage">We could not save your progress.</string>
+    <string name="home_error_conflict">This action is not available right now.</string>
+    <string name="home_error_generic">Something went wrong.</string>
+
+    <string name="night_result_placeholder_title">Night result</string>
+    <string name="night_result_placeholder_body">Result screen for night %1$d is coming next.</string>
+    <string name="night_result_placeholder_cta">Back to home</string>
+
     <string name="time_format_hh_mm">%1$02d:%2$02d</string>
+    <string name="duration_hours">%1$dh</string>
+    <string name="duration_minutes">%1$dm</string>
+    <string name="duration_hours_minutes">%1$dh %2$dm</string>
     <string name="list_separator">, </string>
     <string name="symbol_plus">+</string>
     <string name="symbol_minus">-</string>
