@@ -140,28 +140,48 @@ class NightResultViewModel(
 
     fun onContinue() {
         viewModelScope.launch {
-            val snapshot = _state.value
-            val night = snapshot.night ?: return@launch
-            val result = snapshot.result ?: return@launch
-            if (snapshot.isApplied) {
-                emitNavigateBack()
-                return@launch
-            }
-            applyResult(night = night, result = result, consumeShield = false, shieldUsed = false)
+            applyResultFromState(
+                consumeShield = false,
+                shieldUsed = false,
+                navigateIfApplied = true,
+                resultTransform = { it },
+            )
         }
     }
 
     fun onUseShield() {
         viewModelScope.launch {
-            val snapshot = _state.value
-            val night = snapshot.night ?: return@launch
-            val result = snapshot.result ?: return@launch
-            if (snapshot.isApplied) {
-                return@launch
-            }
-            val preserved = result.copy(streakAfter = result.streakBefore)
-            applyResult(night = night, result = preserved, consumeShield = true, shieldUsed = true)
+            applyResultFromState(
+                consumeShield = true,
+                shieldUsed = true,
+                navigateIfApplied = false,
+                resultTransform = { result -> result.copy(streakAfter = result.streakBefore) },
+            )
         }
+    }
+
+    private suspend fun applyResultFromState(
+        consumeShield: Boolean,
+        shieldUsed: Boolean,
+        navigateIfApplied: Boolean,
+        resultTransform: (NightResult) -> NightResult,
+    ) {
+        val snapshot = _state.value
+        val night = snapshot.night ?: return
+        val result = snapshot.result ?: return
+        if (snapshot.isApplied) {
+            if (navigateIfApplied) {
+                emitNavigateBack()
+            }
+            return
+        }
+        val transformedResult = resultTransform(result)
+        applyResult(
+            night = night,
+            result = transformedResult,
+            consumeShield = consumeShield,
+            shieldUsed = shieldUsed,
+        )
     }
 
     private suspend fun applyResult(
