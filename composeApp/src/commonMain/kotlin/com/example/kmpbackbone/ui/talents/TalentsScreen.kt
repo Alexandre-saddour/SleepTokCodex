@@ -204,7 +204,7 @@ private fun talentNameRes(key: String): StringResource {
         "talent_i1_name" -> Res.string.talent_i1_name
         "talent_i2_name" -> Res.string.talent_i2_name
         "talent_i3_name" -> Res.string.talent_i3_name
-        else -> throw IllegalArgumentException()
+        else -> throw IllegalArgumentException("Unknown talent name key: $key")
     }
 }
 
