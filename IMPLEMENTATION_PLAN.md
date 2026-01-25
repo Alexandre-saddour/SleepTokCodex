@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M9.1
-Next step to run: M9.2
+Last completed step: M9.3
+Next step to run: M10.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -293,13 +293,13 @@ M9) Talents (tree)
   - Locked/unlocked status
   - Done when: state reflects DB
 
-- [ ] M9.2 Talents UI
+- [x] M9.2 Talents UI
   - Tree or section layout
   - Talent cards with cost + effect
   - Unlock button
   - Done when: unlock updates DB and UI
 
-- [ ] M9.3 Talent effects integration
+- [x] M9.3 Talent effects integration
   - XP bonuses, streak shield, cosmetic unlocks, recap visibility
   - Done when: system behavior changes based on unlocks
 
