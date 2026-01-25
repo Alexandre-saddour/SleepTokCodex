@@ -84,7 +84,7 @@ class TalentsViewModel(
 
     private fun hasPrerequisite(
         talent: Talent,
-        allTalents: List<Talent>,
+        talentsByBranchAndTier: Map<Pair<com.example.domain.model.TalentBranch, TalentTier>, Talent>,
         unlockedIds: Set<String>,
     ): Boolean {
         val previousTier = when (talent.tier) {
@@ -93,7 +93,7 @@ class TalentsViewModel(
             TalentTier.TIER_3 -> TalentTier.TIER_2
         }
         val required = previousTier?.let { tier ->
-            allTalents.firstOrNull { it.branch == talent.branch && it.tier == tier }
+            talentsByBranchAndTier[talent.branch to tier]
         }
         return required?.let { unlockedIds.contains(it.id) } ?: true
     }
