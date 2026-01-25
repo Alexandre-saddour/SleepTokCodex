@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.example.kmpbackbone.navigation.AppTab
 import com.example.kmpbackbone.ui.home.HomeRoot
 import com.example.kmpbackbone.ui.progress.ProgressRoot
+import com.example.kmpbackbone.ui.talents.TalentsRoot
 import kmpbackbone.composeapp.generated.resources.Res
 import kmpbackbone.composeapp.generated.resources.tab_home
 import kmpbackbone.composeapp.generated.resources.tab_profile
@@ -53,7 +54,7 @@ fun MainRoot(
                     onEditPlan = onEditPlan,
                 )
                 AppTab.PROGRESS -> ProgressRoot()
-                AppTab.TALENTS -> Box(modifier = Modifier.fillMaxSize())
+                AppTab.TALENTS -> TalentsRoot()
                 AppTab.PROFILE -> Box(modifier = Modifier.fillMaxSize())
             }
         }

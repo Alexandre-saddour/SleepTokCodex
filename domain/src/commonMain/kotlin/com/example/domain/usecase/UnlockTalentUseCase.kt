@@ -1,14 +1,23 @@
 package com.example.domain.usecase
 
+import com.example.domain.model.ShieldSource
+import com.example.domain.model.StreakShield
+import com.example.domain.model.TalentEffect
+import com.example.domain.repository.StreakShieldRepository
 import com.example.domain.repository.TalentRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import kotlin.math.max
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 
 class UnlockTalentUseCase(
     private val userRepository: UserRepository,
     private val talentRepository: TalentRepository,
+    private val streakShieldRepository: StreakShieldRepository,
 ) {
     suspend fun execute(talentId: String): AppResult<Unit> {
         val userResult = userRepository.getActiveUser()
@@ -37,6 +46,10 @@ class UnlockTalentUseCase(
         if (unlockResult is AppResult.Error) {
             return unlockResult
         }
+        val effectResult = applyTalentEffect(user.id, talent.effect)
+        if (effectResult is AppResult.Error) {
+            return effectResult
+        }
         val remainingPoints = user.talentPointsAvailable - talent.costPoints
         return userRepository.updateXp(
             userId = user.id,
@@ -44,5 +57,29 @@ class UnlockTalentUseCase(
             level = user.level,
             talentPointsAvailable = remainingPoints,
         )
+    }
+
+    private suspend fun applyTalentEffect(userId: Long, effect: TalentEffect): AppResult<Unit> {
+        return when (effect) {
+            is TalentEffect.StreakShield -> {
+                val now = Clock.System.now()
+                val existingResult = streakShieldRepository.getStreakShield(userId)
+                if (existingResult is AppResult.Error) {
+                    return existingResult
+                }
+                val existing = existingResult.value
+                val refreshAt = existing?.refreshAt ?: now.plus(7, DateTimeUnit.DAY, TimeZone.UTC)
+                val charges = max(existing?.chargesAvailable ?: 0, effect.chargesPerWeek)
+                streakShieldRepository.upsertStreakShield(
+                    StreakShield(
+                        userId = userId,
+                        chargesAvailable = charges,
+                        refreshAt = refreshAt,
+                        source = existing?.source ?: ShieldSource.TALENT,
+                    )
+                )
+            }
+            else -> AppResult.Success(Unit)
+        }
     }
 }
