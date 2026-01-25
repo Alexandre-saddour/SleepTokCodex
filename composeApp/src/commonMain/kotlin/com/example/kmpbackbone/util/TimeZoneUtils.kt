@@ -5,7 +5,7 @@ import kotlinx.datetime.TimeZone
 fun parseTimeZone(timeZoneId: String): TimeZone {
     return try {
         TimeZone.of(timeZoneId)
-    } catch (exception: Exception) {
+    } catch (exception: IllegalTimeZoneException) {
         TimeZone.currentSystemDefault()
     }
 }
