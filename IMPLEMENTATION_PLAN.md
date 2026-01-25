@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M5.1
-Next step to run: M5.2
+Last completed step: M5.3
+Next step to run: M6.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -186,13 +186,13 @@ M4) DI and app shell
 
 M5) Onboarding flow (O1-O6)
 ---------------------------
-- [ ] M5.1 Onboarding ViewModel and state
+- [x] M5.1 Onboarding ViewModel and state
   - UiState includes step index and selections
   - UiEvent for completion
   - Use GetOnboardingState and CompleteOnboarding
   - Done when: onboarding state drives UI
 
-- [ ] M5.2 Screens O1-O6
+- [x] M5.2 Screens O1-O6
   - O1 Welcome (logo + CTA)
   - O2 Goal picker (4 cards)
   - O3 Coach style (3 cards with sample text)
@@ -201,7 +201,7 @@ M5) Onboarding flow (O1-O6)
   - O6 Ready (summary + CTA)
   - Done when: onboarding completes and navigates to Home
 
-- [ ] M5.3 Persist onboarding outputs
+- [x] M5.3 Persist onboarding outputs
   - Create User with baseline sleep duration
   - Create active SleepPlan with tolerances
   - Store coach style

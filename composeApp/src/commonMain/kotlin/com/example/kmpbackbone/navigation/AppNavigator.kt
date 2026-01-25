@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 class AppNavigator(
-    initialRoute: AppRoute = AppRoute.Main(AppTab.HOME),
+    initialRoute: AppRoute = AppRoute.Onboarding,
 ) {
     var route: AppRoute by mutableStateOf(initialRoute)
         private set

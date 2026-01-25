@@ -1,5 +1,6 @@
 package com.example.kmpbackbone.di
 
+import com.example.data.local.DatabaseContext
 import com.example.data.local.DatabaseFactory
 import com.example.data.local.SleepTokDatabase
 import com.example.data.local.dao.NightDao
@@ -62,20 +63,23 @@ import org.koin.dsl.module
 /**
  * Initialize Koin DI for shared module.
  */
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
+fun initKoin(
+    databaseContext: DatabaseContext,
+    appDeclaration: KoinAppDeclaration = {},
+) = startKoin {
     appDeclaration()
     modules(
         networkModule,
         dataModule,
         domainModule,
         presentationModule,
-        platformModule()
+        platformModule(databaseContext)
     )
     // Initialize Napier for logging
     Napier.base(DebugAntilog())
 }
 
-expect fun platformModule(): Module
+expect fun platformModule(databaseContext: DatabaseContext): Module
 
 val networkModule = module {
 
