@@ -5,6 +5,8 @@ import com.example.domain.model.NightStatus
 import com.example.domain.model.XpEvent
 import com.example.domain.model.XpEventType
 import com.example.domain.model.NightResult
+import com.example.domain.model.RollbackException
+import com.example.domain.model.getOrRollback
 import com.example.domain.repository.NightRepository
 import com.example.domain.repository.TransactionRunner
 import com.example.domain.repository.UserRepository
@@ -20,8 +22,6 @@ class ApplyNightResultUseCase(
     private val xpEventRepository: XpEventRepository,
     private val transactionRunner: TransactionRunner,
 ) {
-    private class RollbackException(val error: AppResult.Error) : Exception()
-
     suspend fun execute(night: Night, result: NightResult): AppResult<Unit> {
         return try {
             transactionRunner.run {
@@ -32,15 +32,8 @@ class ApplyNightResultUseCase(
                     streakAfter = result.streakAfter,
                     actualDurationMinutes = result.actualDurationMinutes,
                 )
-                val nightUpdateResult = nightRepository.updateNight(updatedNight)
-                if (nightUpdateResult is AppResult.Error) {
-                    throw RollbackException(nightUpdateResult)
-                }
-                val userResult = userRepository.getActiveUser()
-                if (userResult is AppResult.Error) {
-                    throw RollbackException(userResult)
-                }
-                val user = (userResult as AppResult.Success).value
+                nightRepository.updateNight(updatedNight).getOrRollback()
+                val user = userRepository.getActiveUser().getOrRollback()
                 val newXpTotal = user.xpTotal + result.xpBreakdown.totalXp
                 val levelUpdate = LevelCalculator.applyLevelUpdate(
                     currentLevel = user.level,
@@ -48,23 +41,17 @@ class ApplyNightResultUseCase(
                     xpTotal = newXpTotal,
                 )
                 val newBestStreak = max(user.streakBest, result.streakAfter)
-                val xpUpdateResult = userRepository.updateXp(
+                userRepository.updateXp(
                     userId = user.id,
                     xpTotal = newXpTotal,
                     level = levelUpdate.level,
                     talentPointsAvailable = levelUpdate.talentPointsAvailable,
-                )
-                if (xpUpdateResult is AppResult.Error) {
-                    throw RollbackException(xpUpdateResult)
-                }
-                val streakUpdateResult = userRepository.updateStreak(
+                ).getOrRollback()
+                userRepository.updateStreak(
                     userId = user.id,
                     current = result.streakAfter,
                     best = newBestStreak,
-                )
-                if (streakUpdateResult is AppResult.Error) {
-                    throw RollbackException(streakUpdateResult)
-                }
+                ).getOrRollback()
                 val xpEvent = XpEvent(
                     id = 0L,
                     userId = user.id,
@@ -74,10 +61,7 @@ class ApplyNightResultUseCase(
                     createdAt = Clock.System.now(),
                     metaJson = null,
                 )
-                val eventResult = xpEventRepository.addXpEvent(xpEvent)
-                if (eventResult is AppResult.Error) {
-                    throw RollbackException(eventResult)
-                }
+                xpEventRepository.addXpEvent(xpEvent).getOrRollback()
                 AppResult.Success(Unit)
             }
         } catch (e: RollbackException) {

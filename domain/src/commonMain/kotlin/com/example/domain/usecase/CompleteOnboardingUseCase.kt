@@ -1,7 +1,9 @@
 package com.example.domain.usecase
 
+import com.example.domain.model.RollbackException
 import com.example.domain.model.SleepPlan
 import com.example.domain.model.User
+import com.example.domain.model.getOrRollback
 import com.example.domain.repository.SleepPlanRepository
 import com.example.domain.repository.TransactionRunner
 import com.example.domain.repository.UserRepository
@@ -12,26 +14,13 @@ class CompleteOnboardingUseCase(
     private val sleepPlanRepository: SleepPlanRepository,
     private val transactionRunner: TransactionRunner,
 ) {
-    private class RollbackException(val error: AppResult.Error) : Exception()
-
     suspend fun execute(user: User, plan: SleepPlan): AppResult<Unit> {
         return try {
             transactionRunner.run {
-                val createdUserResult = userRepository.createUser(user)
-                if (createdUserResult is AppResult.Error) {
-                    throw RollbackException(createdUserResult)
-                }
-                val createdUser = (createdUserResult as AppResult.Success).value
+                val createdUser = userRepository.createUser(user).getOrRollback()
                 val planToCreate = plan.copy(userId = createdUser.id)
-                val createdPlanResult = sleepPlanRepository.createPlan(planToCreate)
-                if (createdPlanResult is AppResult.Error) {
-                    throw RollbackException(createdPlanResult)
-                }
-                val createdPlan = (createdPlanResult as AppResult.Success).value
-                val activateResult = sleepPlanRepository.setActivePlan(createdUser.id, createdPlan.id)
-                if (activateResult is AppResult.Error) {
-                    throw RollbackException(activateResult)
-                }
+                val createdPlan = sleepPlanRepository.createPlan(planToCreate).getOrRollback()
+                sleepPlanRepository.setActivePlan(createdUser.id, createdPlan.id).getOrRollback()
                 AppResult.Success(Unit)
             }
         } catch (e: RollbackException) {
