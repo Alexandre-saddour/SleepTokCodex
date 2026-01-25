@@ -11,7 +11,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        initKoin {
+        initKoin(this) {
             androidLogger(Level.DEBUG)
             androidContext(this@MainApplication)
         }
