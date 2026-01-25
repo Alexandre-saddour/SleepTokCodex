@@ -196,8 +196,7 @@ private fun SettingsContent(
         )
         val activeDays = activeDaysFromMask(plan.activeDaysMask)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(DayOfWeek.values().size) { index ->
-                val day = DayOfWeek.values()[index]
+            items(DayOfWeek.entries) { day ->
                 FilterChip(
                     selected = activeDays.contains(day),
                     onClick = { onActiveDayToggled(day) },
@@ -206,7 +205,11 @@ private fun SettingsContent(
             }
         }
         Text(
-            text = stringResource(Res.string.settings_plan_tolerance_label),
+            text = stringResource(
+                Res.string.settings_plan_tolerance_label,
+                plan.toleranceStartMinutes,
+                plan.toleranceEndMinutes,
+            ),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
         )

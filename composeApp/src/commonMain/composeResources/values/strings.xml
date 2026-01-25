@@ -142,7 +142,7 @@
     <string name="settings_plan_bedtime_label">Bedtime</string>
     <string name="settings_plan_wake_label">Wake time</string>
     <string name="settings_plan_active_days_label">Active days</string>
-    <string name="settings_plan_tolerance_label">Tolerance: 15 min bedtime / 20 min wake</string>
+    <string name="settings_plan_tolerance_label">Tolerance: %1$d min bedtime / %2$d min wake</string>
     <string name="settings_coach_title">Coach style</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_placeholder">Coming soon</string>
