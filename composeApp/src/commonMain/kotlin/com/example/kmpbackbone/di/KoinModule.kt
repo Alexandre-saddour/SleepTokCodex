@@ -53,6 +53,10 @@ import com.example.kmpbackbone.viewmodel.HomeViewModel
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -78,6 +82,12 @@ fun initKoin(
     )
     // Initialize Napier for logging
     Napier.base(DebugAntilog())
+}.also { koinApp ->
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    scope.launch {
+        val initializer = koinApp.koin.get<SeedDataInitializer>()
+        initializer.seedIfNeeded()
+    }
 }
 
 expect fun platformModule(databaseContext: DatabaseContext): Module

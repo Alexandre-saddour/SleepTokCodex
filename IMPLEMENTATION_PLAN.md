@@ -156,7 +156,7 @@ M3) Data layer (Room KMP + repositories)
   - Convert storage errors to DomainError
   - Done when: domain use cases can use repositories
 
-- [ ] M3.5 Seed static data (talents, rewards, coach texts)
+- [x] M3.5 Seed static data (talents, rewards, coach texts)
   - Create JSON files under composeApp resources (raw) for:
     - talents list (12)
     - rewards list (badges, themes, sounds)
@@ -173,7 +173,7 @@ M4) DI and app shell
   - composeApp module: viewmodels
   - Done when: initKoin wires all modules
 
-- [ ] M4.2 Build AppRoot + navigation state
+- [x] M4.2 Build AppRoot + navigation state
   - Custom navigation state or KMP nav lib
   - Support onboarding flow and main tabs (Home, Progress, Talents, Profile)
   - Done when: navigation works in common code

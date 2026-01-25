@@ -559,7 +559,8 @@ private fun rememberElapsedText(startAtMillis: Long): String {
         while (true) {
             val now = Clock.System.now().toEpochMilliseconds()
             elapsedSeconds = ((now - startAtMillis) / 1000L).coerceAtLeast(0L)
-            delay(1000L)
+            val delayMillis = 1000L - (now % 1000L)
+            delay(delayMillis)
         }
     }
     val hours = (elapsedSeconds / 3600L).toInt()
