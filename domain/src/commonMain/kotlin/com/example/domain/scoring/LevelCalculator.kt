@@ -22,6 +22,21 @@ object LevelCalculator {
         )
     }
 
+    fun levelProgress(xpTotal: Long): LevelProgress {
+        val level = calculateLevel(xpTotal)
+        val currentThreshold = thresholds.last { it.level <= level }
+        val nextThreshold = thresholds.firstOrNull { it.level > level } ?: currentThreshold
+        val xpInLevel = (xpTotal - currentThreshold.xpRequired).coerceAtLeast(0).toInt()
+        val levelSpan = (nextThreshold.xpRequired - currentThreshold.xpRequired).coerceAtLeast(1)
+        return LevelProgress(
+            level = level,
+            xpInLevel = xpInLevel,
+            levelSpan = levelSpan,
+            xpTotal = xpTotal.toInt(),
+            nextLevelXp = nextThreshold.xpRequired,
+        )
+    }
+
     private fun buildThresholds(): List<LevelThreshold> {
         val anchors = listOf(
             LevelThreshold(level = 1, xpRequired = 0),
@@ -58,4 +73,12 @@ data class LevelThreshold(
 data class LevelUpdate(
     val level: Int,
     val talentPointsAvailable: Int,
+)
+
+data class LevelProgress(
+    val level: Int,
+    val xpInLevel: Int,
+    val levelSpan: Int,
+    val xpTotal: Int,
+    val nextLevelXp: Int,
 )

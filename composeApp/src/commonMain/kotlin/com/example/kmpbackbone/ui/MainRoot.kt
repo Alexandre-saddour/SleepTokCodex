@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.kmpbackbone.navigation.AppTab
-import com.example.kmpbackbone.ui.home.HomeScreen
+import com.example.kmpbackbone.ui.home.HomeRoot
 
 @Composable
 fun MainRoot(
@@ -13,7 +13,7 @@ fun MainRoot(
     onTabSelected: (AppTab) -> Unit,
 ) {
     when (selectedTab) {
-        AppTab.HOME -> HomeScreen()
+        AppTab.HOME -> HomeRoot()
         AppTab.PROGRESS -> Box(modifier = Modifier.fillMaxSize())
         AppTab.TALENTS -> Box(modifier = Modifier.fillMaxSize())
         AppTab.PROFILE -> Box(modifier = Modifier.fillMaxSize())

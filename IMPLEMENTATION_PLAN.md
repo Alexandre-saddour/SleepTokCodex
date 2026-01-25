@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M5.3
-Next step to run: M6.1
+Last completed step: M6.4
+Next step to run: M7.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -209,12 +209,12 @@ M5) Onboarding flow (O1-O6)
 
 M6) Home (before night, night mode, post-stop claim)
 ----------------------------------------------------
-- [ ] M6.1 Home ViewModel and state
+- [x] M6.1 Home ViewModel and state
   - UiState for before-night, night-mode, post-stop
   - Use GetHomeSummary and GetActiveNight
   - Done when: state updates from DB
 
-- [ ] M6.2 Home UI (before night)
+- [x] M6.2 Home UI (before night)
   - Hero card with plan time and duration
   - Streak chip, level + XP bar
   - Primary CTA: Play
@@ -222,13 +222,13 @@ M6) Home (before night, night mode, post-stop claim)
   - Teaser card for next reward
   - Done when: before-night screen matches spec
 
-- [ ] M6.3 Night mode UI
+- [x] M6.3 Night mode UI
   - Full-screen calm animation
   - Timer from start
   - Hold-to-stop interaction
   - Done when: hold-to-stop requires sustained press
 
-- [ ] M6.4 Post-stop claim UI
+- [x] M6.4 Post-stop claim UI
   - Show "result ready" card if user returns
   - CTA to open Night Result
   - Done when: pending result is tracked
