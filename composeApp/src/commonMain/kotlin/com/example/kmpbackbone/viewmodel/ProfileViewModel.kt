@@ -7,6 +7,7 @@ import com.example.domain.model.Reward
 import com.example.domain.model.RewardType
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import com.example.domain.scoring.LevelCalculator
 import com.example.domain.usecase.GetBadgesAndCosmeticsUseCase
 import com.example.domain.usecase.GetHomeSummaryUseCase
 import com.example.domain.usecase.GetProfileSummaryUseCase
@@ -20,6 +21,8 @@ import kotlinx.coroutines.launch
 
 data class ProfileStatsUi(
     val level: Int,
+    val xpInLevel: Int,
+    val levelSpan: Int,
     val xpTotal: Long,
     val totalNights: Int,
     val totalWins: Int,
@@ -98,8 +101,11 @@ class ProfileViewModel(
     }
 
     private fun ProfileSummary.toStatsUi(): ProfileStatsUi {
+        val progress = LevelCalculator.levelProgress(user.xpTotal)
         return ProfileStatsUi(
-            level = user.level,
+            level = progress.level,
+            xpInLevel = progress.xpInLevel,
+            levelSpan = progress.levelSpan,
             xpTotal = user.xpTotal,
             totalNights = totalNights,
             totalWins = totalWins,
