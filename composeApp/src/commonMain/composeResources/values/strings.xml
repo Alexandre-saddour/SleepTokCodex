@@ -76,6 +76,7 @@
     <string name="night_result_label_success">SUCCESS</string>
     <string name="night_result_label_partial">PARTIAL</string>
     <string name="night_result_label_fail">FAIL</string>
+    <string name="night_result_label_in_progress">IN PROGRESS</string>
     <string name="night_result_score_label">Score %1$d / 100</string>
     <string name="night_result_breakdown_title">XP breakdown</string>
     <string name="night_result_xp_base">Base XP</string>
@@ -125,6 +126,7 @@
     <string name="progress_weekly_avg_score">Average score: %1$d</string>
     <string name="progress_detail_title">Night detail</string>
     <string name="progress_detail_plan_vs_actual">Plan %1$s / Actual %2$s</string>
+    <string name="progress_detail_not_available">N/A</string>
     <string name="progress_detail_score">Score: %1$d</string>
     <string name="progress_detail_xp">XP: %1$d</string>
     <string name="progress_detail_status">Status: %1$s</string>
@@ -132,6 +134,7 @@
     <string name="progress_status_success">SUCCESS</string>
     <string name="progress_status_partial">PARTIAL</string>
     <string name="progress_status_fail">FAIL</string>
+    <string name="progress_status_in_progress">IN PROGRESS</string>
 
     <string name="talents_title">Talent tree</string>
     <string name="talents_loading">Loading talents...</string>

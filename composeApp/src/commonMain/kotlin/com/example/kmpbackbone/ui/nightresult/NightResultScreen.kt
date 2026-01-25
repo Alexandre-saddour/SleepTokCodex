@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -52,6 +51,7 @@ import kmpbackbone.composeapp.generated.resources.night_result_fail_chill
 import kmpbackbone.composeapp.generated.resources.night_result_fail_hype
 import kmpbackbone.composeapp.generated.resources.night_result_fail_strict
 import kmpbackbone.composeapp.generated.resources.night_result_label_fail
+import kmpbackbone.composeapp.generated.resources.night_result_label_in_progress
 import kmpbackbone.composeapp.generated.resources.night_result_label_partial
 import kmpbackbone.composeapp.generated.resources.night_result_label_success
 import kmpbackbone.composeapp.generated.resources.night_result_loading
@@ -67,6 +67,7 @@ import kmpbackbone.composeapp.generated.resources.night_result_success_hype
 import kmpbackbone.composeapp.generated.resources.night_result_success_strict
 import kmpbackbone.composeapp.generated.resources.night_result_use_shield_cta
 import kmpbackbone.composeapp.generated.resources.night_result_xp_base
+import kmpbackbone.composeapp.generated.resources.night_result_xp_multiplier_value
 import kmpbackbone.composeapp.generated.resources.night_result_xp_perfect
 import kmpbackbone.composeapp.generated.resources.night_result_xp_score_bonus
 import kmpbackbone.composeapp.generated.resources.night_result_xp_streak_multiplier
@@ -404,7 +405,7 @@ private fun statusLabel(status: NightStatus): String {
         NightStatus.SUCCESS -> stringResource(Res.string.night_result_label_success)
         NightStatus.PARTIAL -> stringResource(Res.string.night_result_label_partial)
         NightStatus.FAIL -> stringResource(Res.string.night_result_label_fail)
-        NightStatus.IN_PROGRESS -> stringResource(Res.string.night_result_label_partial)
+        NightStatus.IN_PROGRESS -> stringResource(Res.string.night_result_label_in_progress)
         NightStatus.VOID -> stringResource(Res.string.night_result_label_fail)
     }
 }

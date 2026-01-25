@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.TalentBranch
 import com.example.kmpbackbone.viewmodel.TalentsUiState
@@ -56,6 +55,7 @@ import kmpbackbone.composeapp.generated.resources.talent_i2_name
 import kmpbackbone.composeapp.generated.resources.talent_i2_desc
 import kmpbackbone.composeapp.generated.resources.talent_i3_name
 import kmpbackbone.composeapp.generated.resources.talent_i3_desc
+import kmpbackbone.composeapp.generated.resources.talents_cost
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.StringResource
 
@@ -87,10 +87,11 @@ fun TalentsScreen(
                 style = MaterialTheme.typography.bodyLarge,
             )
         } else {
+            val talentsByBranch = uiState.talents.groupBy { it.talent.branch }
             TalentBranch.values().forEach { branch ->
                 TalentBranchSection(
                     branch = branch,
-                    talents = uiState.talents.filter { it.talent.branch == branch },
+                    talents = talentsByBranch[branch].orEmpty(),
                     onUnlock = onUnlock,
                     isUnlocking = uiState.isUnlocking,
                 )
@@ -203,7 +204,7 @@ private fun talentNameRes(key: String): StringResource {
         "talent_i1_name" -> Res.string.talent_i1_name
         "talent_i2_name" -> Res.string.talent_i2_name
         "talent_i3_name" -> Res.string.talent_i3_name
-        else -> Res.string.talents_title
+        else -> throw IllegalArgumentException("Unknown talent name key: $key")
     }
 }
 
@@ -221,6 +222,6 @@ private fun talentDescRes(key: String): StringResource {
         "talent_i1_desc" -> Res.string.talent_i1_desc
         "talent_i2_desc" -> Res.string.talent_i2_desc
         "talent_i3_desc" -> Res.string.talent_i3_desc
-        else -> Res.string.talents_title
+        else -> throw IllegalArgumentException("Unknown talent description key: $key")
     }
 }
