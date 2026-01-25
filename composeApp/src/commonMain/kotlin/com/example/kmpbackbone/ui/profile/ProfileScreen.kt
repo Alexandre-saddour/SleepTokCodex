@@ -39,6 +39,7 @@ import kmpbackbone.composeapp.generated.resources.profile_error_validation
 import kmpbackbone.composeapp.generated.resources.profile_level_label
 import kmpbackbone.composeapp.generated.resources.profile_level_short
 import kmpbackbone.composeapp.generated.resources.profile_loading
+import kmpbackbone.composeapp.generated.resources.profile_open_settings
 import kmpbackbone.composeapp.generated.resources.profile_retry
 import kmpbackbone.composeapp.generated.resources.profile_stat_best_streak
 import kmpbackbone.composeapp.generated.resources.profile_stat_nights
@@ -55,6 +56,7 @@ private const val badgeColumns = 3
 fun ProfileScreen(
     uiState: ProfileUiState,
     onRefresh: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -65,7 +67,7 @@ fun ProfileScreen(
         when {
             uiState.isLoading -> LoadingState()
             uiState.error != null -> ErrorState(uiState.error, onRefresh)
-            uiState.stats != null -> ProfileContent(uiState.stats, uiState.badges)
+            uiState.stats != null -> ProfileContent(uiState.stats, uiState.badges, onOpenSettings)
         }
     }
 }
@@ -114,15 +116,28 @@ private fun ErrorState(error: DomainError, onRefresh: () -> Unit) {
 }
 
 @Composable
-private fun ProfileContent(stats: ProfileStatsUi, badges: List<ProfileBadgeUi>) {
+private fun ProfileContent(
+    stats: ProfileStatsUi,
+    badges: List<ProfileBadgeUi>,
+    onOpenSettings: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Text(
-            text = stringResource(Res.string.profile_title),
-            style = MaterialTheme.typography.headlineMedium,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(Res.string.profile_title),
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Button(onClick = onOpenSettings) {
+                Text(text = stringResource(Res.string.profile_open_settings))
+            }
+        }
         ProfileHeader(stats)
         QuickStats(stats)
         BadgeGrid(badges)
