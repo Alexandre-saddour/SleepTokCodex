@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.TalentBranch
 import com.example.kmpbackbone.viewmodel.TalentsUiState
@@ -56,6 +55,7 @@ import kmpbackbone.composeapp.generated.resources.talent_i2_name
 import kmpbackbone.composeapp.generated.resources.talent_i2_desc
 import kmpbackbone.composeapp.generated.resources.talent_i3_name
 import kmpbackbone.composeapp.generated.resources.talent_i3_desc
+import kmpbackbone.composeapp.generated.resources.talents_cost
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.StringResource
 

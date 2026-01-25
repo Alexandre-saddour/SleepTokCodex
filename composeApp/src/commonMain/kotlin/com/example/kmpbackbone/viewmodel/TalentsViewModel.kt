@@ -46,9 +46,10 @@ class TalentsViewModel(
                 is AppResult.Success -> {
                     val tree = result.value
                     val unlockedIds = tree.unlockedTalentIds
+                    val talentsByBranchAndTier = tree.talents.associateBy { it.branch to it.tier }
                     val nodes = tree.talents.map { talent ->
                         val unlocked = unlockedIds.contains(talent.id)
-                        val hasPrereq = hasPrerequisite(talent, tree.talents, unlockedIds)
+                        val hasPrereq = hasPrerequisite(talent, talentsByBranchAndTier, unlockedIds)
                         val unlockable = !unlocked && hasPrereq && tree.availablePoints >= talent.costPoints
                         TalentNodeUi(
                             talent = talent,
