@@ -11,6 +11,7 @@ import com.example.domain.usecase.GetBadgesAndCosmeticsUseCase
 import com.example.domain.usecase.GetHomeSummaryUseCase
 import com.example.domain.usecase.GetProfileSummaryUseCase
 import com.example.kmpbackbone.util.parseTimeZone
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,27 +55,33 @@ class ProfileViewModel(
     fun load() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            val summaryResult = getHomeSummaryUseCase.execute()
-            if (summaryResult is AppResult.Error) {
-                _state.update { it.copy(isLoading = false, error = summaryResult.error) }
-                return@launch
+            val badgesDeferred = async { getBadgesAndCosmeticsUseCase.execute() }
+            val summary = when (val summaryResult = getHomeSummaryUseCase.execute()) {
+                is AppResult.Success -> summaryResult.value
+                is AppResult.Error -> {
+                    badgesDeferred.cancel()
+                    _state.update { it.copy(isLoading = false, error = summaryResult.error) }
+                    return@launch
+                }
             }
-            val summary = (summaryResult as AppResult.Success).value
             val timeZone = parseTimeZone(summary.user.timezone)
 
-            val profileResult = getProfileSummaryUseCase.execute(timeZone)
-            if (profileResult is AppResult.Error) {
-                _state.update { it.copy(isLoading = false, error = profileResult.error) }
-                return@launch
+            val profile = when (val profileResult = getProfileSummaryUseCase.execute(timeZone)) {
+                is AppResult.Success -> profileResult.value
+                is AppResult.Error -> {
+                    badgesDeferred.cancel()
+                    _state.update { it.copy(isLoading = false, error = profileResult.error) }
+                    return@launch
+                }
             }
-            val profile = (profileResult as AppResult.Success).value
 
-            val badgesResult = getBadgesAndCosmeticsUseCase.execute()
-            if (badgesResult is AppResult.Error) {
-                _state.update { it.copy(isLoading = false, error = badgesResult.error) }
-                return@launch
+            val badgesAndCosmetics = when (val badgesResult = badgesDeferred.await()) {
+                is AppResult.Success -> badgesResult.value
+                is AppResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = badgesResult.error) }
+                    return@launch
+                }
             }
-            val badgesAndCosmetics = (badgesResult as AppResult.Success).value
             val unlockedIds = badgesAndCosmetics.userRewards.map { it.rewardId }.toSet()
             val badges = badgesAndCosmetics.rewards
                 .filter { it.type == RewardType.BADGE }
