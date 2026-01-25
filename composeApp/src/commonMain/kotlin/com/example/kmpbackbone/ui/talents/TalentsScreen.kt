@@ -222,6 +222,6 @@ private fun talentDescRes(key: String): StringResource {
         "talent_i1_desc" -> Res.string.talent_i1_desc
         "talent_i2_desc" -> Res.string.talent_i2_desc
         "talent_i3_desc" -> Res.string.talent_i3_desc
-        else -> throw IllegalArgumentException()
+        else -> throw IllegalArgumentException("Unknown talent description key: $key")
     }
 }
