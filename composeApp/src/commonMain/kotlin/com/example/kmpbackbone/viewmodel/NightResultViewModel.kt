@@ -126,7 +126,7 @@ class NightResultViewModel(
             if (storedStreakAfter != null && storedStreakAfter != result.streakAfter) {
                 result = result.copy(streakAfter = storedStreakAfter)
             }
-            val shieldResult = results[2]
+            val shieldResult = streakShieldDeferred.await()
             val shield = if (shieldResult is AppResult.Success) shieldResult.value as StreakShield? else null
             val shieldAvailable = (shield?.chargesAvailable ?: 0) > 0
             val isApplied = night.status != NightStatus.IN_PROGRESS && night.xpEarned != null
