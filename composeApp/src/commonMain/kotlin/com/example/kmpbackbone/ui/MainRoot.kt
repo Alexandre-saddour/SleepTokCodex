@@ -34,7 +34,7 @@ fun MainRoot(
                     NavigationBarItem(
                         selected = tab == selectedTab,
                         onClick = { onTabSelected(tab) },
-                        icon = { Box(modifier = Modifier.size(0.dp)) },
+                        icon = {},
                         label = { Text(text = stringResource(tabLabelRes(tab))) },
                     )
                 }
