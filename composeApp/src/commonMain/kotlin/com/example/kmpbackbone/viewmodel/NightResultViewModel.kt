@@ -3,13 +3,10 @@ package com.example.kmpbackbone.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.CoachStyle
-import com.example.domain.model.HomeSummary
 import com.example.domain.model.Night
 import com.example.domain.model.NightResult
 import com.example.domain.model.NightStatus
-import com.example.domain.model.StreakShield
 import com.example.domain.model.Talent
-import com.example.domain.model.TalentTree
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
 import com.example.domain.scoring.NightScoreInput
@@ -21,7 +18,6 @@ import com.example.domain.usecase.GetStreakShieldUseCase
 import com.example.domain.usecase.GetTalentTreeUseCase
 import com.example.kmpbackbone.util.parseTimeZone
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -79,23 +75,21 @@ class NightResultViewModel(
                 _state.update { it.copy(isLoading = false, error = DomainError.NotFound) }
                 return@launch
             }
-            val results: List<AppResult<*>> = awaitAll(
-                async { getHomeSummaryUseCase.execute() },
-                async { getTalentTreeUseCase.execute() },
-                async { getStreakShieldUseCase.execute() },
-            )
-            val summaryResult = results[0]
+            val summaryDeferred = async { getHomeSummaryUseCase.execute() }
+            val talentTreeDeferred = async { getTalentTreeUseCase.execute() }
+            val streakShieldDeferred = async { getStreakShieldUseCase.execute() }
+            val summaryResult = summaryDeferred.await()
             if (summaryResult is AppResult.Error) {
                 _state.update { it.copy(isLoading = false, error = summaryResult.error) }
                 return@launch
             }
-            val summary = (summaryResult as AppResult.Success).value as HomeSummary
-            val talentTreeResult = results[1]
+            val summary = (summaryResult as AppResult.Success).value
+            val talentTreeResult = talentTreeDeferred.await()
             if (talentTreeResult is AppResult.Error) {
                 _state.update { it.copy(isLoading = false, error = talentTreeResult.error) }
                 return@launch
             }
-            val talentTree = (talentTreeResult as AppResult.Success).value as TalentTree
+            val talentTree = (talentTreeResult as AppResult.Success).value
             val unlockedTalents = unlockedTalents(talentTree.talents, talentTree.unlockedTalentIds)
             val timeZone = parseTimeZone(summary.user.timezone)
             if (night.endAt == null) {
@@ -127,7 +121,7 @@ class NightResultViewModel(
                 result = result.copy(streakAfter = storedStreakAfter)
             }
             val shieldResult = streakShieldDeferred.await()
-            val shield = if (shieldResult is AppResult.Success) shieldResult.value as StreakShield? else null
+            val shield = if (shieldResult is AppResult.Success) shieldResult.value else null
             val shieldAvailable = (shield?.chargesAvailable ?: 0) > 0
             val isApplied = night.status != NightStatus.IN_PROGRESS && night.xpEarned != null
             _state.update {
@@ -153,21 +147,7 @@ class NightResultViewModel(
                 emitNavigateBack()
                 return@launch
             }
-            _state.update { it.copy(isApplying = true, error = null) }
-            val applyResult = applyNightResultUseCase.execute(
-                night = night,
-                result = result,
-                consumeShield = false,
-            )
-            when (applyResult) {
-                is AppResult.Success -> {
-                    _state.update { it.copy(isApplying = false, isApplied = true) }
-                    emitNavigateBack()
-                }
-                is AppResult.Error -> {
-                    _state.update { it.copy(isApplying = false, error = applyResult.error) }
-                }
-            }
+            applyResult(night = night, result = result, consumeShield = false, shieldUsed = false)
         }
     }
 
@@ -180,26 +160,36 @@ class NightResultViewModel(
                 return@launch
             }
             val preserved = result.copy(streakAfter = result.streakBefore)
-            _state.update { it.copy(isApplying = true, error = null) }
-            val applyResult = applyNightResultUseCase.execute(
-                night = night,
-                result = preserved,
-                consumeShield = true,
-            )
-            when (applyResult) {
-                is AppResult.Success -> {
-                    _state.update {
-                        it.copy(
-                            isApplying = false,
-                            isApplied = true,
-                            shieldUsed = true,
-                            result = preserved,
-                        )
-                    }
+            applyResult(night = night, result = preserved, consumeShield = true, shieldUsed = true)
+        }
+    }
+
+    private suspend fun applyResult(
+        night: Night,
+        result: NightResult,
+        consumeShield: Boolean,
+        shieldUsed: Boolean,
+    ) {
+        _state.update { it.copy(isApplying = true, error = null) }
+        val applyResult = applyNightResultUseCase.execute(
+            night = night,
+            result = result,
+            consumeShield = consumeShield,
+        )
+        when (applyResult) {
+            is AppResult.Success -> {
+                _state.update {
+                    it.copy(
+                        isApplying = false,
+                        isApplied = true,
+                        shieldUsed = it.shieldUsed || shieldUsed,
+                        result = result,
+                    )
                 }
-                is AppResult.Error -> {
-                    _state.update { it.copy(isApplying = false, error = applyResult.error) }
-                }
+                emitNavigateBack()
+            }
+            is AppResult.Error -> {
+                _state.update { it.copy(isApplying = false, error = applyResult.error) }
             }
         }
     }
