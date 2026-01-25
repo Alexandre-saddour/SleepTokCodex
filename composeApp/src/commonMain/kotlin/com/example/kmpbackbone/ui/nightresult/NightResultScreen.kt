@@ -52,6 +52,7 @@ import kmpbackbone.composeapp.generated.resources.night_result_fail_chill
 import kmpbackbone.composeapp.generated.resources.night_result_fail_hype
 import kmpbackbone.composeapp.generated.resources.night_result_fail_strict
 import kmpbackbone.composeapp.generated.resources.night_result_label_fail
+import kmpbackbone.composeapp.generated.resources.night_result_label_in_progress
 import kmpbackbone.composeapp.generated.resources.night_result_label_partial
 import kmpbackbone.composeapp.generated.resources.night_result_label_success
 import kmpbackbone.composeapp.generated.resources.night_result_loading
@@ -404,7 +405,7 @@ private fun statusLabel(status: NightStatus): String {
         NightStatus.SUCCESS -> stringResource(Res.string.night_result_label_success)
         NightStatus.PARTIAL -> stringResource(Res.string.night_result_label_partial)
         NightStatus.FAIL -> stringResource(Res.string.night_result_label_fail)
-        NightStatus.IN_PROGRESS -> stringResource(Res.string.night_result_label_partial)
+        NightStatus.IN_PROGRESS -> stringResource(Res.string.night_result_label_in_progress)
         NightStatus.VOID -> stringResource(Res.string.night_result_label_fail)
     }
 }

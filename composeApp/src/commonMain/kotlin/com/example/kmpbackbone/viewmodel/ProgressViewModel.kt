@@ -14,6 +14,7 @@ import com.example.domain.usecase.GetHomeSummaryUseCase
 import com.example.domain.usecase.GetNightDetailUseCase
 import com.example.domain.usecase.GetTalentTreeUseCase
 import com.example.domain.usecase.GetWeeklyRecapUseCase
+import com.example.kmpbackbone.util.parseTimeZone
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,9 +57,7 @@ class ProgressViewModel(
     val state: StateFlow<ProgressUiState> = _state.asStateFlow()
 
     private var currentMonthStart: LocalDate? = null
-    private var timeZone: TimeZone = TimeZone.currentSystemDefault()
-    private var showWeeklyRecap = false
-    private var showAdvancedCalendar = false
+    private var timeZone = TimeZone.currentSystemDefault()
 
     init {
         val today = Clock.System.now().toLocalDateTime(timeZone).date
@@ -82,8 +81,12 @@ class ProgressViewModel(
                 return@launch
             }
             val talentTree = (talentTreeResult as AppResult.Success).value
-            showWeeklyRecap = hasEffect(talentTree.talents, talentTree.unlockedTalentIds, TalentEffect.EnableWeeklyRecap)
-            showAdvancedCalendar = hasEffect(
+            val showWeeklyRecap = hasEffect(
+                talentTree.talents,
+                talentTree.unlockedTalentIds,
+                TalentEffect.EnableWeeklyRecap,
+            )
+            val showAdvancedCalendar = hasEffect(
                 talentTree.talents,
                 talentTree.unlockedTalentIds,
                 TalentEffect.EnableAdvancedCalendar,
@@ -182,14 +185,6 @@ class ProgressViewModel(
     private fun weekStartFor(date: LocalDate): LocalDate {
         val offset = date.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal
         return date.plus(-offset, DateTimeUnit.DAY)
-    }
-
-    private fun parseTimeZone(timeZoneId: String): TimeZone {
-        return try {
-            TimeZone.of(timeZoneId)
-        } catch (exception: Exception) {
-            TimeZone.currentSystemDefault()
-        }
     }
 
     private fun hasEffect(

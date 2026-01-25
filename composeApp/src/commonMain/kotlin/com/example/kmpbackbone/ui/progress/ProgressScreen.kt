@@ -24,10 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.NightStatus
 import com.example.domain.model.Night
+import com.example.domain.model.WeeklyRecap
 import com.example.kmpbackbone.viewmodel.CalendarDayUi
 import com.example.kmpbackbone.viewmodel.ProgressUiState
 import kmpbackbone.composeapp.generated.resources.Res
@@ -52,12 +54,14 @@ import kmpbackbone.composeapp.generated.resources.progress_weekly_slept
 import kmpbackbone.composeapp.generated.resources.progress_weekly_title
 import kmpbackbone.composeapp.generated.resources.progress_title
 import kmpbackbone.composeapp.generated.resources.progress_detail_close
+import kmpbackbone.composeapp.generated.resources.progress_detail_not_available
 import kmpbackbone.composeapp.generated.resources.progress_detail_plan_vs_actual
 import kmpbackbone.composeapp.generated.resources.progress_detail_score
 import kmpbackbone.composeapp.generated.resources.progress_detail_status
 import kmpbackbone.composeapp.generated.resources.progress_detail_title
 import kmpbackbone.composeapp.generated.resources.progress_detail_xp
 import kmpbackbone.composeapp.generated.resources.progress_status_fail
+import kmpbackbone.composeapp.generated.resources.progress_status_in_progress
 import kmpbackbone.composeapp.generated.resources.progress_status_partial
 import kmpbackbone.composeapp.generated.resources.progress_status_success
 import kmpbackbone.composeapp.generated.resources.duration_hours
@@ -65,7 +69,29 @@ import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
 import kmpbackbone.composeapp.generated.resources.duration_minutes
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+
+private val weekdayLabels = listOf(
+    Res.string.day_mon_short,
+    Res.string.day_tue_short,
+    Res.string.day_wed_short,
+    Res.string.day_thu_short,
+    Res.string.day_fri_short,
+    Res.string.day_sat_short,
+    Res.string.day_sun_short,
+)
+
+private data class LegendEntry(
+    val status: NightStatus,
+    val labelRes: StringResource,
+)
+
+private val legendEntries = listOf(
+    LegendEntry(NightStatus.SUCCESS, Res.string.progress_legend_success),
+    LegendEntry(NightStatus.PARTIAL, Res.string.progress_legend_partial),
+    LegendEntry(NightStatus.FAIL, Res.string.progress_legend_fail),
+)
 
 @Composable
 fun ProgressScreen(
@@ -108,7 +134,9 @@ fun ProgressScreen(
                     onDaySelected = onDaySelected,
                 )
                 LegendRow()
-                WeeklyRecapCard(uiState)
+                if (uiState.showWeeklyRecap) {
+                    uiState.weeklyRecap?.let { WeeklyRecapCard(it) }
+                }
             }
         }
         if (uiState.selectedNight != null) {
@@ -150,20 +178,11 @@ private fun MonthSelector(
 
 @Composable
 private fun CalendarHeader() {
-    val labels = listOf(
-        Res.string.day_mon_short,
-        Res.string.day_tue_short,
-        Res.string.day_wed_short,
-        Res.string.day_thu_short,
-        Res.string.day_fri_short,
-        Res.string.day_sat_short,
-        Res.string.day_sun_short,
-    )
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        labels.forEach { label ->
+        weekdayLabels.forEach { label ->
             Text(
                 text = stringResource(label),
                 style = MaterialTheme.typography.labelLarge,
@@ -225,18 +244,7 @@ private fun CalendarCell(
         )
         return
     }
-    val statusColor = when (day.status) {
-        NightStatus.SUCCESS -> MaterialTheme.colorScheme.secondary
-        NightStatus.PARTIAL -> MaterialTheme.colorScheme.tertiary
-        NightStatus.FAIL -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.surfaceVariant
-    }
-    val contentColor = when (day.status) {
-        NightStatus.SUCCESS -> MaterialTheme.colorScheme.onSecondary
-        NightStatus.PARTIAL -> MaterialTheme.colorScheme.onTertiary
-        NightStatus.FAIL -> MaterialTheme.colorScheme.onError
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    val (statusColor, contentColor) = statusColors(day.status)
     Surface(
         color = statusColor,
         contentColor = contentColor,
@@ -262,28 +270,33 @@ private fun CalendarCell(
 }
 
 @Composable
+private fun statusColors(status: NightStatus?): Pair<Color, Color> {
+    return when (status) {
+        NightStatus.SUCCESS -> MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.onSecondary
+        NightStatus.PARTIAL -> MaterialTheme.colorScheme.tertiary to MaterialTheme.colorScheme.onTertiary
+        NightStatus.FAIL -> MaterialTheme.colorScheme.error to MaterialTheme.colorScheme.onError
+        else -> MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
+    }
+}
+
+@Composable
 private fun LegendRow() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        LegendItem(
-            color = MaterialTheme.colorScheme.secondary,
-            label = stringResource(Res.string.progress_legend_success),
-        )
-        LegendItem(
-            color = MaterialTheme.colorScheme.tertiary,
-            label = stringResource(Res.string.progress_legend_partial),
-        )
-        LegendItem(
-            color = MaterialTheme.colorScheme.error,
-            label = stringResource(Res.string.progress_legend_fail),
-        )
+        legendEntries.forEach { entry ->
+            val (statusColor, _) = statusColors(entry.status)
+            LegendItem(
+                color = statusColor,
+                label = stringResource(entry.labelRes),
+            )
+        }
     }
 }
 
 @Composable
-private fun LegendItem(color: androidx.compose.ui.graphics.Color, label: String) {
+private fun LegendItem(color: Color, label: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -298,9 +311,7 @@ private fun LegendItem(color: androidx.compose.ui.graphics.Color, label: String)
 }
 
 @Composable
-private fun WeeklyRecapCard(uiState: ProgressUiState) {
-    val recap = uiState.weeklyRecap ?: return
-    if (!uiState.showWeeklyRecap) return
+private fun WeeklyRecapCard(recap: WeeklyRecap) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.medium,
@@ -314,37 +325,38 @@ private fun WeeklyRecapCard(uiState: ProgressUiState) {
                 text = stringResource(Res.string.progress_weekly_title),
                 style = MaterialTheme.typography.titleLarge,
             )
-            Text(
+            RecapStat(
                 text = stringResource(
                     Res.string.progress_weekly_slept,
                     formatMinutes(recap.totalSleptMinutes),
                     formatMinutes(recap.targetMinutes),
                 ),
-                style = MaterialTheme.typography.bodyLarge,
             )
-            Text(
+            RecapStat(
                 text = stringResource(
                     Res.string.progress_weekly_sleep_gained,
                     recap.sleepGainedMinutes,
                 ),
-                style = MaterialTheme.typography.bodyLarge,
             )
-            Text(
+            RecapStat(
                 text = stringResource(
                     Res.string.progress_weekly_best_streak,
                     recap.bestStreak,
                 ),
-                style = MaterialTheme.typography.bodyLarge,
             )
-            Text(
+            RecapStat(
                 text = stringResource(
                     Res.string.progress_weekly_avg_score,
                     recap.averageScore,
                 ),
-                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }
+}
+
+@Composable
+private fun RecapStat(text: String) {
+    Text(text = text, style = MaterialTheme.typography.bodyLarge)
 }
 
 @Composable
@@ -391,24 +403,29 @@ private fun NightDetailOverlay(
                     text = stringResource(
                         Res.string.progress_detail_plan_vs_actual,
                         formatMinutes(night.planDurationMinutes),
-                        formatMinutes(night.actualDurationMinutes ?: 0),
+                        night.actualDurationMinutes?.let { formatMinutes(it) }
+                            ?: stringResource(Res.string.progress_detail_not_available),
                     ),
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                Text(
-                    text = stringResource(
-                        Res.string.progress_detail_score,
-                        night.score ?: 0,
-                    ),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = stringResource(
-                        Res.string.progress_detail_xp,
-                        night.xpEarned ?: 0,
-                    ),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                night.score?.let { score ->
+                    Text(
+                        text = stringResource(
+                            Res.string.progress_detail_score,
+                            score,
+                        ),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                night.xpEarned?.let { xp ->
+                    Text(
+                        text = stringResource(
+                            Res.string.progress_detail_xp,
+                            xp,
+                        ),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
                 Text(
                     text = stringResource(
                         Res.string.progress_detail_status,
@@ -433,7 +450,7 @@ private fun statusLabel(status: NightStatus): String {
         NightStatus.SUCCESS -> stringResource(Res.string.progress_status_success)
         NightStatus.PARTIAL -> stringResource(Res.string.progress_status_partial)
         NightStatus.FAIL -> stringResource(Res.string.progress_status_fail)
-        NightStatus.IN_PROGRESS -> stringResource(Res.string.progress_status_partial)
+        NightStatus.IN_PROGRESS -> stringResource(Res.string.progress_status_in_progress)
         NightStatus.VOID -> stringResource(Res.string.progress_status_fail)
     }
 }
