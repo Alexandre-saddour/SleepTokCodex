@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M8.1
-Next step to run: M8.2
+Last completed step: M9.3
+Next step to run: M10.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -267,19 +267,19 @@ M8) Progress (calendar + weekly recap + night detail)
   - Night detail modal data
   - Done when: UI uses state only
 
-- [ ] M8.2 Calendar UI
+- [x] M8.2 Calendar UI
   - Month selector
   - Grid with status colors
   - Legend
   - Done when: month changes update grid
 
-- [ ] M8.3 Weekly recap UI
+- [x] M8.3 Weekly recap UI
   - Slept vs target
   - Sleep gained vs baseline
   - Best streak this week
   - Done when: recap appears if talent I1 unlocked
 
-- [ ] M8.4 Night detail UI
+- [x] M8.4 Night detail UI
   - Plan vs actual
   - Score and XP
   - Status and coach note
@@ -287,19 +287,19 @@ M8) Progress (calendar + weekly recap + night detail)
 
 M9) Talents (tree)
 ------------------
-- [ ] M9.1 Talents ViewModel and state
+- [x] M9.1 Talents ViewModel and state
   - Points available
   - Branch sections with tiers
   - Locked/unlocked status
   - Done when: state reflects DB
 
-- [ ] M9.2 Talents UI
+- [x] M9.2 Talents UI
   - Tree or section layout
   - Talent cards with cost + effect
   - Unlock button
   - Done when: unlock updates DB and UI
 
-- [ ] M9.3 Talent effects integration
+- [x] M9.3 Talent effects integration
   - XP bonuses, streak shield, cosmetic unlocks, recap visibility
   - Done when: system behavior changes based on unlocks
 

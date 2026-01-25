@@ -112,6 +112,62 @@
 
     <string name="progress_title">Your streak calendar</string>
     <string name="progress_loading">Loading progress...</string>
+    <string name="progress_month_label">%1$d-%2$02d</string>
+    <string name="progress_previous_month">Prev</string>
+    <string name="progress_next_month">Next</string>
+    <string name="progress_legend_success">Success</string>
+    <string name="progress_legend_partial">Partial</string>
+    <string name="progress_legend_fail">Fail</string>
+    <string name="progress_weekly_title">This week</string>
+    <string name="progress_weekly_slept">Slept: %1$s / %2$s target</string>
+    <string name="progress_weekly_sleep_gained">Sleep gained: %1$d min</string>
+    <string name="progress_weekly_best_streak">Best streak: %1$d</string>
+    <string name="progress_weekly_avg_score">Average score: %1$d</string>
+    <string name="progress_detail_title">Night detail</string>
+    <string name="progress_detail_plan_vs_actual">Plan %1$s / Actual %2$s</string>
+    <string name="progress_detail_score">Score: %1$d</string>
+    <string name="progress_detail_xp">XP: %1$d</string>
+    <string name="progress_detail_status">Status: %1$s</string>
+    <string name="progress_detail_close">Close</string>
+    <string name="progress_status_success">SUCCESS</string>
+    <string name="progress_status_partial">PARTIAL</string>
+    <string name="progress_status_fail">FAIL</string>
+
+    <string name="talents_title">Talent tree</string>
+    <string name="talents_loading">Loading talents...</string>
+    <string name="talents_points_available">Points available: %1$d</string>
+    <string name="talents_unlock">Unlock</string>
+    <string name="talents_unlocked">Unlocked</string>
+    <string name="talents_locked">Locked</string>
+    <string name="talents_cost">Cost %1$d</string>
+    <string name="branch_discipline">Discipline</string>
+    <string name="branch_streak">Streak</string>
+    <string name="branch_style">Style</string>
+    <string name="branch_insight">Insight</string>
+    <string name="talent_d1_name">Warm-up XP</string>
+    <string name="talent_d1_desc">+5 XP if you start within 10 min of bedtime.</string>
+    <string name="talent_d2_name">Clean Start</string>
+    <string name="talent_d2_desc">+10 XP if you start within 15 min of bedtime.</string>
+    <string name="talent_d3_name">Perfect Night Bonus</string>
+    <string name="talent_d3_desc">+25 XP for SUCCESS with score >= 90.</string>
+    <string name="talent_s1_name">Streak Booster I</string>
+    <string name="talent_s1_desc">+5 percent XP while streak >= 3.</string>
+    <string name="talent_s2_name">Streak Shield</string>
+    <string name="talent_s2_desc">1 streak save per week.</string>
+    <string name="talent_s3_name">Streak Booster II</string>
+    <string name="talent_s3_desc">+10 percent XP while streak >= 7.</string>
+    <string name="talent_t1_name">Theme Slot</string>
+    <string name="talent_t1_desc">Unlocks 1 theme slot.</string>
+    <string name="talent_t2_name">Sound Pack</string>
+    <string name="talent_t2_desc">Unlocks 3 sound slots.</string>
+    <string name="talent_t3_name">Rare Cosmetics</string>
+    <string name="talent_t3_desc">Increases rare drop luck by 20 percent.</string>
+    <string name="talent_i1_name">Weekly Recap</string>
+    <string name="talent_i1_desc">Unlocks weekly recap insights.</string>
+    <string name="talent_i2_name">Advanced Calendar</string>
+    <string name="talent_i2_desc">Show scores and tags on the calendar.</string>
+    <string name="talent_i3_name">Trendline</string>
+    <string name="talent_i3_desc">Unlocks 30 day trendline graph.</string>
 
     <string name="time_format_hh_mm">%1$02d:%2$02d</string>
     <string name="duration_hours">%1$dh</string>
