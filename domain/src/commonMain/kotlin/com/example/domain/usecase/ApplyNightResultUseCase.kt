@@ -8,10 +8,12 @@ import com.example.domain.model.NightResult
 import com.example.domain.model.RollbackException
 import com.example.domain.model.getOrRollback
 import com.example.domain.repository.NightRepository
+import com.example.domain.repository.StreakShieldRepository
 import com.example.domain.repository.TransactionRunner
 import com.example.domain.repository.UserRepository
 import com.example.domain.repository.XpEventRepository
 import com.example.domain.result.AppResult
+import com.example.domain.result.DomainError
 import com.example.domain.scoring.LevelCalculator
 import kotlin.math.max
 import kotlinx.datetime.Clock
@@ -21,8 +23,13 @@ class ApplyNightResultUseCase(
     private val nightRepository: NightRepository,
     private val xpEventRepository: XpEventRepository,
     private val transactionRunner: TransactionRunner,
+    private val streakShieldRepository: StreakShieldRepository,
 ) {
-    suspend fun execute(night: Night, result: NightResult): AppResult<Unit> {
+    suspend fun execute(
+        night: Night,
+        result: NightResult,
+        consumeShield: Boolean = false,
+    ): AppResult<Unit> {
         return try {
             transactionRunner.run {
                 val updatedNight = night.copy(
@@ -34,6 +41,14 @@ class ApplyNightResultUseCase(
                 )
                 nightRepository.updateNight(updatedNight).getOrRollback()
                 val user = userRepository.getActiveUser().getOrRollback()
+                if (consumeShield) {
+                    val shield = streakShieldRepository.getStreakShield(user.id).getOrRollback()
+                    val available = shield?.chargesAvailable ?: 0
+                    if (available <= 0) {
+                        throw RollbackException(AppResult.Error(DomainError.Validation))
+                    }
+                    streakShieldRepository.consumeCharge(user.id).getOrRollback()
+                }
                 val newXpTotal = user.xpTotal + result.xpBreakdown.totalXp
                 val levelUpdate = LevelCalculator.applyLevelUpdate(
                     currentLevel = user.level,

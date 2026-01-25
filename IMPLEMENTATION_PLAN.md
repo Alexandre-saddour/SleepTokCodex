@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M6.4
-Next step to run: M7.1
+Last completed step: M7.4
+Next step to run: M8.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -235,18 +235,18 @@ M6) Home (before night, night mode, post-stop claim)
 
 M7) Night result (SUCCESS/PARTIAL/FAIL)
 ---------------------------------------
-- [ ] M7.1 ComputeNightResult use case (pure)
+- [x] M7.1 ComputeNightResult use case (pure)
   - Input: plan, start, end, tolerances
   - Output: status, score, xp breakdown, streak change proposal
   - Done when: tests cover all branches
 
-- [ ] M7.2 ApplyNightResult use case (persist)
+- [x] M7.2 ApplyNightResult use case (persist)
   - Persist night record
   - Update user xp_total, level, streak
   - Add xp_event entries
   - Done when: DB reflects results after stop
 
-- [ ] M7.3 Night Result UI
+- [x] M7.3 Night Result UI
   - Verdict + score ring
   - XP breakdown (collapsible)
   - Streak update
@@ -254,7 +254,7 @@ M7) Night result (SUCCESS/PARTIAL/FAIL)
   - CTA: Continue
   - Done when: each status renders correct content
 
-- [ ] M7.4 Streak shield handling
+- [x] M7.4 Streak shield handling
   - If FAIL and shield available -> prompt use
   - If used -> preserve streak, consume charge
   - Done when: shield logic is persisted
