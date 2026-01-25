@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M8.3
-Next step to run: M8.4
+Last completed step: M8.4
+Next step to run: M9.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -279,7 +279,7 @@ M8) Progress (calendar + weekly recap + night detail)
   - Best streak this week
   - Done when: recap appears if talent I1 unlocked
 
-- [ ] M8.4 Night detail UI
+- [x] M8.4 Night detail UI
   - Plan vs actual
   - Score and XP
   - Status and coach note

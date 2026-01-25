@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.NightStatus
+import com.example.domain.model.Night
 import com.example.kmpbackbone.viewmodel.CalendarDayUi
 import com.example.kmpbackbone.viewmodel.ProgressUiState
 import kmpbackbone.composeapp.generated.resources.Res
@@ -47,6 +51,15 @@ import kmpbackbone.composeapp.generated.resources.progress_weekly_sleep_gained
 import kmpbackbone.composeapp.generated.resources.progress_weekly_slept
 import kmpbackbone.composeapp.generated.resources.progress_weekly_title
 import kmpbackbone.composeapp.generated.resources.progress_title
+import kmpbackbone.composeapp.generated.resources.progress_detail_close
+import kmpbackbone.composeapp.generated.resources.progress_detail_plan_vs_actual
+import kmpbackbone.composeapp.generated.resources.progress_detail_score
+import kmpbackbone.composeapp.generated.resources.progress_detail_status
+import kmpbackbone.composeapp.generated.resources.progress_detail_title
+import kmpbackbone.composeapp.generated.resources.progress_detail_xp
+import kmpbackbone.composeapp.generated.resources.progress_status_fail
+import kmpbackbone.composeapp.generated.resources.progress_status_partial
+import kmpbackbone.composeapp.generated.resources.progress_status_success
 import kmpbackbone.composeapp.generated.resources.duration_hours
 import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
 import kmpbackbone.composeapp.generated.resources.duration_minutes
@@ -62,39 +75,47 @@ fun ProgressScreen(
     onDaySelected: (LocalDate) -> Unit,
     onDismissDetail: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            text = stringResource(Res.string.progress_title),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-        )
-        if (uiState.isLoading) {
-            CircularProgressIndicator()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
             Text(
-                text = stringResource(Res.string.progress_loading),
-                style = MaterialTheme.typography.bodyLarge,
+                text = stringResource(Res.string.progress_title),
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
             )
-        } else if (uiState.monthStart != null) {
-            MonthSelector(
-                monthStart = uiState.monthStart,
-                onPreviousMonth = onPreviousMonth,
-                onNextMonth = onNextMonth,
+            if (uiState.isLoading) {
+                CircularProgressIndicator()
+                Text(
+                    text = stringResource(Res.string.progress_loading),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            } else if (uiState.monthStart != null) {
+                MonthSelector(
+                    monthStart = uiState.monthStart,
+                    onPreviousMonth = onPreviousMonth,
+                    onNextMonth = onNextMonth,
+                )
+                CalendarHeader()
+                CalendarGrid(
+                    monthStart = uiState.monthStart,
+                    days = uiState.days,
+                    showAdvanced = uiState.showAdvancedCalendar,
+                    onDaySelected = onDaySelected,
+                )
+                LegendRow()
+                WeeklyRecapCard(uiState)
+            }
+        }
+        if (uiState.selectedNight != null) {
+            NightDetailOverlay(
+                night = uiState.selectedNight,
+                onDismiss = onDismissDetail,
             )
-            CalendarHeader()
-            CalendarGrid(
-                monthStart = uiState.monthStart,
-                days = uiState.days,
-                showAdvanced = uiState.showAdvancedCalendar,
-                onDaySelected = onDaySelected,
-            )
-            LegendRow()
-            WeeklyRecapCard(uiState)
         }
     }
 }
@@ -338,5 +359,81 @@ private fun formatMinutes(totalMinutes: Int): String {
         )
         hours > 0 -> stringResource(Res.string.duration_hours, hours)
         else -> stringResource(Res.string.duration_minutes, minutes)
+    }
+}
+
+@Composable
+private fun NightDetailOverlay(
+    night: Night,
+    onDismiss: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.85f))
+            .padding(20.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.progress_detail_title),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Text(
+                    text = stringResource(
+                        Res.string.progress_detail_plan_vs_actual,
+                        formatMinutes(night.planDurationMinutes),
+                        formatMinutes(night.actualDurationMinutes ?: 0),
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(
+                        Res.string.progress_detail_score,
+                        night.score ?: 0,
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(
+                        Res.string.progress_detail_xp,
+                        night.xpEarned ?: 0,
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(
+                        Res.string.progress_detail_status,
+                        statusLabel(night.status),
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(Res.string.progress_detail_close))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun statusLabel(status: NightStatus): String {
+    return when (status) {
+        NightStatus.SUCCESS -> stringResource(Res.string.progress_status_success)
+        NightStatus.PARTIAL -> stringResource(Res.string.progress_status_partial)
+        NightStatus.FAIL -> stringResource(Res.string.progress_status_fail)
+        NightStatus.IN_PROGRESS -> stringResource(Res.string.progress_status_partial)
+        NightStatus.VOID -> stringResource(Res.string.progress_status_fail)
     }
 }

@@ -123,6 +123,15 @@
     <string name="progress_weekly_sleep_gained">Sleep gained: %1$d min</string>
     <string name="progress_weekly_best_streak">Best streak: %1$d</string>
     <string name="progress_weekly_avg_score">Average score: %1$d</string>
+    <string name="progress_detail_title">Night detail</string>
+    <string name="progress_detail_plan_vs_actual">Plan %1$s / Actual %2$s</string>
+    <string name="progress_detail_score">Score: %1$d</string>
+    <string name="progress_detail_xp">XP: %1$d</string>
+    <string name="progress_detail_status">Status: %1$s</string>
+    <string name="progress_detail_close">Close</string>
+    <string name="progress_status_success">SUCCESS</string>
+    <string name="progress_status_partial">PARTIAL</string>
+    <string name="progress_status_fail">FAIL</string>
 
     <string name="time_format_hh_mm">%1$02d:%2$02d</string>
     <string name="duration_hours">%1$dh</string>
