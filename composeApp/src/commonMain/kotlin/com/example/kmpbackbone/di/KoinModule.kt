@@ -53,14 +53,13 @@ import com.example.kmpbackbone.viewmodel.HomeViewModel
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import com.example.domain.dispatchers.DispatcherProvider
+import com.example.data.dispatchers.DefaultDispatcherProvider
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -82,12 +81,6 @@ fun initKoin(
     )
     // Initialize Napier for logging
     Napier.base(DebugAntilog())
-}.also { koinApp ->
-    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    scope.launch {
-        val initializer = koinApp.koin.get<SeedDataInitializer>()
-        initializer.seedIfNeeded()
-    }
 }
 
 expect fun platformModule(databaseContext: DatabaseContext): Module
@@ -116,6 +109,9 @@ val dataModule = module {
 
     singleOf(::SeedDataInitializer)
     singleOf(::RoomTransactionRunner) bind TransactionRunner::class
+
+    single<DispatcherProvider> { DefaultDispatcherProvider }
+    singleOf(::AppInitializer)
 }
 
 val domainModule = module {
@@ -143,6 +139,6 @@ val domainModule = module {
 
 val presentationModule = module {
     single<SeedDataProvider> { ResourceSeedDataProvider() }
-    factoryOf(::OnboardingViewModel)
-    factoryOf(::HomeViewModel)
+    viewModelOf(::OnboardingViewModel)
+    viewModelOf(::HomeViewModel)
 }
