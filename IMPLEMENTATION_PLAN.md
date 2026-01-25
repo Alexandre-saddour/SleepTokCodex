@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M8.1
-Next step to run: M8.2
+Last completed step: M8.2
+Next step to run: M8.3
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -267,7 +267,7 @@ M8) Progress (calendar + weekly recap + night detail)
   - Night detail modal data
   - Done when: UI uses state only
 
-- [ ] M8.2 Calendar UI
+- [x] M8.2 Calendar UI
   - Month selector
   - Grid with status colors
   - Legend
