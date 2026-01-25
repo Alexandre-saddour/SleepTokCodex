@@ -3,17 +3,16 @@ package com.example.kmpbackbone.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.example.kmpbackbone.navigation.AppTab
 import com.example.kmpbackbone.ui.home.HomeRoot
 import com.example.kmpbackbone.ui.progress.ProgressRoot
+import com.example.kmpbackbone.ui.profile.ProfileRoot
 import com.example.kmpbackbone.ui.talents.TalentsRoot
 import kmpbackbone.composeapp.generated.resources.Res
 import kmpbackbone.composeapp.generated.resources.tab_home
@@ -55,7 +54,7 @@ fun MainRoot(
                 )
                 AppTab.PROGRESS -> ProgressRoot()
                 AppTab.TALENTS -> TalentsRoot()
-                AppTab.PROFILE -> Box(modifier = Modifier.fillMaxSize())
+                AppTab.PROFILE -> ProfileRoot()
             }
         }
     }
