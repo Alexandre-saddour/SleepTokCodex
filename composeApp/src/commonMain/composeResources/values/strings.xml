@@ -68,6 +68,10 @@
     <string name="home_error_conflict">This action is not available right now.</string>
     <string name="home_error_generic">Something went wrong.</string>
 
+    <string name="night_result_placeholder_title">Night result</string>
+    <string name="night_result_placeholder_body">Result screen for night %1$d is coming next.</string>
+    <string name="night_result_placeholder_cta">Back to home</string>
+
     <string name="time_format_hh_mm">%1$02d:%2$02d</string>
     <string name="duration_hours">%1$dh</string>
     <string name="duration_minutes">%1$dm</string>

@@ -1,7 +1,6 @@
 package com.example.kmpbackbone.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,15 +21,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Night
@@ -66,8 +76,12 @@ import kmpbackbone.composeapp.generated.resources.duration_hours
 import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
 import kmpbackbone.composeapp.generated.resources.duration_minutes
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun HomeScreen(
@@ -318,36 +332,25 @@ private fun NightModeContent(
             )
         }
 
-        Text(
-            text = elapsedText,
-            style = MaterialTheme.typography.displayLarge,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            BreathingOrb()
+            Text(
+                text = elapsedText,
+                style = MaterialTheme.typography.displayLarge,
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.tertiary,
-                        shape = RoundedCornerShape(32.dp),
-                    )
-                    .combinedClickable(
-                        enabled = !isActionInProgress,
-                        onClick = {},
-                        onLongClick = onStop,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = stringResource(Res.string.home_hold_to_stop),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onTertiary,
-                )
-            }
+            HoldToStopButton(
+                enabled = !isActionInProgress,
+                onHoldComplete = onStop,
+            )
             if (isActionInProgress) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -399,6 +402,123 @@ private fun PostStopContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BreathingOrb() {
+    val transition = rememberInfiniteTransition(label = "breathing-orb")
+    val scale by transition.animateFloat(
+        initialValue = 0.9f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "breathing-scale",
+    )
+    val alpha by transition.animateFloat(
+        initialValue = 0.55f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "breathing-alpha",
+    )
+    val glow = Brush.radialGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.tertiary.copy(alpha = alpha),
+            Color.Transparent,
+        ),
+    )
+    Box(
+        modifier = Modifier
+            .width(180.dp)
+            .height(180.dp)
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+            )
+            .background(glow, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .width(84.dp)
+                .height(84.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    shape = CircleShape,
+                ),
+        )
+    }
+}
+
+@Composable
+private fun HoldToStopButton(
+    enabled: Boolean,
+    onHoldComplete: () -> Unit,
+) {
+    val holdDurationMs = 1200
+    val progress = remember { Animatable(0f) }
+    val currentOnHoldComplete by rememberUpdatedState(onHoldComplete)
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    shape = RoundedCornerShape(32.dp),
+                )
+                .pointerInput(enabled) {
+                    detectTapGestures(
+                        onPress = {
+                            if (!enabled) {
+                                return@detectTapGestures
+                            }
+                            progress.snapTo(0f)
+                            coroutineScope {
+                                val job = launch {
+                                    progress.animateTo(
+                                        targetValue = 1f,
+                                        animationSpec = tween(
+                                            durationMillis = holdDurationMs,
+                                            easing = LinearEasing,
+                                        ),
+                                    )
+                                    currentOnHoldComplete()
+                                }
+                                val released = tryAwaitRelease()
+                                if (released && !job.isCompleted) {
+                                    job.cancel()
+                                }
+                            }
+                            progress.snapTo(0f)
+                        },
+                    )
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = stringResource(Res.string.home_hold_to_stop),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onTertiary,
+            )
+        }
+        LinearProgressIndicator(
+            progress = progress.value,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp),
+            color = MaterialTheme.colorScheme.tertiary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
     }
 }
 

@@ -11,9 +11,14 @@ import com.example.kmpbackbone.ui.home.HomeRoot
 fun MainRoot(
     selectedTab: AppTab,
     onTabSelected: (AppTab) -> Unit,
+    onOpenNightResult: (Long) -> Unit,
+    onEditPlan: () -> Unit = {},
 ) {
     when (selectedTab) {
-        AppTab.HOME -> HomeRoot()
+        AppTab.HOME -> HomeRoot(
+            onOpenResult = onOpenNightResult,
+            onEditPlan = onEditPlan,
+        )
         AppTab.PROGRESS -> Box(modifier = Modifier.fillMaxSize())
         AppTab.TALENTS -> Box(modifier = Modifier.fillMaxSize())
         AppTab.PROFILE -> Box(modifier = Modifier.fillMaxSize())
