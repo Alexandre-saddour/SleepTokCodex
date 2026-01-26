@@ -27,6 +27,7 @@ fun MainRoot(
     onTabSelected: (AppTab) -> Unit,
     onOpenNightResult: (Long) -> Unit,
     onEditPlan: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
 ) {
     Scaffold(
         bottomBar = {
@@ -54,7 +55,9 @@ fun MainRoot(
                 )
                 AppTab.PROGRESS -> ProgressRoot()
                 AppTab.TALENTS -> TalentsRoot()
-                AppTab.PROFILE -> ProfileRoot()
+                AppTab.PROFILE -> ProfileRoot(
+                    onOpenSettings = onOpenSettings,
+                )
             }
         }
     }
