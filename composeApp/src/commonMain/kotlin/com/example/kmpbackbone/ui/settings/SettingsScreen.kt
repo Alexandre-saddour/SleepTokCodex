@@ -194,7 +194,7 @@ private fun SettingsContent(
             text = stringResource(Res.string.settings_plan_active_days_label),
             style = MaterialTheme.typography.titleLarge,
         )
-        val activeDays = activeDaysFromMask(plan.activeDaysMask)
+        val activeDays = plan.activeDays
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(DayOfWeek.entries) { day ->
                 FilterChip(
@@ -412,8 +412,3 @@ private fun coachSampleRes(style: CoachStyle): StringResource {
     }
 }
 
-private fun activeDaysFromMask(mask: Int): Set<DayOfWeek> {
-    return DayOfWeek.entries
-        .filter { day -> mask and (1 shl day.ordinal) != 0 }
-        .toSet()
-}

@@ -1,5 +1,6 @@
 package com.example.kmpbackbone.util
 
+import kotlinx.datetime.IllegalTimeZoneException
 import kotlinx.datetime.TimeZone
 
 fun parseTimeZone(timeZoneId: String): TimeZone {

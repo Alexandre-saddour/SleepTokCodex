@@ -58,47 +58,47 @@ class ProfileViewModel(
     fun load() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
+            
             val badgesDeferred = async { getBadgesAndCosmeticsUseCase.execute() }
-            val summary = when (val summaryResult = getHomeSummaryUseCase.execute()) {
-                is AppResult.Success -> summaryResult.value
-                is AppResult.Error -> {
-                    badgesDeferred.cancel()
-                    _state.update { it.copy(isLoading = false, error = summaryResult.error) }
-                    return@launch
-                }
-            }
-            val timeZone = parseTimeZone(summary.user.timezone)
 
-            val profile = when (val profileResult = getProfileSummaryUseCase.execute(timeZone)) {
-                is AppResult.Success -> profileResult.value
-                is AppResult.Error -> {
-                    badgesDeferred.cancel()
-                    _state.update { it.copy(isLoading = false, error = profileResult.error) }
-                    return@launch
-                }
-            }
+            try {
+                // 1. Get Home Summary (for User timezone)
+                val summary = getHomeSummaryUseCase.execute().getOrThrow()
+                val timeZone = parseTimeZone(summary.user.timezone)
 
-            val badgesAndCosmetics = when (val badgesResult = badgesDeferred.await()) {
-                is AppResult.Success -> badgesResult.value
-                is AppResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = badgesResult.error) }
-                    return@launch
-                }
-            }
-            val unlockedIds = badgesAndCosmetics.userRewards.map { it.rewardId }.toSet()
-            val badges = badgesAndCosmetics.rewards
-                .filter { it.type == RewardType.BADGE }
-                .map { reward -> reward.toBadgeUi(unlockedIds) }
+                // 2. Get Profile Summary using timezone
+                val profile = getProfileSummaryUseCase.execute(timeZone).getOrThrow()
 
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    stats = profile.toStatsUi(),
-                    badges = badges,
-                )
+                // 3. Get Badges (await the parallel request)
+                val badgesAndCosmetics = badgesDeferred.await().getOrThrow()
+
+                val unlockedIds = badgesAndCosmetics.userRewards.map { it.rewardId }.toSet()
+                val badges = badgesAndCosmetics.rewards
+                    .filter { it.type == RewardType.BADGE }
+                    .map { reward -> reward.toBadgeUi(unlockedIds) }
+
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        stats = profile.toStatsUi(),
+                        badges = badges,
+                    )
+                }
+            } catch (e: DomainException) {
+                badgesDeferred.cancel()
+                _state.update { it.copy(isLoading = false, error = e.error) }
             }
         }
     }
+
+    private fun <T> AppResult<T>.getOrThrow(): T {
+        return when (this) {
+            is AppResult.Success -> value
+            is AppResult.Error -> throw DomainException(error)
+        }
+    }
+
+    private class DomainException(val error: DomainError) : Exception()
 
     private fun ProfileSummary.toStatsUi(): ProfileStatsUi {
         val progress = LevelCalculator.levelProgress(user.xpTotal)

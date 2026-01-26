@@ -72,13 +72,13 @@ class SettingsViewModel(
     fun onActiveDayToggled(day: DayOfWeek) {
         _state.update { current ->
             val plan = current.plan ?: return@update current
-            val activeDays = activeDaysFromMask(plan.activeDaysMask).toMutableSet()
+            val activeDays = plan.activeDays.toMutableSet()
             if (activeDays.contains(day)) {
                 activeDays.remove(day)
             } else {
                 activeDays.add(day)
             }
-            current.copy(plan = plan.copy(activeDaysMask = activeDaysMask(activeDays)))
+            current.copy(plan = plan.copy(activeDaysMask = SleepPlan.computeActiveDaysMask(activeDays)))
         }
     }
 
@@ -103,17 +103,5 @@ class SettingsViewModel(
             }
             _state.update { it.copy(isSaving = false) }
         }
-    }
-
-    private fun activeDaysMask(days: Set<DayOfWeek>): Int {
-        return days.fold(0) { mask, day ->
-            mask or (1 shl day.ordinal)
-        }
-    }
-
-    private fun activeDaysFromMask(mask: Int): Set<DayOfWeek> {
-        return DayOfWeek.entries
-            .filter { day -> mask and (1 shl day.ordinal) != 0 }
-            .toSet()
     }
 }
