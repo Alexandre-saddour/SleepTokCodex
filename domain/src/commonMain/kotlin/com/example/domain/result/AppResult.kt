@@ -12,3 +12,12 @@ sealed class DomainError {
     data object Conflict : DomainError()
     data object Unknown : DomainError()
 }
+
+fun <T> AppResult<T>.getOrThrow(): T {
+    return when (this) {
+        is AppResult.Success -> value
+        is AppResult.Error -> throw DomainException(error)
+    }
+}
+
+class DomainException(val error: DomainError) : Exception()

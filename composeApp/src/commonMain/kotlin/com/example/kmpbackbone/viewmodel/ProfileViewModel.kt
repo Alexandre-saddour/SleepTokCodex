@@ -5,8 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.ProfileSummary
 import com.example.domain.model.Reward
 import com.example.domain.model.RewardType
-import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import com.example.domain.result.DomainException
+import com.example.domain.result.getOrThrow
 import com.example.domain.scoring.LevelCalculator
 import com.example.domain.usecase.GetBadgesAndCosmeticsUseCase
 import com.example.domain.usecase.GetHomeSummaryUseCase
@@ -90,15 +91,6 @@ class ProfileViewModel(
             }
         }
     }
-
-    private fun <T> AppResult<T>.getOrThrow(): T {
-        return when (this) {
-            is AppResult.Success -> value
-            is AppResult.Error -> throw DomainException(error)
-        }
-    }
-
-    private class DomainException(val error: DomainError) : Exception()
 
     private fun ProfileSummary.toStatsUi(): ProfileStatsUi {
         val progress = LevelCalculator.levelProgress(user.xpTotal)
