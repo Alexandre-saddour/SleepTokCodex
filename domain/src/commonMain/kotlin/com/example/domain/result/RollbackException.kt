@@ -1,6 +1,4 @@
-package com.example.domain.model
-
-import com.example.domain.result.AppResult
+package com.example.domain.result
 
 class RollbackException(val error: AppResult.Error) : Exception()
 

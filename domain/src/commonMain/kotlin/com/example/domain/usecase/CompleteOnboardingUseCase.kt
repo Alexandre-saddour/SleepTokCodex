@@ -1,9 +1,9 @@
 package com.example.domain.usecase
 
-import com.example.domain.model.RollbackException
 import com.example.domain.model.SleepPlan
 import com.example.domain.model.User
-import com.example.domain.model.getOrRollback
+import com.example.domain.result.RollbackException
+import com.example.domain.result.getOrRollback
 import com.example.domain.repository.SleepPlanRepository
 import com.example.domain.repository.TransactionRunner
 import com.example.domain.repository.UserRepository

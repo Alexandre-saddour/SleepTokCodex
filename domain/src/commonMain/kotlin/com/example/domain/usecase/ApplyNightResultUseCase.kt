@@ -5,8 +5,8 @@ import com.example.domain.model.NightStatus
 import com.example.domain.model.XpEvent
 import com.example.domain.model.XpEventType
 import com.example.domain.model.NightResult
-import com.example.domain.model.RollbackException
-import com.example.domain.model.getOrRollback
+import com.example.domain.result.RollbackException
+import com.example.domain.result.getOrRollback
 import com.example.domain.repository.NightRepository
 import com.example.domain.repository.StreakShieldRepository
 import com.example.domain.repository.TransactionRunner
