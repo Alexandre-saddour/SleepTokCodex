@@ -214,7 +214,7 @@ private fun SettingsContent(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
         )
         SettingsSectionTitle(text = stringResource(Res.string.settings_coach_title))
-        CoachStyle.values().forEach { style ->
+        CoachStyle.entries.forEach { style ->
             SelectableCard(
                 title = stringResource(coachTitleRes(style)),
                 subtitle = stringResource(coachSampleRes(style)),

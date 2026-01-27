@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
 
 data class SettingsUiState(
     val isLoading: Boolean = true,
@@ -55,14 +56,14 @@ class SettingsViewModel(
         }
     }
 
-    fun onBedtimeChanged(time: kotlinx.datetime.LocalTime) {
+    fun onBedtimeChanged(time: LocalTime) {
         _state.update { current ->
             val plan = current.plan ?: return@update current
             current.copy(plan = plan.copy(planStartLocalTime = time))
         }
     }
 
-    fun onWakeTimeChanged(time: kotlinx.datetime.LocalTime) {
+    fun onWakeTimeChanged(time: LocalTime) {
         _state.update { current ->
             val plan = current.plan ?: return@update current
             current.copy(plan = plan.copy(planEndLocalTime = time))
