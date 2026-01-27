@@ -7,7 +7,7 @@ import com.example.domain.model.Night
 import com.example.domain.repository.NightRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
-import kotlinx.datetime.Instant as KxInstant
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -42,17 +42,21 @@ class NightRepositoryImpl(
         timeZone: TimeZone,
     ): AppResult<List<Night>> {
         return try {
-            val startInstant = LocalDateTime(startDate, LocalTime(hour = 0, minute = 0)).toInstant(timeZone)
-            val endInstant = LocalDateTime(endDate, LocalTime(hour = 23, minute = 59, second = 59)).toInstant(timeZone)
-            val nights = nightDao.getNightsBetween(
-                userId,
-                KxInstant.fromEpochMilliseconds(startInstant.toEpochMilliseconds()),
-                KxInstant.fromEpochMilliseconds(endInstant.toEpochMilliseconds()),
-            )
+            val startInstant = LocalDateTime(startDate, LocalTime(hour = 0, minute = 0))
+                .toInstant(timeZone)
+                .toKotlinxInstant()
+            val endInstant = LocalDateTime(endDate, LocalTime(hour = 23, minute = 59, second = 59))
+                .toInstant(timeZone)
+                .toKotlinxInstant()
+            val nights = nightDao.getNightsBetween(userId, startInstant, endInstant)
             AppResult.Success(nights.map { it.toDomain() })
         } catch (exception: Exception) {
             AppResult.Error(DomainError.Storage)
         }
+    }
+
+    private fun kotlin.time.Instant.toKotlinxInstant(): Instant {
+        return Instant.fromEpochMilliseconds(toEpochMilliseconds())
     }
 
     override suspend fun createNight(night: Night): AppResult<Night> {
