@@ -48,12 +48,15 @@ import com.example.domain.usecase.GetWeeklyRecapUseCase
 import com.example.domain.usecase.StartNightUseCase
 import com.example.domain.usecase.StopNightUseCase
 import com.example.domain.usecase.UnlockTalentUseCase
+import com.example.domain.usecase.UpdateCoachStyleUseCase
 import com.example.domain.usecase.UpdatePlanUseCase
 import com.example.kmpbackbone.resources.ResourceSeedDataProvider
 import com.example.kmpbackbone.viewmodel.HomeViewModel
 import com.example.kmpbackbone.viewmodel.NightResultViewModel
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
+import com.example.kmpbackbone.viewmodel.ProfileViewModel
 import com.example.kmpbackbone.viewmodel.ProgressViewModel
+import com.example.kmpbackbone.viewmodel.SettingsViewModel
 import com.example.kmpbackbone.viewmodel.TalentsViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -137,6 +140,7 @@ val domainModule = module {
     factoryOf(::GetStreakShieldUseCase)
     factoryOf(::GetTalentTreeUseCase)
     factoryOf(::UnlockTalentUseCase)
+    factoryOf(::UpdateCoachStyleUseCase)
     factoryOf(::GetProfileSummaryUseCase)
     factoryOf(::ClaimDailyChestUseCase)
     factoryOf(::GetBadgesAndCosmeticsUseCase)
@@ -149,4 +153,6 @@ val presentationModule = module {
     viewModelOf(::NightResultViewModel)
     viewModelOf(::ProgressViewModel)
     viewModelOf(::TalentsViewModel)
+    viewModelOf(::ProfileViewModel)
+    viewModelOf(::SettingsViewModel)
 }

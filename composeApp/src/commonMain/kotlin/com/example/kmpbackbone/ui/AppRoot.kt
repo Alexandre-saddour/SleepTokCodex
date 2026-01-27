@@ -17,10 +17,15 @@ fun AppRoot() {
                 selectedTab = route.tab,
                 onTabSelected = { navigator.goToMain(it) },
                 onOpenNightResult = { nightId -> navigator.goToNightResult(nightId) },
+                onEditPlan = { navigator.goToSettings() },
+                onOpenSettings = { navigator.goToSettings() },
             )
             is AppRoute.NightResult -> NightResultRoot(
                 nightId = route.nightId,
                 onBack = { navigator.goToMain() },
+            )
+            AppRoute.Settings -> com.example.kmpbackbone.ui.settings.SettingsRoot(
+                onBack = { navigator.goBack() }
             )
         }
     }
