@@ -246,7 +246,7 @@ private fun BeforeNightContent(
                 )
             }
             LinearProgressIndicator(
-                progress = xpRatio.coerceIn(0f, 1f),
+                progress = { xpRatio.coerceIn(0f, 1f) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),
@@ -512,7 +512,7 @@ private fun HoldToStopButton(
             )
         }
         LinearProgressIndicator(
-            progress = progress.value,
+            progress = { progress.value },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(4.dp),

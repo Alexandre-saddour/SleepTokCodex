@@ -273,7 +273,7 @@ private fun SettingsContent(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 )
                 LinearProgressIndicator(
-                    progress = 0.35f,
+                    progress = { 0.35f },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
