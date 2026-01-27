@@ -7,7 +7,6 @@ import com.example.domain.model.SleepPlan
 import com.example.domain.model.User
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
-import com.example.domain.usecase.GetActiveNightUseCase
 import com.example.domain.usecase.GetHomeSummaryUseCase
 import com.example.domain.usecase.StartNightUseCase
 import com.example.domain.usecase.StopNightUseCase
@@ -44,7 +43,6 @@ sealed class HomeUiEvent : UiEvent {
 
 class HomeViewModel(
     private val getHomeSummaryUseCase: GetHomeSummaryUseCase,
-    private val getActiveNightUseCase: GetActiveNightUseCase,
     private val startNightUseCase: StartNightUseCase,
     private val stopNightUseCase: StopNightUseCase,
 ) : ViewModel() {
@@ -111,15 +109,6 @@ class HomeViewModel(
                 }
                 is AppResult.Error -> {
                     _state.update { it.copy(error = summaryResult.error) }
-                }
-            }
-            // The call to getActiveNightUseCase here is redundant. The getHomeSummaryUseCase call just above already fetches the activeNight data, and the state is updated with it. Removing this block will make the data loading more efficient and prevent an unnecessary network/database request.
-            when (val activeNightResult = getActiveNightUseCase.execute()) {
-                is AppResult.Success -> updateNight(activeNightResult.value)
-                is AppResult.Error -> {
-                    if (activeNightResult.error != DomainError.NotFound) {
-                        _state.update { it.copy(error = activeNightResult.error) }
-                    }
                 }
             }
             _state.update { it.copy(isLoading = false) }

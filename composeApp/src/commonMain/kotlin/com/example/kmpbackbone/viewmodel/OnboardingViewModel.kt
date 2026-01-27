@@ -10,7 +10,6 @@ import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
 import com.example.domain.usecase.CompleteOnboardingUseCase
 import com.example.domain.usecase.GetOnboardingStateUseCase
-import kotlin.math.abs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +46,7 @@ data class OnboardingUiState(
     val coachStyle: CoachStyle? = null,
     val bedtime: LocalTime = LocalTime(hour = 23, minute = 30),
     val wakeTime: LocalTime = LocalTime(hour = 7, minute = 30),
-    val activeDays: Set<DayOfWeek> = DayOfWeek.values().toSet(),
+    val activeDays: Set<DayOfWeek> = DayOfWeek.entries.toSet(),
     val timeZoneId: String = TimeZone.currentSystemDefault().id,
     val error: DomainError? = null,
 ) : UiState
@@ -60,7 +59,7 @@ class OnboardingViewModel(
     private val getOnboardingStateUseCase: GetOnboardingStateUseCase,
     private val completeOnboardingUseCase: CompleteOnboardingUseCase,
 ) : ViewModel() {
-    private val steps = OnboardingStep.values()
+    private val steps = OnboardingStep.entries
     private val _state = MutableStateFlow(OnboardingUiState())
     val state: StateFlow<OnboardingUiState> = _state.asStateFlow()
 
@@ -95,16 +94,6 @@ class OnboardingViewModel(
             }
             current.copy(activeDays = updatedActiveDays)
         }
-
-        _state.update { current ->
-            val updated = current.activeDays.toMutableSet()
-            if (updated.contains(day)) {
-                updated.remove(day)
-            } else {
-                updated.add(day)
-            }
-            current.copy(activeDays = updated)
-        }
     }
 
     fun onNext() {
@@ -126,8 +115,8 @@ class OnboardingViewModel(
             _state.update { it.copy(isLoading = true, error = null) }
             val snapshot = state.value
             val now = Clock.System.now()
-            val user = buildUser(snapshot, now)
             val plan = buildPlan(snapshot, now)
+            val user = buildUser(snapshot, now, plan.durationMinutes)
             when (val result = completeOnboardingUseCase.execute(user, plan)) {
                 is AppResult.Success -> _events.emit(OnboardingUiEvent.Completed)
                 is AppResult.Error -> _state.update {
@@ -156,12 +145,7 @@ class OnboardingViewModel(
                                 timeZoneId = onboarding.user?.timezone ?: current.timeZoneId,
                                 bedtime = onboarding.plan?.planStartLocalTime ?: current.bedtime,
                                 wakeTime = onboarding.plan?.planEndLocalTime ?: current.wakeTime,
-                                activeDays = onboarding.plan?.activeDaysMask?.let {
-                                    activeDaysFromMask(
-                                        it
-                                    )
-                                }
-                                    ?: current.activeDays,
+                                activeDays = onboarding.plan?.activeDays ?: current.activeDays,
                             )
                         }
                     }
@@ -174,8 +158,11 @@ class OnboardingViewModel(
         }
     }
 
-    private fun buildUser(state: OnboardingUiState, createdAt: Instant): User {
-        val baseline = planDurationMinutes(state.bedtime, state.wakeTime)
+    private fun buildUser(
+        state: OnboardingUiState,
+        createdAt: Instant,
+        baselineSleepMinutes: Int,
+    ): User {
         return User(
             id = 0L,
             createdAt = createdAt,
@@ -189,7 +176,7 @@ class OnboardingViewModel(
             streakCurrent = 0,
             streakBest = 0,
             lastNightId = null,
-            baselineSleepDurationMinutes = baseline,
+            baselineSleepDurationMinutes = baselineSleepMinutes,
             settingsJson = null,
         )
     }
@@ -200,33 +187,12 @@ class OnboardingViewModel(
             userId = 0L,
             planStartLocalTime = state.bedtime,
             planEndLocalTime = state.wakeTime,
-            activeDaysMask = activeDaysMask(state.activeDays),
+            activeDaysMask = SleepPlan.computeActiveDaysMask(state.activeDays),
             toleranceStartMinutes = DEFAULT_TOLERANCE_START_MINUTES,
             toleranceEndMinutes = DEFAULT_TOLERANCE_END_MINUTES,
             createdAt = createdAt,
             isActive = true,
         )
-    }
-
-    private fun activeDaysMask(days: Set<DayOfWeek>): Int {
-        return days.fold(0) { mask, day ->
-            mask or (1 shl day.ordinal)
-        }
-    }
-
-    private fun activeDaysFromMask(mask: Int): Set<DayOfWeek> {
-        return DayOfWeek.entries
-            .filter { day -> mask and (1 shl day.ordinal) != 0 }
-            .toSet()
-    }
-
-    private fun planDurationMinutes(start: LocalTime, end: LocalTime): Int {
-        val startMinutes = start.hour * 60 + start.minute
-        val endMinutes = end.hour * 60 + end.minute
-        return  when {
-            endMinutes >= startMinutes -> endMinutes - startMinutes
-            else -> (24 * 60 - startMinutes) + endMinutes
-        }
     }
 
     companion object {
