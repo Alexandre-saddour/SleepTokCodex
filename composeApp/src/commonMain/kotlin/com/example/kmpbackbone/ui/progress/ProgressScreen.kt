@@ -258,7 +258,7 @@ private fun CalendarCell(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text(text = day.date.dayOfMonth.toString())
+            Text(text = day.date.day.toString())
             if (showAdvanced && day.score != null) {
                 Text(
                     text = day.score.toString(),

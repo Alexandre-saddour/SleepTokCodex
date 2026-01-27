@@ -249,7 +249,7 @@ private fun ScoreRing(score: Int) {
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
-            progress = progress,
+            progress = { progress },
             strokeWidth = 8.dp,
             color = MaterialTheme.colorScheme.tertiary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,

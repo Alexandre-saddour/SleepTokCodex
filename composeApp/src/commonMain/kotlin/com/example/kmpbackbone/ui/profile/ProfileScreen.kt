@@ -170,7 +170,7 @@ private fun ProfileHeader(stats: ProfileStatsUi) {
                 style = MaterialTheme.typography.titleLarge,
             )
             LinearProgressIndicator(
-                progress = progress,
+                progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
