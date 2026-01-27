@@ -7,8 +7,9 @@ import com.example.domain.repository.SleepPlanRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import com.example.domain.result.DomainException
+import com.example.domain.result.getOrThrow
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalTime
 
 class StartNightUseCase(
     private val userRepository: UserRepository,
@@ -16,44 +17,30 @@ class StartNightUseCase(
     private val nightRepository: NightRepository,
 ) {
     suspend fun execute(startAt: Instant): AppResult<Night> {
-        val userResult = userRepository.getActiveUser()
-        if (userResult is AppResult.Error) {
-            return userResult
-        }
-        val user = (userResult as AppResult.Success).value
-        val planResult = sleepPlanRepository.getActivePlan(user.id)
-        if (planResult is AppResult.Error) {
-            return planResult
-        }
-        val plan = (planResult as AppResult.Success).value
-            ?: return AppResult.Error(DomainError.NotFound)
-        val planDurationMinutes = computePlanDurationMinutes(plan.planStartLocalTime, plan.planEndLocalTime)
-        val night = Night(
-            id = 0L,
-            userId = user.id,
-            planId = plan.id,
-            startAt = startAt,
-            endAt = null,
-            status = NightStatus.IN_PROGRESS,
-            actualDurationMinutes = null,
-            planDurationMinutes = planDurationMinutes,
-            score = null,
-            xpEarned = null,
-            streakBefore = user.streakCurrent,
-            streakAfter = null,
-            createdAt = startAt,
-            note = null,
-        )
-        return nightRepository.createNight(night)
-    }
+        return try {
+            val user = userRepository.getActiveUser().getOrThrow()
+            val plan = sleepPlanRepository.getActivePlan(user.id).getOrThrow()
+                ?: return AppResult.Error(DomainError.NotFound)
 
-    private fun computePlanDurationMinutes(start: LocalTime, end: LocalTime): Int {
-        val startMinutes = start.hour * 60 + start.minute
-        val endMinutes = end.hour * 60 + end.minute
-        return if (endMinutes >= startMinutes) {
-            endMinutes - startMinutes
-        } else {
-            (24 * 60 - startMinutes) + endMinutes
+            val night = Night(
+                id = 0L,
+                userId = user.id,
+                planId = plan.id,
+                startAt = startAt,
+                endAt = null,
+                status = NightStatus.IN_PROGRESS,
+                actualDurationMinutes = null,
+                planDurationMinutes = plan.durationMinutes,
+                score = null,
+                xpEarned = null,
+                streakBefore = user.streakCurrent,
+                streakAfter = null,
+                createdAt = startAt,
+                note = null,
+            )
+            nightRepository.createNight(night)
+        } catch (e: DomainException) {
+            AppResult.Error(e.error)
         }
     }
 }

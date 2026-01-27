@@ -8,6 +8,8 @@ import com.example.domain.repository.TalentRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import com.example.domain.result.DomainException
+import com.example.domain.result.getOrThrow
 import kotlin.math.max
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -20,64 +22,56 @@ class UnlockTalentUseCase(
     private val streakShieldRepository: StreakShieldRepository,
 ) {
     suspend fun execute(talentId: String): AppResult<Unit> {
-        val userResult = userRepository.getActiveUser()
-        if (userResult is AppResult.Error) {
-            return userResult
+        return try {
+            val user = userRepository.getActiveUser().getOrThrow()
+            val allTalents = talentRepository.getAllTalents().getOrThrow()
+            val talent = allTalents.firstOrNull { it.id == talentId }
+                ?: return AppResult.Error(DomainError.NotFound)
+
+            val userTalents = talentRepository.getUserTalents(user.id).getOrThrow()
+            val userTalentIds = userTalents.map { it.talentId }.toSet()
+
+            if (userTalentIds.contains(talentId)) {
+                return AppResult.Error(DomainError.Conflict)
+            }
+            if (user.talentPointsAvailable < talent.costPoints) {
+                return AppResult.Error(DomainError.Validation)
+            }
+
+            talentRepository.unlockTalent(user.id, talentId, Clock.System.now()).getOrThrow()
+            applyTalentEffect(user.id, talent.effect).getOrThrow()
+
+            val remainingPoints = user.talentPointsAvailable - talent.costPoints
+            userRepository.updateXp(
+                userId = user.id,
+                xpTotal = user.xpTotal,
+                level = user.level,
+                talentPointsAvailable = remainingPoints,
+            )
+        } catch (e: DomainException) {
+            AppResult.Error(e.error)
         }
-        val user = (userResult as AppResult.Success).value
-        val allTalentsResult = talentRepository.getAllTalents()
-        if (allTalentsResult is AppResult.Error) {
-            return allTalentsResult
-        }
-        val talent = (allTalentsResult as AppResult.Success).value.firstOrNull { it.id == talentId }
-            ?: return AppResult.Error(DomainError.NotFound)
-        val userTalentsResult = talentRepository.getUserTalents(user.id)
-        if (userTalentsResult is AppResult.Error) {
-            return userTalentsResult
-        }
-        val userTalentIds = (userTalentsResult as AppResult.Success).value.map { it.talentId }.toSet()
-        if (userTalentIds.contains(talentId)) {
-            return AppResult.Error(DomainError.Conflict)
-        }
-        if (user.talentPointsAvailable < talent.costPoints) {
-            return AppResult.Error(DomainError.Validation)
-        }
-        val unlockResult = talentRepository.unlockTalent(user.id, talentId, Clock.System.now())
-        if (unlockResult is AppResult.Error) {
-            return unlockResult
-        }
-        val effectResult = applyTalentEffect(user.id, talent.effect)
-        if (effectResult is AppResult.Error) {
-            return effectResult
-        }
-        val remainingPoints = user.talentPointsAvailable - talent.costPoints
-        return userRepository.updateXp(
-            userId = user.id,
-            xpTotal = user.xpTotal,
-            level = user.level,
-            talentPointsAvailable = remainingPoints,
-        )
     }
 
     private suspend fun applyTalentEffect(userId: Long, effect: TalentEffect): AppResult<Unit> {
         return when (effect) {
             is TalentEffect.StreakShield -> {
-                val now = Clock.System.now()
-                val existingResult = streakShieldRepository.getStreakShield(userId)
-                if (existingResult is AppResult.Error) {
-                    return existingResult
-                }
-                val existing = (existingResult as AppResult.Success).value
-                val refreshAt = existing?.refreshAt ?: now.plus(7, DateTimeUnit.DAY, TimeZone.UTC)
-                val charges = max(existing?.chargesAvailable ?: 0, effect.chargesPerWeek)
-                streakShieldRepository.upsertStreakShield(
-                    StreakShield(
-                        userId = userId,
-                        chargesAvailable = charges,
-                        refreshAt = refreshAt,
-                        source = existing?.source ?: ShieldSource.TALENT,
+                try {
+                    val now = Clock.System.now()
+                    val existing = streakShieldRepository.getStreakShield(userId).getOrThrow()
+                    val refreshAt = existing?.refreshAt ?: now.plus(7, DateTimeUnit.DAY, TimeZone.UTC)
+                    val charges = max(existing?.chargesAvailable ?: 0, effect.chargesPerWeek)
+                    streakShieldRepository.upsertStreakShield(
+                        StreakShield(
+                            userId = userId,
+                            chargesAvailable = charges,
+                            refreshAt = refreshAt,
+                            source = existing?.source ?: ShieldSource.TALENT,
+                        )
                     )
-                )
+                } catch (e: DomainException) {
+                    AppResult.Error(e.error)
+                }
             }
             else -> AppResult.Success(Unit)
         }

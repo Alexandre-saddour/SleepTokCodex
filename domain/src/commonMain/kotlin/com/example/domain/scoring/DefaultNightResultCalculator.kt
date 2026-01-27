@@ -10,14 +10,15 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
 class DefaultNightResultCalculator : NightResultCalculator {
     override fun calculate(input: NightScoreInput): NightResult {
@@ -35,7 +36,7 @@ class DefaultNightResultCalculator : NightResultCalculator {
             plan.planEndLocalTime,
         )
 
-        val planDurationMinutes = computePlanDurationMinutes(plan.planStartLocalTime, plan.planEndLocalTime)
+        val planDurationMinutes = plan.durationMinutes
         val actualDurationMinutes = night.actualDurationMinutes
             ?: durationMinutesBetween(night.startAt, endAt)
         val deltaStartMinutes = minutesBetween(planStartDateTime, localStart, timeZone)
@@ -104,17 +105,7 @@ class DefaultNightResultCalculator : NightResultCalculator {
         }
     }
 
-    private fun computePlanDurationMinutes(start: LocalTime, end: LocalTime): Int {
-        val startMinutes = start.hour * 60 + start.minute
-        val endMinutes = end.hour * 60 + end.minute
-        return if (endMinutes >= startMinutes) {
-            endMinutes - startMinutes
-        } else {
-            (24 * 60 - startMinutes) + endMinutes
-        }
-    }
-
-    private fun durationMinutesBetween(start: kotlinx.datetime.Instant, end: kotlinx.datetime.Instant): Int {
+    private fun durationMinutesBetween(start: Instant, end: Instant): Int {
         val millis = end.toEpochMilliseconds() - start.toEpochMilliseconds()
         return (millis / 60000L).toInt().coerceAtLeast(0)
     }

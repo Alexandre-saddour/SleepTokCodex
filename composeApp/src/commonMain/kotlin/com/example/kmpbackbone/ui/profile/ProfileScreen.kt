@@ -146,7 +146,7 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileHeader(stats: ProfileStatsUi) {
-    val progress = (stats.xpInLevel.toFloat() / stats.levelSpan.coerceAtLeast(1)).coerceIn(0f, 1f)
+    val progress = (stats.xpInLevel.toFloat() / stats.levelSpan.coerceAtLeast(1L)).coerceIn(0f, 1f)
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),

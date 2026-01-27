@@ -4,17 +4,19 @@ import com.example.domain.model.StreakShield
 import com.example.domain.repository.StreakShieldRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
+import com.example.domain.result.DomainException
+import com.example.domain.result.getOrThrow
 
 class GetStreakShieldUseCase(
     private val userRepository: UserRepository,
     private val streakShieldRepository: StreakShieldRepository,
 ) {
     suspend fun execute(): AppResult<StreakShield?> {
-        val userResult = userRepository.getActiveUser()
-        if (userResult is AppResult.Error) {
-            return userResult
+        return try {
+            val user = userRepository.getActiveUser().getOrThrow()
+            streakShieldRepository.getStreakShield(user.id)
+        } catch (e: DomainException) {
+            AppResult.Error(e.error)
         }
-        val user = (userResult as AppResult.Success).value
-        return streakShieldRepository.getStreakShield(user.id)
     }
 }

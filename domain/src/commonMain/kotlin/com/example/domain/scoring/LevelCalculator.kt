@@ -26,8 +26,8 @@ object LevelCalculator {
         val level = calculateLevel(xpTotal)
         val currentThreshold = thresholds.last { it.level <= level }
         val nextThreshold = thresholds.firstOrNull { it.level > level } ?: currentThreshold
-        val xpInLevel = (xpTotal - currentThreshold.xpRequired).coerceAtLeast(0).toInt()
-        val levelSpan = (nextThreshold.xpRequired - currentThreshold.xpRequired).coerceAtLeast(1)
+        val xpInLevel = (xpTotal - currentThreshold.xpRequired).coerceAtLeast(0L)
+        val levelSpan = (nextThreshold.xpRequired - currentThreshold.xpRequired).coerceAtLeast(1L)
         return LevelProgress(
             level = level,
             xpInLevel = xpInLevel,
@@ -39,14 +39,14 @@ object LevelCalculator {
 
     private fun buildThresholds(): List<LevelThreshold> {
         val anchors = listOf(
-            LevelThreshold(level = 1, xpRequired = 0),
-            LevelThreshold(level = 2, xpRequired = 300),
-            LevelThreshold(level = 3, xpRequired = 700),
-            LevelThreshold(level = 5, xpRequired = 2000),
-            LevelThreshold(level = 10, xpRequired = 7000),
-            LevelThreshold(level = 20, xpRequired = 25000),
+            LevelThreshold(level = 1, xpRequired = 0L),
+            LevelThreshold(level = 2, xpRequired = 300L),
+            LevelThreshold(level = 3, xpRequired = 700L),
+            LevelThreshold(level = 5, xpRequired = 2000L),
+            LevelThreshold(level = 10, xpRequired = 7000L),
+            LevelThreshold(level = 20, xpRequired = 25000L),
         )
-        val thresholdMap = mutableMapOf<Int, Int>()
+        val thresholdMap = mutableMapOf<Int, Long>()
         for (index in 0 until anchors.size - 1) {
             val start = anchors[index]
             val end = anchors[index + 1]
@@ -55,7 +55,7 @@ object LevelCalculator {
             val step = if (levelSpan == 0) 0.0 else xpSpan.toDouble() / levelSpan.toDouble()
             for (level in start.level..end.level) {
                 val offset = level - start.level
-                val xpValue = (start.xpRequired + step * offset).roundToInt()
+                val xpValue = (start.xpRequired + step * offset).toLong()
                 thresholdMap[level] = xpValue
             }
         }
@@ -67,7 +67,7 @@ object LevelCalculator {
 
 data class LevelThreshold(
     val level: Int,
-    val xpRequired: Int,
+    val xpRequired: Long,
 )
 
 data class LevelUpdate(
@@ -77,8 +77,8 @@ data class LevelUpdate(
 
 data class LevelProgress(
     val level: Int,
-    val xpInLevel: Int,
-    val levelSpan: Int,
+    val xpInLevel: Long,
+    val levelSpan: Long,
     val xpTotal: Long,
-    val nextLevelXp: Int,
+    val nextLevelXp: Long,
 )

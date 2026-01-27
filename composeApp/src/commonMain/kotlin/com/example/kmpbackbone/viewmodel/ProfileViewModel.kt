@@ -22,8 +22,8 @@ import kotlinx.coroutines.launch
 
 data class ProfileStatsUi(
     val level: Int,
-    val xpInLevel: Int,
-    val levelSpan: Int,
+    val xpInLevel: Long,
+    val levelSpan: Long,
     val xpTotal: Long,
     val totalNights: Int,
     val totalWins: Int,

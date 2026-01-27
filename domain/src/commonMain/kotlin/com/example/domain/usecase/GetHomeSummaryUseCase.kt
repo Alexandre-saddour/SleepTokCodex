@@ -6,6 +6,8 @@ import com.example.domain.repository.SleepPlanRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import com.example.domain.result.DomainException
+import com.example.domain.result.getOrThrow
 
 class GetHomeSummaryUseCase(
     private val userRepository: UserRepository,
@@ -13,22 +15,15 @@ class GetHomeSummaryUseCase(
     private val nightRepository: NightRepository,
 ) {
     suspend fun execute(): AppResult<HomeSummary> {
-        val userResult = userRepository.getActiveUser()
-        if (userResult is AppResult.Error) {
-            return userResult
+        return try {
+            val user = userRepository.getActiveUser().getOrThrow()
+            val plan = sleepPlanRepository.getActivePlan(user.id).getOrThrow()
+                ?: return AppResult.Error(DomainError.NotFound)
+            val activeNight = nightRepository.getActiveNight(user.id).getOrThrow()
+
+            AppResult.Success(HomeSummary(user = user, plan = plan, activeNight = activeNight))
+        } catch (e: DomainException) {
+            AppResult.Error(e.error)
         }
-        val user = (userResult as AppResult.Success).value
-        val planResult = sleepPlanRepository.getActivePlan(user.id)
-        if (planResult is AppResult.Error) {
-            return planResult
-        }
-        val plan = (planResult as AppResult.Success).value
-            ?: return AppResult.Error(DomainError.NotFound)
-        val activeNightResult = nightRepository.getActiveNight(user.id)
-        if (activeNightResult is AppResult.Error) {
-            return activeNightResult
-        }
-        val activeNight = (activeNightResult as AppResult.Success).value
-        return AppResult.Success(HomeSummary(user = user, plan = plan, activeNight = activeNight))
     }
 }
