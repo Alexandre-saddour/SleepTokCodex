@@ -237,4 +237,31 @@
     <string name="daily_chest_error_validation">Invalid request.</string>
     <string name="daily_chest_error_storage">Could not save reward.</string>
     <string name="daily_chest_error_generic">Something went wrong.</string>
+
+    <string name="badge_first_quest_name">First Quest</string>
+    <string name="badge_night_starter_name">Night Starter</string>
+    <string name="badge_on_time_name">On Time</string>
+    <string name="badge_early_bird_name">Early Bird</string>
+    <string name="badge_streak_3_name">Streak 3</string>
+    <string name="badge_moonrunner_name">Moonrunner</string>
+    <string name="badge_perfect_night_name">Perfect Night</string>
+    <string name="badge_consistency_name">Consistency</string>
+    <string name="badge_streak_7_name">Streak 7</string>
+    <string name="badge_comeback_name">Comeback</string>
+    <string name="badge_level_5_name">Level 5</string>
+    <string name="badge_30_club_name">30 Club</string>
+
+    <string name="theme_default_neon_name">Default Neon</string>
+    <string name="theme_lavender_dream_name">Lavender Dream</string>
+    <string name="theme_matcha_night_name">Matcha Night</string>
+    <string name="theme_sunrise_pop_name">Sunrise Pop</string>
+    <string name="theme_cyber_moon_name">Cyber Moon</string>
+    <string name="theme_cloudy_minimal_name">Cloudy Minimal</string>
+
+    <string name="sound_rain_lofi_name">Rain Lo-fi</string>
+    <string name="sound_ocean_hush_name">Ocean Hush</string>
+    <string name="sound_space_drone_name">Space Drone</string>
+    <string name="sound_soft_chimes_name">Soft Chimes</string>
+    <string name="sound_hype_alarm_cute_name">Hype Alarm Cute</string>
+    <string name="sound_retro_arcade_ping_name">Retro Arcade Ping</string>
 </resources>

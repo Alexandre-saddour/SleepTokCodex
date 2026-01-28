@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M11.2
-Next step to run: M12.1
+Last completed step: M12.2
+Next step to run: M13.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -339,13 +339,13 @@ M11) Rewards (daily chest, milestones, cosmetics)
 
 M12) Resources and text
 -----------------------
-- [ ] M12.1 Add all user-visible strings to resources
+- [x] M12.1 Add all user-visible strings to resources
   - All screen titles, buttons, descriptions, helper texts
   - Coach messages and recap templates via JSON resource
   - No hardcoded strings in code
   - Done when: strings lint check passes
 
-- [ ] M12.2 Add icons and art placeholders
+- [x] M12.2 Add icons and art placeholders
   - Badges, themes, sound icons
   - Minimal assets for MVP
   - Done when: UI renders without missing resources
