@@ -8,7 +8,7 @@ import com.example.domain.model.UserTalent
 import com.example.domain.repository.TalentRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class TalentRepositoryImpl(
     private val talentDao: TalentDao,

@@ -16,7 +16,7 @@ import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
 import com.example.domain.scoring.LevelCalculator
 import kotlin.math.max
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class ApplyNightResultUseCase(
     private val userRepository: UserRepository,

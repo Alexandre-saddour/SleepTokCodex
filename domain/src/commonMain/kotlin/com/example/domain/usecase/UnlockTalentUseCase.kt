@@ -11,7 +11,7 @@ import com.example.domain.result.DomainError
 import com.example.domain.result.DomainException
 import com.example.domain.result.getOrThrow
 import kotlin.math.max
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus

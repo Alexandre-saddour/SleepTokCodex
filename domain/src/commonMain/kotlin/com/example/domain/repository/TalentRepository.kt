@@ -3,7 +3,7 @@ package com.example.domain.repository
 import com.example.domain.model.Talent
 import com.example.domain.model.UserTalent
 import com.example.domain.result.AppResult
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 interface TalentRepository {
     suspend fun getAllTalents(): AppResult<List<Talent>>

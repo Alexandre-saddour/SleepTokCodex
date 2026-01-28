@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.domain.model.CoachStyle
 import com.example.domain.model.PremiumStatus
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Entity(tableName = "users")
 data class UserEntity(

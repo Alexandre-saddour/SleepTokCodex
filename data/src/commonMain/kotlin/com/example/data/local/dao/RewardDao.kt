@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.data.local.entity.RewardEntity
 import com.example.data.local.entity.UserRewardEntity
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Dao
 interface RewardDao {

@@ -8,7 +8,7 @@ import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
 import com.example.domain.result.DomainException
 import com.example.domain.result.getOrThrow
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class ClaimDailyChestUseCase(
     private val userRepository: UserRepository,

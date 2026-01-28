@@ -8,7 +8,7 @@ import androidx.room.Update
 import com.example.data.local.entity.UserEntity
 import com.example.domain.model.CoachStyle
 import com.example.domain.model.PremiumStatus
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Dao
 interface UserDao {

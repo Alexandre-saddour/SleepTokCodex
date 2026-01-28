@@ -7,7 +7,7 @@ import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
 import com.example.domain.result.DomainException
 import com.example.domain.result.getOrThrow
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class StopNightUseCase(
     private val userRepository: UserRepository,

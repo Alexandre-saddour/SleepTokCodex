@@ -9,7 +9,7 @@ import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class UserRepositoryImpl(
     private val userDao: UserDao,

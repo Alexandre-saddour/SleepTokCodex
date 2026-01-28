@@ -11,7 +11,7 @@ import com.example.domain.model.ShieldSource
 import com.example.domain.model.TalentBranch
 import com.example.domain.model.TalentTier
 import com.example.domain.model.XpEventType
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
