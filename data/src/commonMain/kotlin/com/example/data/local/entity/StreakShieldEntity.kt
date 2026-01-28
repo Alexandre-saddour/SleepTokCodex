@@ -3,7 +3,7 @@ package com.example.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.domain.model.ShieldSource
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Entity(tableName = "streak_shields")
 data class StreakShieldEntity(

@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.data.local.entity.NightEntity
 import com.example.domain.model.NightStatus
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Dao
 interface NightDao {

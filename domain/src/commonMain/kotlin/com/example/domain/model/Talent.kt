@@ -1,6 +1,6 @@
 package com.example.domain.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class Talent(
     val id: String,

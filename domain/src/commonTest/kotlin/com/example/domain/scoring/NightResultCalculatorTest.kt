@@ -10,7 +10,7 @@ import com.example.domain.model.TalentEffect
 import com.example.domain.model.TalentTier
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 

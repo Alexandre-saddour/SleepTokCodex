@@ -3,7 +3,7 @@ package com.example.domain.repository
 import com.example.domain.model.Reward
 import com.example.domain.model.UserReward
 import com.example.domain.result.AppResult
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 interface RewardRepository {
     suspend fun getRewards(): AppResult<List<Reward>>

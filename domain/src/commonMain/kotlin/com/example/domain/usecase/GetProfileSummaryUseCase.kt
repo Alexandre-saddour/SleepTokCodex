@@ -8,9 +8,9 @@ import com.example.domain.repository.UserRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainException
 import com.example.domain.result.getOrThrow
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import com.example.domain.util.toLocalDateTime
 
 class GetProfileSummaryUseCase(
     private val userRepository: UserRepository,

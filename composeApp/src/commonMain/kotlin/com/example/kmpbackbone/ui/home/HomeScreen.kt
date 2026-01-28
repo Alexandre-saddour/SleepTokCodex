@@ -78,7 +78,7 @@ import kmpbackbone.composeapp.generated.resources.duration_minutes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput

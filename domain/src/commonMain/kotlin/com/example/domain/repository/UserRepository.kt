@@ -3,7 +3,7 @@ package com.example.domain.repository
 import com.example.domain.model.CoachStyle
 import com.example.domain.model.PremiumStatus
 import com.example.domain.model.User
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import com.example.domain.result.AppResult
 
 interface UserRepository {

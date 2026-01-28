@@ -8,7 +8,7 @@ import com.example.domain.model.UserReward
 import com.example.domain.repository.RewardRepository
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class RewardRepositoryImpl(
     private val rewardDao: RewardDao,
