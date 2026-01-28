@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M9.3
-Next step to run: M10.1
+Last completed step: M11.2
+Next step to run: M12.1
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -305,19 +305,19 @@ M9) Talents (tree)
 
 M10) Profile + Settings
 -----------------------
-- [ ] M10.1 Profile ViewModel and state
+- [x] M10.1 Profile ViewModel and state
   - Level, XP, total nights, best streak
   - Badges grid
   - Done when: profile uses data only
 
-- [ ] M10.2 Profile UI
+- [x] M10.2 Profile UI
   - Avatar preset
   - XP bar
   - Badges grid
   - Quick stats
   - Done when: layout matches spec
 
-- [ ] M10.3 Settings UI
+- [x] M10.3 Settings UI
   - Edit plan
   - Coach style
   - Notifications (placeholder)
@@ -326,13 +326,13 @@ M10) Profile + Settings
 
 M11) Rewards (daily chest, milestones, cosmetics)
 -------------------------------------------------
-- [ ] M11.1 Reward claim flow
+- [x] M11.1 Reward claim flow
   - Daily chest (morning)
   - Animation + reward reveal
   - Equip or OK
   - Done when: reward is stored as user_reward
 
-- [ ] M11.2 Milestone rewards (7/14/30)
+- [x] M11.2 Milestone rewards (7/14/30)
   - Trigger on streak milestones
   - Teaser UI in MVP (actual drop optional)
   - Done when: milestones display in Night Result
