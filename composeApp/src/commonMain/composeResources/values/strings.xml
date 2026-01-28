@@ -226,4 +226,15 @@
     <string name="day_fri_short">Fri</string>
     <string name="day_sat_short">Sat</string>
     <string name="day_sun_short">Sun</string>
+
+    <string name="daily_chest_available_title">Daily chest available</string>
+    <string name="daily_chest_available_cta">Claim</string>
+    <string name="daily_chest_claimed_title">Daily chest claimed</string>
+    <string name="daily_chest_reward_label">You received</string>
+    <string name="daily_chest_cta_ok">OK</string>
+    <string name="daily_chest_loading">Opening chest...</string>
+    <string name="daily_chest_error_not_found">Reward not found.</string>
+    <string name="daily_chest_error_validation">Invalid request.</string>
+    <string name="daily_chest_error_storage">Could not save reward.</string>
+    <string name="daily_chest_error_generic">Something went wrong.</string>
 </resources>

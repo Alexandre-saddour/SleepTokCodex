@@ -51,6 +51,8 @@ import com.example.domain.scoring.LevelCalculator
 import com.example.kmpbackbone.viewmodel.HomeMode
 import com.example.kmpbackbone.viewmodel.HomeUiState
 import kmpbackbone.composeapp.generated.resources.Res
+import kmpbackbone.composeapp.generated.resources.daily_chest_available_cta
+import kmpbackbone.composeapp.generated.resources.daily_chest_available_title
 import kmpbackbone.composeapp.generated.resources.home_claim_cta
 import kmpbackbone.composeapp.generated.resources.home_empty_state
 import kmpbackbone.composeapp.generated.resources.home_error_conflict
@@ -90,6 +92,7 @@ fun HomeScreen(
     onStop: () -> Unit,
     onClaimResult: () -> Unit,
     onEditPlan: () -> Unit,
+    onOpenDailyChest: () -> Unit,
 ) {
     val background = Brush.verticalGradient(
         colors = listOf(
@@ -123,8 +126,10 @@ fun HomeScreen(
                             user = uiState.user,
                             plan = uiState.plan,
                             nextRewardWins = uiState.nextRewardWins,
+                            canClaimDailyChest = uiState.canClaimDailyChest,
                             onPlay = onPlay,
                             onEditPlan = onEditPlan,
+                            onOpenDailyChest = onOpenDailyChest,
                         )
                         HomeMode.NightMode -> NightModeContent(
                             night = uiState.activeNight,
@@ -192,8 +197,10 @@ private fun BeforeNightContent(
     user: User,
     plan: SleepPlan,
     nextRewardWins: Int,
+    canClaimDailyChest: Boolean,
     onPlay: () -> Unit,
     onEditPlan: () -> Unit,
+    onOpenDailyChest: () -> Unit,
 ) {
     val startText = formatTime(plan.planStartLocalTime.hour, plan.planStartLocalTime.minute)
     val endText = formatTime(plan.planEndLocalTime.hour, plan.planEndLocalTime.minute)
@@ -284,21 +291,53 @@ private fun BeforeNightContent(
         Text(text = stringResource(Res.string.home_secondary_edit_plan))
     }
 
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+    when {
+        canClaimDailyChest -> Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+            shape = RoundedCornerShape(20.dp),
+            onClick = onOpenDailyChest,
         ) {
-            Text(
-                text = stringResource(Res.string.home_teaser_next_reward, nextRewardWins),
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.daily_chest_available_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+                Surface(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.daily_chest_available_cta),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+        }
+        else -> Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            shape = RoundedCornerShape(20.dp),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.home_teaser_next_reward, nextRewardWins),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ import com.example.domain.repository.XpEventRepository
 import com.example.domain.scoring.DefaultNightResultCalculator
 import com.example.domain.scoring.NightResultCalculator
 import com.example.domain.usecase.ApplyNightResultUseCase
+import com.example.domain.usecase.CanClaimDailyChestUseCase
 import com.example.domain.usecase.ClaimDailyChestUseCase
 import com.example.domain.usecase.CompleteOnboardingUseCase
 import com.example.domain.usecase.ComputeNightResultUseCase
@@ -51,6 +52,7 @@ import com.example.domain.usecase.UnlockTalentUseCase
 import com.example.domain.usecase.UpdateCoachStyleUseCase
 import com.example.domain.usecase.UpdatePlanUseCase
 import com.example.kmpbackbone.resources.ResourceSeedDataProvider
+import com.example.kmpbackbone.viewmodel.DailyChestViewModel
 import com.example.kmpbackbone.viewmodel.HomeViewModel
 import com.example.kmpbackbone.viewmodel.NightResultViewModel
 import com.example.kmpbackbone.viewmodel.OnboardingViewModel
@@ -142,6 +144,7 @@ val domainModule = module {
     factoryOf(::UnlockTalentUseCase)
     factoryOf(::UpdateCoachStyleUseCase)
     factoryOf(::GetProfileSummaryUseCase)
+    factoryOf(::CanClaimDailyChestUseCase)
     factoryOf(::ClaimDailyChestUseCase)
     factoryOf(::GetBadgesAndCosmeticsUseCase)
 }
@@ -155,4 +158,5 @@ val presentationModule = module {
     viewModelOf(::TalentsViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::DailyChestViewModel)
 }

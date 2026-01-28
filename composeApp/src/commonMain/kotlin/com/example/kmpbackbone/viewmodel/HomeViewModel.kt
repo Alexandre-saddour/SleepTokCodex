@@ -7,9 +7,11 @@ import com.example.domain.model.SleepPlan
 import com.example.domain.model.User
 import com.example.domain.result.AppResult
 import com.example.domain.result.DomainError
+import com.example.domain.usecase.CanClaimDailyChestUseCase
 import com.example.domain.usecase.GetHomeSummaryUseCase
 import com.example.domain.usecase.StartNightUseCase
 import com.example.domain.usecase.StopNightUseCase
+import kotlinx.datetime.TimeZone
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,18 +35,21 @@ data class HomeUiState(
     val activeNight: Night? = null,
     val mode: HomeMode = HomeMode.BeforeNight,
     val nextRewardWins: Int = 3,
+    val canClaimDailyChest: Boolean = false,
     val error: DomainError? = null,
 ) : UiState
 
 sealed class HomeUiEvent : UiEvent {
     data class OpenNightResult(val nightId: Long) : HomeUiEvent()
     data object EditPlan : HomeUiEvent()
+    data object OpenDailyChest : HomeUiEvent()
 }
 
 class HomeViewModel(
     private val getHomeSummaryUseCase: GetHomeSummaryUseCase,
     private val startNightUseCase: StartNightUseCase,
     private val stopNightUseCase: StopNightUseCase,
+    private val canClaimDailyChestUseCase: CanClaimDailyChestUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -88,6 +93,12 @@ class HomeViewModel(
         }
     }
 
+    fun onOpenDailyChest() {
+        viewModelScope.launch {
+            _events.emit(HomeUiEvent.OpenDailyChest)
+        }
+    }
+
     fun refresh() {
         loadHome()
     }
@@ -98,12 +109,17 @@ class HomeViewModel(
             when (val summaryResult = getHomeSummaryUseCase.execute()) {
                 is AppResult.Success -> {
                     val summary = summaryResult.value
+                    val canClaim = when (val result = canClaimDailyChestUseCase.execute(TimeZone.currentSystemDefault())) {
+                        is AppResult.Success -> result.value
+                        is AppResult.Error -> false
+                    }
                     _state.update {
                         it.copy(
                             user = summary.user,
                             plan = summary.plan,
                             activeNight = summary.activeNight,
                             mode = modeForNight(summary.activeNight),
+                            canClaimDailyChest = canClaim,
                         )
                     }
                 }
