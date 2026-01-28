@@ -22,7 +22,6 @@ sealed interface DailyChestUiEvent {
 }
 
 data class DailyChestUiState(
-    val isLoading: Boolean = false,
     val isClaiming: Boolean = false,
     val claimedReward: Reward? = null,
     val error: DomainError? = null,
