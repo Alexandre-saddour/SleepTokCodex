@@ -8,8 +8,13 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.kmpbackbone.navigation.AppTab
+import com.example.kmpbackbone.ui.dailychest.DailyChestRoot
 import com.example.kmpbackbone.ui.home.HomeRoot
 import com.example.kmpbackbone.ui.progress.ProgressRoot
 import com.example.kmpbackbone.ui.profile.ProfileRoot
@@ -29,6 +34,9 @@ fun MainRoot(
     onEditPlan: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
 ) {
+    var showDailyChest by remember { mutableStateOf(false) }
+    var onDailyChestDismiss by remember { mutableStateOf<(() -> Unit)?>(null) }
+
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -52,6 +60,10 @@ fun MainRoot(
                 AppTab.HOME -> HomeRoot(
                     onOpenResult = onOpenNightResult,
                     onEditPlan = onEditPlan,
+                    onOpenDailyChest = { refreshCallback ->
+                        showDailyChest = true
+                        onDailyChestDismiss = refreshCallback
+                    },
                 )
                 AppTab.PROGRESS -> ProgressRoot()
                 AppTab.TALENTS -> TalentsRoot()
@@ -60,6 +72,16 @@ fun MainRoot(
                 )
             }
         }
+    }
+
+    when {
+        showDailyChest -> DailyChestRoot(
+            onDismiss = {
+                showDailyChest = false
+                onDailyChestDismiss?.invoke()
+                onDailyChestDismiss = null
+            },
+        )
     }
 }
 

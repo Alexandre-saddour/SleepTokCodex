@@ -12,6 +12,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun HomeRoot(
     onOpenResult: (Long) -> Unit = {},
     onEditPlan: () -> Unit = {},
+    onOpenDailyChest: (() -> Unit) -> Unit = {},
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
@@ -21,6 +22,7 @@ fun HomeRoot(
             when (event) {
                 is HomeUiEvent.OpenNightResult -> onOpenResult(event.nightId)
                 HomeUiEvent.EditPlan -> onEditPlan()
+                HomeUiEvent.OpenDailyChest -> onOpenDailyChest { viewModel.refresh() }
             }
         }
     }
@@ -31,5 +33,6 @@ fun HomeRoot(
         onStop = viewModel::onStop,
         onClaimResult = viewModel::onClaimResult,
         onEditPlan = viewModel::onEditPlan,
+        onOpenDailyChest = viewModel::onOpenDailyChest,
     )
 }
