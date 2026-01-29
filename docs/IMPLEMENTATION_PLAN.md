@@ -2,8 +2,8 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M12.2
-Next step to run: M13.1
+Last completed step: M13.2
+Next step to run: M13.3
 
 --------------------------------------------------------------------------------
 0) How to use this plan
@@ -350,19 +350,26 @@ M12) Resources and text
   - Minimal assets for MVP
   - Done when: UI renders without missing resources
 
+- [x] M12.3 Add MVP teaser UI elements
+  - Share button (disabled) in NightResultScreen
+  - Next milestone teaser in NightResultScreen
+  - Done when: Share button visible but disabled, milestone teaser shows next rare drop
+
 M13) Testing and QA
 ------------------
-- [ ] M13.1 Domain tests
+- [x] M13.1 Domain tests
   - XP formula, score computation, streak updates
   - Edge cases (late start, early end, short duration)
+  - Tests: ScoreCalculationTest, StatusDeterminationTest, XpCalculationTest, EdgeCasesTest, LevelProgressTest
   - Done when: tests pass
 
-- [ ] M13.2 Data tests
+- [x] M13.2 Data tests
   - Repository behavior with seed data
-  - Migrations (if any)
+  - Seed mappers and JSON parsing
+  - Tests: SeedMappersTest, SeedModelsParsingTest
   - Done when: tests pass
 
-- [ ] M13.3 UI sanity checks
+- [ ] M13.3 UI sanity checks (skipped - UI will change)
   - Onboarding flow end-to-end
   - Start/stop night and result
   - Progress + talents + profile

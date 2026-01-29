@@ -105,6 +105,10 @@
     <string name="night_result_error_validation">Night timing is incomplete.</string>
     <string name="night_result_error_storage">We could not save the result.</string>
     <string name="night_result_error_generic">Something went wrong.</string>
+    <string name="night_result_share">Share</string>
+    <string name="night_result_share_coming_soon">Coming soon</string>
+    <string name="night_result_next_milestone">Next rare drop at streak %1$d</string>
+    <string name="night_result_milestone_reached">Milestone reached!</string>
 
     <string name="tab_home">Home</string>
     <string name="tab_progress">Progress</string>
