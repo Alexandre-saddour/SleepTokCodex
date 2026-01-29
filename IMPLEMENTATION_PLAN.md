@@ -2,7 +2,7 @@
 
 This file is the single source of truth for step-by-step delivery. Each step has an ID. Do not skip steps. Mark a step done only when it is fully complete and verified.
 
-Last completed step: M12.2
+Last completed step: M12.3
 Next step to run: M13.1
 
 --------------------------------------------------------------------------------
@@ -349,6 +349,11 @@ M12) Resources and text
   - Badges, themes, sound icons
   - Minimal assets for MVP
   - Done when: UI renders without missing resources
+
+- [x] M12.3 Add MVP teaser UI elements
+  - Share button (disabled) in NightResultScreen
+  - Next milestone teaser in NightResultScreen
+  - Done when: Share button visible but disabled, milestone teaser shows next rare drop
 
 M13) Testing and QA
 ------------------

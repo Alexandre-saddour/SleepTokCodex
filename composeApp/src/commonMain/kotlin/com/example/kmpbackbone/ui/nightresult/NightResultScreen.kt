@@ -9,14 +9,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -74,6 +78,9 @@ import kmpbackbone.composeapp.generated.resources.night_result_xp_streak_multipl
 import kmpbackbone.composeapp.generated.resources.night_result_xp_talent_bonus
 import kmpbackbone.composeapp.generated.resources.night_result_xp_talent_multiplier
 import kmpbackbone.composeapp.generated.resources.night_result_xp_total
+import kmpbackbone.composeapp.generated.resources.night_result_share
+import kmpbackbone.composeapp.generated.resources.night_result_share_coming_soon
+import kmpbackbone.composeapp.generated.resources.night_result_next_milestone
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -204,6 +211,10 @@ private fun ResultContent(
         )
         BreakdownCard(result = result)
 
+        uiState.nextMilestone?.let { milestone ->
+            MilestoneCard(milestone = milestone)
+        }
+
         if (shieldPrompt) {
             ShieldCard(charges = uiState.shieldCharges)
         }
@@ -232,6 +243,8 @@ private fun ResultContent(
             ) {
                 Text(text = stringResource(Res.string.night_result_continue_cta))
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            ShareButtonTeaser()
         }
     }
 }
@@ -315,6 +328,55 @@ private fun ShieldCard(charges: Int) {
             text = stringResource(Res.string.night_result_shield_available, charges),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(12.dp),
+        )
+    }
+}
+
+@Composable
+private fun MilestoneCard(milestone: Int) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(Res.string.night_result_next_milestone, milestone),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShareButtonTeaser() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        OutlinedButton(
+            onClick = { /* No-op - disabled for MVP */ },
+            enabled = false,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(18.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+            ),
+        ) {
+            Text(text = stringResource(Res.string.night_result_share))
+        }
+        Text(
+            text = stringResource(Res.string.night_result_share_coming_soon),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            modifier = Modifier.padding(top = 4.dp),
         )
     }
 }

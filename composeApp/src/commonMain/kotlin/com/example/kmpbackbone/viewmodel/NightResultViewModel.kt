@@ -38,6 +38,7 @@ data class NightResultUiState(
     val shieldUsed: Boolean = false,
     val isApplied: Boolean = false,
     val error: DomainError? = null,
+    val nextMilestone: Int? = null,
 ) : UiState
 
 sealed class NightResultUiEvent : UiEvent {
@@ -128,6 +129,7 @@ class NightResultViewModel(
             }
             val shieldAvailable = (shield?.chargesAvailable ?: 0) > 0
             val isApplied = night.status != NightStatus.IN_PROGRESS && night.xpEarned != null
+            val nextMilestone = calculateNextMilestone(result.streakAfter)
             _state.update {
                 it.copy(
                     isLoading = false,
@@ -137,6 +139,7 @@ class NightResultViewModel(
                     shieldAvailable = shieldAvailable,
                     shieldCharges = shield?.chargesAvailable ?: 0,
                     isApplied = isApplied,
+                    nextMilestone = nextMilestone,
                 )
             }
         }
@@ -221,5 +224,10 @@ class NightResultViewModel(
 
     private fun unlockedTalents(all: List<Talent>, unlockedIds: Set<String>): List<Talent> {
         return all.filter { unlockedIds.contains(it.id) }
+    }
+
+    private fun calculateNextMilestone(currentStreak: Int): Int? {
+        val milestones = listOf(7, 14, 30)
+        return milestones.firstOrNull { it > currentStreak }
     }
 }
