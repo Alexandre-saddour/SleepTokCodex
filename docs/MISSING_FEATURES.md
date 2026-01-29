@@ -2,8 +2,8 @@
 
 **Genere le:** 2026-01-29
 **Version actuelle du code:** V1-MVP (en cours de finalisation)
-**Derniere etape completee:** M12.2 (Resources and text)
-**Prochaine etape:** M13.1 (Testing and QA)
+**Derniere etape completee:** M13.2 (Domain and Data tests)
+**Prochaine etape:** M13.3 (UI sanity checks)
 
 ---
 
@@ -24,20 +24,21 @@ Il reste les tests (M13) avant de pouvoir considerer le MVP comme termine.
 ## 1. Fonctionnalites MVP Non Completees
 
 ### 1.1 Share Card (Teaser)
-**Statut:** NON IMPLEMENTE
+**Statut:** PARTIELLEMENT IMPLEMENTE (TEASER UNIQUEMENT)
 **Spec:** "Share Card (desactive mais UI prete)"
 
-La spec demande que le bouton "Share" soit present mais desactive dans l'ecran Night Result. Actuellement, ce bouton n'existe pas du tout dans l'UI.
+Le bouton "Share" est present et desactive dans l'ecran Night Result, avec un message "Coming soon".
 
-**A faire:**
-- Ajouter un bouton "Share" desactive dans NightResultScreen
-- Preparer le layout de la "share card" (meme si non fonctionnel)
+**Reste a faire (V1.1+):**
+- Generation d'image de la carte de resultat
+- Integration partage natif (Android/iOS)
 
 ### 1.2 Tests (M13)
-**Statut:** NON COMPLETE
+**Statut:** EN COURS
+**Steps completes:**
+- M13.1: Tests domaine (formules XP, score, streak) ✓
+- M13.2: Tests data (seed mappers, seed models parsing) ✓
 **Steps manquants:**
-- M13.1: Tests domaine (formules XP, score, streak)
-- M13.2: Tests data (repositories, seed data, migrations)
 - M13.3: Tests UI (QA manuel - onboarding, night flow, etc.)
 
 ---
@@ -326,7 +327,6 @@ La spec demande que le bouton "Share" soit present mais desactive dans l'ecran N
 
 ### Haute Priorite (MVP a finaliser)
 1. Tests domaine/data/UI (M13)
-2. Share Card button (desactive) dans Night Result
 
 ### Priorite Moyenne (V1.1)
 1. Notifications intelligentes
