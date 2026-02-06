@@ -1,14 +1,11 @@
 package com.example.kmpbackbone.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -20,40 +17,45 @@ import kmpbackbone.composeapp.generated.resources.space_grotesk_semibold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 
-private val LightColors = lightColorScheme(
-    primary = Color(0xFF1A3A5F),
-    onPrimary = Color(0xFFFFFFFF),
-    secondary = Color(0xFF2B6E6B),
-    onSecondary = Color(0xFFFFFFFF),
-    tertiary = Color(0xFFE09F3E),
-    onTertiary = Color(0xFF1B1B1B),
-    background = Color(0xFFF8F5F0),
-    onBackground = Color(0xFF141414),
-    surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF1C1C1C),
-    surfaceVariant = Color(0xFFE9E2D9),
-    onSurfaceVariant = Color(0xFF4A453E),
-    outline = Color(0xFF9A9288),
-    error = Color(0xFFB3261E),
-    onError = Color(0xFFFFFFFF),
-)
+/**
+ * Neon Dark color scheme using the NeonColors palette.
+ */
+private val NeonDarkColors = darkColorScheme(
+    primary = NeonColors.NeonElectricBlue,
+    onPrimary = NeonColors.NeonDarkBackground,
+    primaryContainer = NeonColors.NeonDarkSurfaceVariant,
+    onPrimaryContainer = NeonColors.NeonElectricBlue,
 
-private val DarkColors = darkColorScheme(
-    primary = Color(0xFF8FB3FF),
-    onPrimary = Color(0xFF0C1B2A),
-    secondary = Color(0xFF7CD6D1),
-    onSecondary = Color(0xFF10312F),
-    tertiary = Color(0xFFF2B96D),
-    onTertiary = Color(0xFF2A1A00),
-    background = Color(0xFF0B0F14),
-    onBackground = Color(0xFFE5E3DC),
-    surface = Color(0xFF11161C),
-    onSurface = Color(0xFFE5E3DC),
-    surfaceVariant = Color(0xFF1D2530),
-    onSurfaceVariant = Color(0xFFBAC2CF),
-    outline = Color(0xFF6B7685),
-    error = Color(0xFFF2B8B5),
-    onError = Color(0xFF601410),
+    secondary = NeonColors.NeonCyan,
+    onSecondary = NeonColors.NeonDarkBackground,
+    secondaryContainer = NeonColors.NeonDarkSurfaceVariant,
+    onSecondaryContainer = NeonColors.NeonCyan,
+
+    tertiary = NeonColors.NeonYellow,
+    onTertiary = NeonColors.NeonDarkBackground,
+    tertiaryContainer = NeonColors.NeonDarkSurfaceVariant,
+    onTertiaryContainer = NeonColors.NeonYellow,
+
+    background = NeonColors.NeonDarkBackground,
+    onBackground = NeonColors.TextPrimary,
+
+    surface = NeonColors.NeonDarkSurface,
+    onSurface = NeonColors.TextPrimary,
+
+    surfaceVariant = NeonColors.NeonDarkSurfaceVariant,
+    onSurfaceVariant = NeonColors.TextSecondary,
+
+    outline = NeonColors.Outline,
+    outlineVariant = NeonColors.TextMuted,
+
+    error = NeonColors.Error,
+    onError = NeonColors.OnError,
+    errorContainer = NeonColors.StatusFail.copy(alpha = 0.2f),
+    onErrorContainer = NeonColors.StatusFail,
+
+    inverseSurface = NeonColors.TextPrimary,
+    inverseOnSurface = NeonColors.NeonDarkBackground,
+    inversePrimary = NeonColors.NeonElectricBlue,
 )
 
 @OptIn(ExperimentalResourceApi::class)
@@ -71,9 +73,28 @@ private fun appTypography(): Typography {
     return Typography(
         displayLarge = TextStyle(
             fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 52.sp,
+            lineHeight = 56.sp,
+            letterSpacing = (-0.5).sp,
+        ),
+        displayMedium = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 40.sp,
+            lineHeight = 44.sp,
+        ),
+        displaySmall = TextStyle(
+            fontFamily = fontFamily,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 44.sp,
-            lineHeight = 48.sp,
+            fontSize = 34.sp,
+            lineHeight = 38.sp,
+        ),
+        headlineLarge = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 32.sp,
+            lineHeight = 36.sp,
         ),
         headlineMedium = TextStyle(
             fontFamily = fontFamily,
@@ -81,40 +102,84 @@ private fun appTypography(): Typography {
             fontSize = 28.sp,
             lineHeight = 32.sp,
         ),
+        headlineSmall = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 24.sp,
+            lineHeight = 28.sp,
+        ),
         titleLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 22.sp,
             lineHeight = 28.sp,
         ),
+        titleMedium = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+        ),
+        titleSmall = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+        ),
         bodyLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
-            lineHeight = 22.sp,
+            lineHeight = 24.sp,
+        ),
+        bodyMedium = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+        ),
+        bodySmall = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            lineHeight = 16.sp,
         ),
         labelLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            lineHeight = 18.sp,
+            lineHeight = 20.sp,
+        ),
+        labelMedium = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+            lineHeight = 16.sp,
+        ),
+        labelSmall = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 10.sp,
+            lineHeight = 14.sp,
         ),
     )
 }
 
 private val AppShapes = Shapes(
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(16.dp),
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(18.dp),
     large = RoundedCornerShape(24.dp),
+    extraLarge = RoundedCornerShape(32.dp),
 )
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = if (darkTheme) DarkColors else LightColors,
+        colorScheme = NeonDarkColors,
         typography = appTypography(),
         shapes = AppShapes,
         content = content,

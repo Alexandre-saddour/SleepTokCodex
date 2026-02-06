@@ -1,6 +1,7 @@
 package com.example.kmpbackbone.ui.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,20 +13,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.example.domain.result.DomainError
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonCard
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.components.NeonProgressBar
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.ProfileBadgeUi
 import com.example.kmpbackbone.viewmodel.ProfileStatsUi
 import com.example.kmpbackbone.viewmodel.ProfileUiState
@@ -58,11 +62,8 @@ fun ProfileScreen(
     onRefresh: () -> Unit,
     onOpenSettings: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(20.dp),
+    NeonGradientBackground(
+        modifier = Modifier.padding(20.dp),
     ) {
         when {
             uiState.isLoading -> LoadingState()
@@ -79,10 +80,13 @@ private fun LoadingState() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = NeonColors.NeonElectricBlue,
+        )
         Text(
             text = stringResource(Res.string.profile_loading),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextSecondary,
             modifier = Modifier.padding(top = 12.dp),
         )
     }
@@ -105,12 +109,17 @@ private fun ErrorState(error: DomainError, onRefresh: () -> Unit) {
         Text(
             text = stringResource(message),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.StatusFail,
         )
-        Button(
+        NeonButton(
             onClick = onRefresh,
             modifier = Modifier.padding(top = 12.dp),
+            glowColor = NeonColors.NeonElectricBlue,
         ) {
-            Text(text = stringResource(Res.string.profile_retry))
+            Text(
+                text = stringResource(Res.string.profile_retry),
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
 }
@@ -133,9 +142,19 @@ private fun ProfileContent(
             Text(
                 text = stringResource(Res.string.profile_title),
                 style = MaterialTheme.typography.headlineMedium,
+                color = NeonColors.TextPrimary,
             )
-            Button(onClick = onOpenSettings) {
-                Text(text = stringResource(Res.string.profile_open_settings))
+            Surface(
+                onClick = onOpenSettings,
+                shape = MaterialTheme.shapes.medium,
+                color = NeonColors.NeonElectricBlue.copy(alpha = 0.1f),
+                contentColor = NeonColors.NeonElectricBlue,
+            ) {
+                Text(
+                    text = stringResource(Res.string.profile_open_settings),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                )
             }
         }
         ProfileHeader(stats)
@@ -147,42 +166,73 @@ private fun ProfileContent(
 @Composable
 private fun ProfileHeader(stats: ProfileStatsUi) {
     val progress = (stats.xpInLevel.toFloat() / stats.levelSpan.coerceAtLeast(1L)).coerceIn(0f, 1f)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.size(72.dp),
+        // Neon level ring
+        Box(
+            modifier = Modifier.size(80.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(contentAlignment = Alignment.Center) {
+            // Glow
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .blur(12.dp)
+                    .background(
+                        NeonColors.NeonPurple.copy(alpha = 0.4f),
+                        CircleShape,
+                    ),
+            )
+            // Ring background
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .background(NeonColors.NeonDarkSurface, CircleShape)
+                    .border(
+                        width = 3.dp,
+                        brush = Brush.sweepGradient(
+                            0f to NeonColors.NeonPurple.copy(alpha = 0.2f),
+                            progress to NeonColors.NeonPurple,
+                            progress to NeonColors.NeonDarkSurfaceVariant,
+                            1f to NeonColors.NeonDarkSurfaceVariant,
+                        ),
+                        shape = CircleShape,
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
                 Text(
                     text = stringResource(Res.string.profile_level_short, stats.level),
                     style = MaterialTheme.typography.titleMedium,
+                    color = NeonColors.NeonPurple,
                 )
             }
         }
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(Res.string.profile_level_label, stats.level),
                 style = MaterialTheme.typography.titleLarge,
+                color = NeonColors.TextPrimary,
             )
-            LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+            NeonProgressBar(
+                progress = progress,
+                progressColor = NeonColors.NeonPurple,
+                modifier = Modifier.padding(top = 8.dp),
             )
             Text(
                 text = stringResource(Res.string.profile_xp_progress, stats.xpInLevel, stats.levelSpan),
                 style = MaterialTheme.typography.bodySmall,
+                color = NeonColors.TextSecondary,
                 modifier = Modifier.padding(top = 6.dp),
             )
             Text(
                 text = stringResource(Res.string.profile_xp_total, stats.xpTotal),
                 style = MaterialTheme.typography.bodySmall,
+                color = NeonColors.NeonYellow,
             )
         }
     }
@@ -194,30 +244,33 @@ private fun QuickStats(stats: ProfileStatsUi) {
         Text(
             text = stringResource(Res.string.profile_stats_title),
             style = MaterialTheme.typography.titleLarge,
+            color = NeonColors.TextPrimary,
         )
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.fillMaxWidth(),
+        NeonCard(
+            glowColor = NeonColors.NeonElectricBlue,
+            glowIntensity = 0.2f,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 StatItem(
                     label = stringResource(Res.string.profile_stat_nights),
                     value = stats.totalNights.toString(),
+                    color = NeonColors.NeonElectricBlue,
                 )
                 StatItem(
                     label = stringResource(Res.string.profile_stat_wins),
                     value = stats.totalWins.toString(),
+                    color = NeonColors.NeonGreen,
                 )
                 StatItem(
                     label = stringResource(Res.string.profile_stat_best_streak),
                     value = stats.bestStreak.toString(),
+                    color = NeonColors.NeonYellow,
                 )
             }
         }
@@ -225,10 +278,18 @@ private fun QuickStats(stats: ProfileStatsUi) {
 }
 
 @Composable
-private fun StatItem(label: String, value: String) {
+private fun StatItem(label: String, value: String, color: androidx.compose.ui.graphics.Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, style = MaterialTheme.typography.titleMedium)
-        Text(text = label, style = MaterialTheme.typography.bodySmall)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineMedium,
+            color = color,
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = NeonColors.TextSecondary,
+        )
     }
 }
 
@@ -239,10 +300,12 @@ private fun BadgeGrid(badges: List<ProfileBadgeUi>) {
         Text(
             text = stringResource(Res.string.profile_badges_title),
             style = MaterialTheme.typography.titleLarge,
+            color = NeonColors.TextPrimary,
         )
         Text(
             text = stringResource(Res.string.profile_badges_unlocked, unlockedCount, badges.size),
             style = MaterialTheme.typography.bodySmall,
+            color = NeonColors.TextSecondary,
         )
         badges.chunked(badgeColumns).forEach { row ->
             Row(
@@ -250,7 +313,7 @@ private fun BadgeGrid(badges: List<ProfileBadgeUi>) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 row.forEach { badge ->
-                    BadgeCell(
+                    NeonBadgeCell(
                         badge = badge,
                         modifier = Modifier.weight(1f),
                     )
@@ -266,16 +329,31 @@ private fun BadgeGrid(badges: List<ProfileBadgeUi>) {
 }
 
 @Composable
-private fun BadgeCell(badge: ProfileBadgeUi, modifier: Modifier) {
-    val background = if (badge.isUnlocked) {
-        MaterialTheme.colorScheme.secondaryContainer
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant
+private fun NeonBadgeCell(badge: ProfileBadgeUi, modifier: Modifier) {
+    val backgroundColor = when {
+        badge.isUnlocked -> NeonColors.NeonPink.copy(alpha = 0.15f)
+        else -> NeonColors.NeonDarkSurfaceVariant
     }
+    val borderColor = when {
+        badge.isUnlocked -> NeonColors.NeonPink.copy(alpha = 0.5f)
+        else -> NeonColors.Outline
+    }
+
     Box(
         modifier = modifier
             .height(72.dp)
             .clip(MaterialTheme.shapes.medium)
-            .background(background),
-    )
+            .background(backgroundColor)
+            .border(1.dp, borderColor, MaterialTheme.shapes.medium),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (badge.isUnlocked) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .blur(8.dp)
+                    .background(NeonColors.NeonPink.copy(alpha = 0.5f), CircleShape),
+            )
+        }
+    }
 }

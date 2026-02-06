@@ -1,5 +1,6 @@
 package com.example.kmpbackbone.ui.settings
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +13,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.CoachStyle
 import com.example.domain.result.DomainError
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonCard
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.components.NeonProgressBar
+import com.example.kmpbackbone.ui.components.NeonSectionHeader
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.SettingsUiState
 import kmpbackbone.composeapp.generated.resources.Res
 import kmpbackbone.composeapp.generated.resources.coach_chill_sample
@@ -83,10 +90,8 @@ fun SettingsScreen(
     onCoachStyleSelected: (CoachStyle) -> Unit,
     onSave: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
+    NeonGradientBackground(
+        modifier = Modifier.padding(20.dp),
     ) {
         when {
             uiState.isLoading -> LoadingState()
@@ -111,10 +116,13 @@ private fun LoadingState() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = NeonColors.NeonElectricBlue,
+        )
         Text(
             text = stringResource(Res.string.settings_loading),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextSecondary,
             modifier = Modifier.padding(top = 12.dp),
         )
     }
@@ -137,13 +145,18 @@ private fun ErrorState(error: DomainError, onRefresh: () -> Unit) {
         Text(
             text = stringResource(message),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.StatusFail,
             textAlign = TextAlign.Center,
         )
-        Button(
+        NeonButton(
             onClick = onRefresh,
             modifier = Modifier.padding(top = 12.dp),
+            glowColor = NeonColors.NeonElectricBlue,
         ) {
-            Text(text = stringResource(Res.string.settings_retry))
+            Text(
+                text = stringResource(Res.string.settings_retry),
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
 }
@@ -159,8 +172,11 @@ private fun SettingsContent(
     onSave: () -> Unit,
 ) {
     val plan = uiState.plan ?: return
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Row(
@@ -168,32 +184,51 @@ private fun SettingsContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedButton(onClick = onBack) {
-                Text(text = stringResource(Res.string.settings_back))
+            Surface(
+                onClick = onBack,
+                shape = RoundedCornerShape(12.dp),
+                color = NeonColors.NeonElectricBlue.copy(alpha = 0.1f),
+                contentColor = NeonColors.NeonElectricBlue,
+            ) {
+                Text(
+                    text = stringResource(Res.string.settings_back),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                )
             }
             Text(
                 text = stringResource(Res.string.settings_title),
                 style = MaterialTheme.typography.headlineMedium,
+                color = NeonColors.TextPrimary,
             )
             Spacer(modifier = Modifier.width(72.dp))
         }
-        SettingsSectionTitle(text = stringResource(Res.string.settings_plan_title))
-        TimeAdjuster(
+
+        NeonSectionHeader(
+            text = stringResource(Res.string.settings_plan_title),
+            accentColor = NeonColors.NeonElectricBlue,
+        )
+
+        NeonTimeAdjuster(
             label = stringResource(Res.string.settings_plan_bedtime_label),
             time = plan.planStartLocalTime,
             onMinus = { onBedtimeChanged(adjustTime(plan.planStartLocalTime, -15)) },
             onPlus = { onBedtimeChanged(adjustTime(plan.planStartLocalTime, 15)) },
         )
-        TimeAdjuster(
+
+        NeonTimeAdjuster(
             label = stringResource(Res.string.settings_plan_wake_label),
             time = plan.planEndLocalTime,
             onMinus = { onWakeTimeChanged(adjustTime(plan.planEndLocalTime, -15)) },
             onPlus = { onWakeTimeChanged(adjustTime(plan.planEndLocalTime, 15)) },
         )
+
         Text(
             text = stringResource(Res.string.settings_plan_active_days_label),
             style = MaterialTheme.typography.titleLarge,
+            color = NeonColors.TextPrimary,
         )
+
         val activeDays = plan.activeDays
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(DayOfWeek.entries) { day ->
@@ -201,9 +236,16 @@ private fun SettingsContent(
                     selected = activeDays.contains(day),
                     onClick = { onActiveDayToggled(day) },
                     label = { Text(text = stringResource(dayLabelRes(day))) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = NeonColors.NeonElectricBlue.copy(alpha = 0.2f),
+                        selectedLabelColor = NeonColors.NeonElectricBlue,
+                        containerColor = NeonColors.NeonDarkSurfaceVariant,
+                        labelColor = NeonColors.TextSecondary,
+                    ),
                 )
             }
         }
+
         Text(
             text = stringResource(
                 Res.string.settings_plan_tolerance_label,
@@ -211,22 +253,38 @@ private fun SettingsContent(
                 plan.toleranceEndMinutes,
             ),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            color = NeonColors.TextMuted,
         )
-        SettingsSectionTitle(text = stringResource(Res.string.settings_coach_title))
+
+        NeonSectionHeader(
+            text = stringResource(Res.string.settings_coach_title),
+            accentColor = NeonColors.NeonPink,
+        )
+
+        val coachColors = mapOf(
+            CoachStyle.CHILL to NeonColors.NeonCyan,
+            CoachStyle.HYPE to NeonColors.NeonPink,
+            CoachStyle.STRICT to NeonColors.NeonOrange,
+        )
+
         CoachStyle.entries.forEach { style ->
-            SelectableCard(
+            NeonSelectableCard(
                 title = stringResource(coachTitleRes(style)),
                 subtitle = stringResource(coachSampleRes(style)),
                 selected = style == uiState.coachStyle,
                 onClick = { onCoachStyleSelected(style) },
+                accentColor = coachColors[style] ?: NeonColors.NeonElectricBlue,
             )
         }
-        SettingsSectionTitle(text = stringResource(Res.string.settings_notifications_title))
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.fillMaxWidth(),
+
+        NeonSectionHeader(
+            text = stringResource(Res.string.settings_notifications_title),
+            accentColor = NeonColors.NeonPurple,
+        )
+
+        NeonCard(
+            glowColor = NeonColors.NeonPurple,
+            glowIntensity = 0.15f,
         ) {
             Row(
                 modifier = Modifier
@@ -239,25 +297,36 @@ private fun SettingsContent(
                     Text(
                         text = stringResource(Res.string.settings_notifications_title),
                         style = MaterialTheme.typography.titleMedium,
+                        color = NeonColors.TextPrimary,
                     )
                     Text(
                         text = stringResource(Res.string.settings_notifications_placeholder),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        color = NeonColors.TextMuted,
                     )
                 }
                 Switch(
                     checked = uiState.notificationsEnabled,
                     onCheckedChange = null,
                     enabled = false,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = NeonColors.NeonPurple,
+                        checkedTrackColor = NeonColors.NeonPurple.copy(alpha = 0.3f),
+                        uncheckedThumbColor = NeonColors.TextMuted,
+                        uncheckedTrackColor = NeonColors.NeonDarkSurfaceVariant,
+                    ),
                 )
             }
         }
-        SettingsSectionTitle(text = stringResource(Res.string.settings_premium_title))
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.fillMaxWidth(),
+
+        NeonSectionHeader(
+            text = stringResource(Res.string.settings_premium_title),
+            accentColor = NeonColors.NeonYellow,
+        )
+
+        NeonCard(
+            glowColor = NeonColors.NeonYellow,
+            glowIntensity = 0.2f,
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -266,23 +335,26 @@ private fun SettingsContent(
                 Text(
                     text = stringResource(Res.string.settings_premium_title),
                     style = MaterialTheme.typography.titleMedium,
+                    color = NeonColors.NeonYellow,
                 )
                 Text(
                     text = stringResource(Res.string.settings_premium_body),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    color = NeonColors.TextSecondary,
                 )
-                LinearProgressIndicator(
-                    progress = { 0.35f },
-                    modifier = Modifier.fillMaxWidth(),
+                NeonProgressBar(
+                    progress = 0.35f,
+                    progressColor = NeonColors.NeonYellow,
                 )
             }
         }
+
         Spacer(modifier = Modifier.weight(1f))
-        Button(
+
+        NeonButton(
             onClick = onSave,
             enabled = !uiState.isSaving,
-            modifier = Modifier.fillMaxWidth(),
+            glowColor = NeonColors.NeonGreen,
         ) {
             if (uiState.isSaving) {
                 CircularProgressIndicator(
@@ -290,36 +362,44 @@ private fun SettingsContent(
                         .padding(end = 8.dp)
                         .size(18.dp),
                     strokeWidth = 2.dp,
+                    color = NeonColors.NeonDarkBackground,
                 )
             }
-            Text(text = stringResource(Res.string.settings_save))
+            Text(
+                text = stringResource(Res.string.settings_save),
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
 }
 
 @Composable
-private fun SettingsSectionTitle(text: String) {
-    Text(text = text, style = MaterialTheme.typography.titleLarge)
-}
-
-@Composable
-private fun SelectableCard(
+private fun NeonSelectableCard(
     title: String,
     subtitle: String,
     selected: Boolean,
     onClick: () -> Unit,
+    accentColor: androidx.compose.ui.graphics.Color,
 ) {
-    val borderColor = if (selected) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+    val borderColor = when {
+        selected -> accentColor
+        else -> NeonColors.Outline
     }
+    val backgroundColor = when {
+        selected -> accentColor.copy(alpha = 0.1f)
+        else -> NeonColors.NeonDarkSurface
+    }
+
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = if (selected) 2.dp else 1.dp,
+                color = borderColor,
+                shape = MaterialTheme.shapes.large,
+            ),
         shape = MaterialTheme.shapes.large,
-        tonalElevation = if (selected) 4.dp else 1.dp,
-        color = MaterialTheme.colorScheme.surface,
-        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
+        color = backgroundColor,
         onClick = onClick,
     ) {
         Column(
@@ -329,19 +409,19 @@ private fun SelectableCard(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (selected) accentColor else NeonColors.TextPrimary,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                color = NeonColors.TextSecondary,
             )
         }
     }
 }
 
 @Composable
-private fun TimeAdjuster(
+private fun NeonTimeAdjuster(
     label: String,
     time: LocalTime,
     onMinus: () -> Unit,
@@ -351,23 +431,46 @@ private fun TimeAdjuster(
         Text(
             text = label,
             style = MaterialTheme.typography.titleLarge,
+            color = NeonColors.TextPrimary,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedButton(onClick = onMinus) {
-                Text(text = stringResource(Res.string.symbol_minus))
-            }
+            NeonTimeButton(
+                text = stringResource(Res.string.symbol_minus),
+                onClick = onMinus,
+            )
             Text(
                 text = formatTime(time),
                 style = MaterialTheme.typography.headlineMedium,
+                color = NeonColors.NeonElectricBlue,
             )
-            OutlinedButton(onClick = onPlus) {
-                Text(text = stringResource(Res.string.symbol_plus))
-            }
+            NeonTimeButton(
+                text = stringResource(Res.string.symbol_plus),
+                onClick = onPlus,
+            )
         }
+    }
+}
+
+@Composable
+private fun NeonTimeButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        color = NeonColors.NeonElectricBlue.copy(alpha = 0.1f),
+        contentColor = NeonColors.NeonElectricBlue,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+        )
     }
 }
 
@@ -411,4 +514,3 @@ private fun coachSampleRes(style: CoachStyle): StringResource {
         CoachStyle.STRICT -> Res.string.coach_strict_sample
     }
 }
-

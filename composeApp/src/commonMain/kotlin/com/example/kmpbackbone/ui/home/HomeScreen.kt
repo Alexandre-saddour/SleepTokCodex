@@ -1,5 +1,13 @@
 package com.example.kmpbackbone.ui.home
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,23 +20,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,11 +31,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Night
@@ -48,11 +44,21 @@ import com.example.domain.model.SleepPlan
 import com.example.domain.model.User
 import com.example.domain.result.DomainError
 import com.example.domain.scoring.LevelCalculator
+import com.example.kmpbackbone.ui.components.NeonBadge
+import com.example.kmpbackbone.ui.components.NeonBreathingOrb
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonCard
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.components.NeonProgressBar
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.HomeMode
 import com.example.kmpbackbone.viewmodel.HomeUiState
 import kmpbackbone.composeapp.generated.resources.Res
 import kmpbackbone.composeapp.generated.resources.daily_chest_available_cta
 import kmpbackbone.composeapp.generated.resources.daily_chest_available_title
+import kmpbackbone.composeapp.generated.resources.duration_hours
+import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
+import kmpbackbone.composeapp.generated.resources.duration_minutes
 import kmpbackbone.composeapp.generated.resources.home_claim_cta
 import kmpbackbone.composeapp.generated.resources.home_empty_state
 import kmpbackbone.composeapp.generated.resources.home_error_conflict
@@ -74,11 +80,8 @@ import kmpbackbone.composeapp.generated.resources.home_timer_format
 import kmpbackbone.composeapp.generated.resources.home_title_tonight_quest
 import kmpbackbone.composeapp.generated.resources.home_xp_progress_label
 import kmpbackbone.composeapp.generated.resources.time_format_hh_mm
-import kmpbackbone.composeapp.generated.resources.duration_hours
-import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
-import kmpbackbone.composeapp.generated.resources.duration_minutes
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 import org.jetbrains.compose.resources.stringResource
@@ -94,52 +97,37 @@ fun HomeScreen(
     onEditPlan: () -> Unit,
     onOpenDailyChest: () -> Unit,
 ) {
-    val background = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.background,
-            MaterialTheme.colorScheme.surfaceVariant,
-        ),
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(background)
-            .padding(horizontal = 20.dp, vertical = 24.dp)
+    NeonGradientBackground(
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
     ) {
         when {
-            uiState.isLoading -> {
-                LoadingState()
-            }
-            uiState.user == null || uiState.plan == null -> {
-                EmptyState()
-            }
-            else -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                ) {
-                    if (uiState.error != null) {
-                        ErrorBanner(uiState.error)
-                    }
-                    when (uiState.mode) {
-                        HomeMode.BeforeNight -> BeforeNightContent(
-                            user = uiState.user,
-                            plan = uiState.plan,
-                            nextRewardWins = uiState.nextRewardWins,
-                            canClaimDailyChest = uiState.canClaimDailyChest,
-                            onPlay = onPlay,
-                            onEditPlan = onEditPlan,
-                            onOpenDailyChest = onOpenDailyChest,
-                        )
-                        HomeMode.NightMode -> NightModeContent(
-                            night = uiState.activeNight,
-                            onStop = onStop,
-                            isActionInProgress = uiState.isActionInProgress,
-                        )
-                        HomeMode.PostStopClaim -> PostStopContent(
-                            onClaimResult = onClaimResult,
-                        )
-                    }
+            uiState.isLoading -> LoadingState()
+            uiState.user == null || uiState.plan == null -> EmptyState()
+            else -> Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                if (uiState.error != null) {
+                    ErrorBanner(uiState.error)
+                }
+                when (uiState.mode) {
+                    HomeMode.BeforeNight -> BeforeNightContent(
+                        user = uiState.user,
+                        plan = uiState.plan,
+                        nextRewardWins = uiState.nextRewardWins,
+                        canClaimDailyChest = uiState.canClaimDailyChest,
+                        onPlay = onPlay,
+                        onEditPlan = onEditPlan,
+                        onOpenDailyChest = onOpenDailyChest,
+                    )
+                    HomeMode.NightMode -> NightModeContent(
+                        night = uiState.activeNight,
+                        onStop = onStop,
+                        isActionInProgress = uiState.isActionInProgress,
+                    )
+                    HomeMode.PostStopClaim -> PostStopContent(
+                        onClaimResult = onClaimResult,
+                    )
                 }
             }
         }
@@ -152,7 +140,9 @@ private fun LoadingState() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = NeonColors.NeonElectricBlue,
+        )
     }
 }
 
@@ -166,6 +156,7 @@ private fun EmptyState() {
             text = stringResource(Res.string.home_empty_state),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
+            color = NeonColors.TextSecondary,
         )
     }
 }
@@ -180,8 +171,8 @@ private fun ErrorBanner(error: DomainError) {
         DomainError.Unknown -> Res.string.home_error_generic
     }
     Surface(
-        color = MaterialTheme.colorScheme.error,
-        contentColor = MaterialTheme.colorScheme.onError,
+        color = NeonColors.StatusFail.copy(alpha = 0.2f),
+        contentColor = NeonColors.StatusFail,
         shape = RoundedCornerShape(16.dp),
     ) {
         Text(
@@ -215,11 +206,11 @@ private fun BeforeNightContent(
     Text(
         text = stringResource(Res.string.home_title_tonight_quest),
         style = MaterialTheme.typography.headlineMedium,
+        color = NeonColors.TextPrimary,
     )
 
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(24.dp),
+    NeonCard(
+        glowColor = NeonColors.NeonElectricBlue,
     ) {
         Column(
             modifier = Modifier
@@ -230,35 +221,26 @@ private fun BeforeNightContent(
             Text(
                 text = planText,
                 style = MaterialTheme.typography.titleLarge,
+                color = NeonColors.TextPrimary,
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    shape = CircleShape,
-                ) {
-                    Text(
-                        text = stringResource(Res.string.home_streak_label, user.streakCurrent),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
+                NeonBadge(
+                    text = stringResource(Res.string.home_streak_label, user.streakCurrent),
+                    color = NeonColors.NeonGreen,
+                )
                 Text(
                     text = stringResource(Res.string.home_level_label, levelProgress.level),
                     style = MaterialTheme.typography.labelLarge,
+                    color = NeonColors.NeonYellow,
                 )
             }
-            LinearProgressIndicator(
-                progress = { xpRatio.coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = MaterialTheme.colorScheme.tertiary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            NeonProgressBar(
+                progress = xpRatio.coerceIn(0f, 1f),
+                progressColor = NeonColors.NeonYellow,
             )
             Text(
                 text = stringResource(
@@ -267,64 +249,60 @@ private fun BeforeNightContent(
                     levelProgress.nextLevelXp,
                 ),
                 style = MaterialTheme.typography.bodyLarge,
+                color = NeonColors.TextSecondary,
             )
         }
     }
 
-    Button(
+    NeonButton(
         onClick = onPlay,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        shape = RoundedCornerShape(18.dp),
+        glowColor = NeonColors.NeonElectricBlue,
     ) {
-        Text(text = stringResource(Res.string.home_primary_play))
+        Text(
+            text = stringResource(Res.string.home_primary_play),
+            style = MaterialTheme.typography.labelLarge,
+        )
     }
 
-    OutlinedButton(
+    NeonSecondaryButton(
         onClick = onEditPlan,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp),
-        shape = RoundedCornerShape(18.dp),
     ) {
-        Text(text = stringResource(Res.string.home_secondary_edit_plan))
+        Text(
+            text = stringResource(Res.string.home_secondary_edit_plan),
+            style = MaterialTheme.typography.labelLarge,
+        )
     }
 
     when {
-        canClaimDailyChest -> Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-            shape = RoundedCornerShape(20.dp),
-            onClick = onOpenDailyChest,
+        canClaimDailyChest -> NeonCard(
+            glowColor = NeonColors.NeonYellow,
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+            Surface(
+                onClick = onOpenDailyChest,
+                color = Color.Transparent,
             ) {
-                Text(
-                    text = stringResource(Res.string.daily_chest_available_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                )
-                Surface(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    contentColor = MaterialTheme.colorScheme.onTertiary,
-                    shape = RoundedCornerShape(12.dp),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
+                        text = stringResource(Res.string.daily_chest_available_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = NeonColors.NeonYellow,
+                    )
+                    NeonBadge(
                         text = stringResource(Res.string.daily_chest_available_cta),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.labelLarge,
+                        color = NeonColors.NeonYellow,
                     )
                 }
             }
         }
-        else -> Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            shape = RoundedCornerShape(20.dp),
+        else -> NeonCard(
+            glowColor = NeonColors.NeonPurple,
+            glowIntensity = 0.2f,
         ) {
             Row(
                 modifier = Modifier
@@ -336,8 +314,48 @@ private fun BeforeNightContent(
                 Text(
                     text = stringResource(Res.string.home_teaser_next_reward, nextRewardWins),
                     style = MaterialTheme.typography.bodyLarge,
+                    color = NeonColors.TextSecondary,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun NeonSecondaryButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        shape = RoundedCornerShape(18.dp),
+        color = Color.Transparent,
+        contentColor = NeonColors.NeonElectricBlue,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            NeonColors.NeonElectricBlue.copy(alpha = 0.1f),
+                            NeonColors.NeonElectricBlue.copy(alpha = 0.05f),
+                        ),
+                    ),
+                    shape = RoundedCornerShape(18.dp),
+                )
+                .padding(1.dp)
+                .background(
+                    color = NeonColors.NeonDarkSurface,
+                    shape = RoundedCornerShape(17.dp),
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            content()
         }
     }
 }
@@ -364,10 +382,12 @@ private fun NightModeContent(
             Text(
                 text = stringResource(Res.string.home_night_mode_title),
                 style = MaterialTheme.typography.headlineMedium,
+                color = NeonColors.TextPrimary,
             )
             Text(
                 text = stringResource(Res.string.home_night_mode_hint),
                 style = MaterialTheme.typography.bodyLarge,
+                color = NeonColors.TextSecondary,
             )
         }
 
@@ -376,17 +396,21 @@ private fun NightModeContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            BreathingOrb()
+            NeonBreathingOrb(
+                primaryColor = NeonColors.NeonCyan,
+                secondaryColor = NeonColors.NeonGreen,
+            )
             Text(
                 text = elapsedText,
                 style = MaterialTheme.typography.displayLarge,
+                color = NeonColors.NeonCyan,
             )
         }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            HoldToStopButton(
+            NeonHoldToStopButton(
                 enabled = !isActionInProgress,
                 onHoldComplete = onStop,
             )
@@ -399,7 +423,8 @@ private fun NightModeContent(
                     CircularProgressIndicator(
                         modifier = Modifier
                             .height(24.dp)
-                            .width(24.dp)
+                            .width(24.dp),
+                        color = NeonColors.NeonElectricBlue,
                     )
                 }
             }
@@ -416,9 +441,8 @@ private fun PostStopContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(24.dp),
+        NeonCard(
+            glowColor = NeonColors.NeonGreen,
         ) {
             Column(
                 modifier = Modifier
@@ -431,13 +455,16 @@ private fun PostStopContent(
                     text = stringResource(Res.string.home_result_ready),
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,
+                    color = NeonColors.NeonGreen,
                 )
-                Button(
+                NeonButton(
                     onClick = onClaimResult,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
+                    glowColor = NeonColors.NeonGreen,
                 ) {
-                    Text(text = stringResource(Res.string.home_claim_cta))
+                    Text(
+                        text = stringResource(Res.string.home_claim_cta),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
             }
         }
@@ -445,57 +472,7 @@ private fun PostStopContent(
 }
 
 @Composable
-private fun BreathingOrb() {
-    val transition = rememberInfiniteTransition(label = "breathing-orb")
-    val scale by transition.animateFloat(
-        initialValue = 0.9f,
-        targetValue = 1.1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2600, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "breathing-scale",
-    )
-    val alpha by transition.animateFloat(
-        initialValue = 0.55f,
-        targetValue = 0.9f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2600, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "breathing-alpha",
-    )
-    val glow = Brush.radialGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.tertiary.copy(alpha = alpha),
-            Color.Transparent,
-        ),
-    )
-    Box(
-        modifier = Modifier
-            .width(180.dp)
-            .height(180.dp)
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale,
-            )
-            .background(glow, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .width(84.dp)
-                .height(84.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    shape = CircleShape,
-                ),
-        )
-    }
-}
-
-@Composable
-private fun HoldToStopButton(
+private fun NeonHoldToStopButton(
     enabled: Boolean,
     onHoldComplete: () -> Unit,
 ) {
@@ -510,53 +487,74 @@ private fun HoldToStopButton(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    shape = RoundedCornerShape(32.dp),
-                )
-                .pointerInput(enabled) {
-                    detectTapGestures(
-                        onPress = {
-                            if (!enabled) {
-                                return@detectTapGestures
-                            }
-                            progress.snapTo(0f)
-                            coroutineScope {
-                                val job = launch {
-                                    progress.animateTo(
-                                        targetValue = 1f,
-                                        animationSpec = tween(
-                                            durationMillis = holdDurationMs,
-                                            easing = LinearEasing,
-                                        ),
-                                    )
-                                    currentOnHoldComplete()
-                                }
-                                val released = tryAwaitRelease()
-                                if (released && !job.isCompleted) {
-                                    job.cancel()
-                                }
-                            }
-                            progress.snapTo(0f)
-                        },
-                    )
-                },
-            contentAlignment = Alignment.Center,
+                .height(64.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.home_hold_to_stop),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onTertiary,
-            )
+            // Glow layer
+            if (enabled) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .padding(4.dp)
+                        .blur(16.dp)
+                        .background(
+                            NeonColors.NeonOrange.copy(alpha = 0.4f),
+                            RoundedCornerShape(32.dp),
+                        ),
+                )
+            }
+            // Button
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                NeonColors.NeonOrange,
+                                NeonColors.NeonYellow,
+                            ),
+                        ),
+                        shape = RoundedCornerShape(32.dp),
+                    )
+                    .pointerInput(enabled) {
+                        detectTapGestures(
+                            onPress = {
+                                if (!enabled) {
+                                    return@detectTapGestures
+                                }
+                                progress.snapTo(0f)
+                                coroutineScope {
+                                    val job = launch {
+                                        progress.animateTo(
+                                            targetValue = 1f,
+                                            animationSpec = tween(
+                                                durationMillis = holdDurationMs,
+                                                easing = LinearEasing,
+                                            ),
+                                        )
+                                        currentOnHoldComplete()
+                                    }
+                                    val released = tryAwaitRelease()
+                                    if (released && !job.isCompleted) {
+                                        job.cancel()
+                                    }
+                                }
+                                progress.snapTo(0f)
+                            },
+                        )
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(Res.string.home_hold_to_stop),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = NeonColors.NeonDarkBackground,
+                )
+            }
         }
-        LinearProgressIndicator(
-            progress = { progress.value },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp),
-            color = MaterialTheme.colorScheme.tertiary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        NeonProgressBar(
+            progress = progress.value,
+            progressColor = NeonColors.NeonOrange,
+            height = 4.dp,
         )
     }
 }

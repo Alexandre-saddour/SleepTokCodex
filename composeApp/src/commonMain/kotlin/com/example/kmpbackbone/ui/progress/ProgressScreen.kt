@@ -1,6 +1,7 @@
 package com.example.kmpbackbone.ui.progress
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -27,9 +26,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.NightStatus
 import com.example.domain.model.Night
+import com.example.domain.model.NightStatus
 import com.example.domain.model.WeeklyRecap
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonCard
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.CalendarDayUi
 import com.example.kmpbackbone.viewmodel.ProgressUiState
 import kmpbackbone.composeapp.generated.resources.Res
@@ -40,19 +43,9 @@ import kmpbackbone.composeapp.generated.resources.day_sun_short
 import kmpbackbone.composeapp.generated.resources.day_thu_short
 import kmpbackbone.composeapp.generated.resources.day_tue_short
 import kmpbackbone.composeapp.generated.resources.day_wed_short
-import kmpbackbone.composeapp.generated.resources.progress_loading
-import kmpbackbone.composeapp.generated.resources.progress_month_label
-import kmpbackbone.composeapp.generated.resources.progress_next_month
-import kmpbackbone.composeapp.generated.resources.progress_previous_month
-import kmpbackbone.composeapp.generated.resources.progress_legend_fail
-import kmpbackbone.composeapp.generated.resources.progress_legend_partial
-import kmpbackbone.composeapp.generated.resources.progress_legend_success
-import kmpbackbone.composeapp.generated.resources.progress_weekly_avg_score
-import kmpbackbone.composeapp.generated.resources.progress_weekly_best_streak
-import kmpbackbone.composeapp.generated.resources.progress_weekly_sleep_gained
-import kmpbackbone.composeapp.generated.resources.progress_weekly_slept
-import kmpbackbone.composeapp.generated.resources.progress_weekly_title
-import kmpbackbone.composeapp.generated.resources.progress_title
+import kmpbackbone.composeapp.generated.resources.duration_hours
+import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
+import kmpbackbone.composeapp.generated.resources.duration_minutes
 import kmpbackbone.composeapp.generated.resources.progress_detail_close
 import kmpbackbone.composeapp.generated.resources.progress_detail_not_available
 import kmpbackbone.composeapp.generated.resources.progress_detail_plan_vs_actual
@@ -60,13 +53,23 @@ import kmpbackbone.composeapp.generated.resources.progress_detail_score
 import kmpbackbone.composeapp.generated.resources.progress_detail_status
 import kmpbackbone.composeapp.generated.resources.progress_detail_title
 import kmpbackbone.composeapp.generated.resources.progress_detail_xp
+import kmpbackbone.composeapp.generated.resources.progress_legend_fail
+import kmpbackbone.composeapp.generated.resources.progress_legend_partial
+import kmpbackbone.composeapp.generated.resources.progress_legend_success
+import kmpbackbone.composeapp.generated.resources.progress_loading
+import kmpbackbone.composeapp.generated.resources.progress_month_label
+import kmpbackbone.composeapp.generated.resources.progress_next_month
+import kmpbackbone.composeapp.generated.resources.progress_previous_month
 import kmpbackbone.composeapp.generated.resources.progress_status_fail
 import kmpbackbone.composeapp.generated.resources.progress_status_in_progress
 import kmpbackbone.composeapp.generated.resources.progress_status_partial
 import kmpbackbone.composeapp.generated.resources.progress_status_success
-import kmpbackbone.composeapp.generated.resources.duration_hours
-import kmpbackbone.composeapp.generated.resources.duration_hours_minutes
-import kmpbackbone.composeapp.generated.resources.duration_minutes
+import kmpbackbone.composeapp.generated.resources.progress_title
+import kmpbackbone.composeapp.generated.resources.progress_weekly_avg_score
+import kmpbackbone.composeapp.generated.resources.progress_weekly_best_streak
+import kmpbackbone.composeapp.generated.resources.progress_weekly_sleep_gained
+import kmpbackbone.composeapp.generated.resources.progress_weekly_slept
+import kmpbackbone.composeapp.generated.resources.progress_weekly_title
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.StringResource
@@ -85,12 +88,13 @@ private val weekdayLabels = listOf(
 private data class LegendEntry(
     val status: NightStatus,
     val labelRes: StringResource,
+    val color: Color,
 )
 
 private val legendEntries = listOf(
-    LegendEntry(NightStatus.SUCCESS, Res.string.progress_legend_success),
-    LegendEntry(NightStatus.PARTIAL, Res.string.progress_legend_partial),
-    LegendEntry(NightStatus.FAIL, Res.string.progress_legend_fail),
+    LegendEntry(NightStatus.SUCCESS, Res.string.progress_legend_success, NeonColors.NeonGreen),
+    LegendEntry(NightStatus.PARTIAL, Res.string.progress_legend_partial, NeonColors.StatusPartial),
+    LegendEntry(NightStatus.FAIL, Res.string.progress_legend_fail, NeonColors.StatusFail),
 )
 
 @Composable
@@ -102,40 +106,46 @@ fun ProgressScreen(
     onDismissDetail: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        NeonGradientBackground(
+            modifier = Modifier.padding(20.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.progress_title),
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center,
-            )
-            if (uiState.isLoading) {
-                CircularProgressIndicator()
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
                 Text(
-                    text = stringResource(Res.string.progress_loading),
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = stringResource(Res.string.progress_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                    color = NeonColors.TextPrimary,
                 )
-            } else if (uiState.monthStart != null) {
-                MonthSelector(
-                    monthStart = uiState.monthStart,
-                    onPreviousMonth = onPreviousMonth,
-                    onNextMonth = onNextMonth,
-                )
-                CalendarHeader()
-                CalendarGrid(
-                    monthStart = uiState.monthStart,
-                    days = uiState.days,
-                    showAdvanced = uiState.showAdvancedCalendar,
-                    onDaySelected = onDaySelected,
-                )
-                LegendRow()
-                if (uiState.showWeeklyRecap) {
-                    uiState.weeklyRecap?.let { WeeklyRecapCard(it) }
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        color = NeonColors.NeonElectricBlue,
+                    )
+                    Text(
+                        text = stringResource(Res.string.progress_loading),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = NeonColors.TextSecondary,
+                    )
+                } else if (uiState.monthStart != null) {
+                    MonthSelector(
+                        monthStart = uiState.monthStart,
+                        onPreviousMonth = onPreviousMonth,
+                        onNextMonth = onNextMonth,
+                    )
+                    CalendarHeader()
+                    CalendarGrid(
+                        monthStart = uiState.monthStart,
+                        days = uiState.days,
+                        showAdvanced = uiState.showAdvancedCalendar,
+                        onDaySelected = onDaySelected,
+                    )
+                    LegendRow()
+                    if (uiState.showWeeklyRecap) {
+                        uiState.weeklyRecap?.let { WeeklyRecapCard(it) }
+                    }
                 }
             }
         }
@@ -159,9 +169,10 @@ private fun MonthSelector(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Button(onClick = onPreviousMonth) {
-            Text(text = stringResource(Res.string.progress_previous_month))
-        }
+        NeonNavButton(
+            text = stringResource(Res.string.progress_previous_month),
+            onClick = onPreviousMonth,
+        )
         Text(
             text = stringResource(
                 Res.string.progress_month_label,
@@ -169,10 +180,31 @@ private fun MonthSelector(
                 monthStart.monthNumber,
             ),
             style = MaterialTheme.typography.titleLarge,
+            color = NeonColors.TextPrimary,
         )
-        Button(onClick = onNextMonth) {
-            Text(text = stringResource(Res.string.progress_next_month))
-        }
+        NeonNavButton(
+            text = stringResource(Res.string.progress_next_month),
+            onClick = onNextMonth,
+        )
+    }
+}
+
+@Composable
+private fun NeonNavButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        color = NeonColors.NeonElectricBlue.copy(alpha = 0.1f),
+        contentColor = NeonColors.NeonElectricBlue,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        )
     }
 }
 
@@ -186,6 +218,7 @@ private fun CalendarHeader() {
             Text(
                 text = stringResource(label),
                 style = MaterialTheme.typography.labelLarge,
+                color = NeonColors.TextSecondary,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
             )
@@ -213,7 +246,7 @@ private fun CalendarGrid(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 row.forEach { day ->
-                    CalendarCell(
+                    NeonCalendarCell(
                         day = day,
                         showAdvanced = showAdvanced,
                         onDaySelected = onDaySelected,
@@ -231,7 +264,7 @@ private fun CalendarGrid(
 }
 
 @Composable
-private fun CalendarCell(
+private fun NeonCalendarCell(
     day: CalendarDayUi?,
     showAdvanced: Boolean,
     onDaySelected: (LocalDate) -> Unit,
@@ -239,43 +272,55 @@ private fun CalendarCell(
 ) {
     if (day == null) {
         Box(
-            modifier = modifier
-                .height(54.dp),
+            modifier = modifier.height(54.dp),
         )
         return
     }
-    val (statusColor, contentColor) = statusColors(day.status)
+
+    val statusColor = statusColor(day.status)
+    val backgroundColor = statusColor?.copy(alpha = 0.15f) ?: NeonColors.NeonDarkSurfaceVariant
+    val borderColor = statusColor?.copy(alpha = 0.5f) ?: NeonColors.Outline
+    val textColor = statusColor ?: NeonColors.TextPrimary
+
     Surface(
-        color = statusColor,
-        contentColor = contentColor,
         modifier = modifier
             .height(54.dp)
-            .clip(MaterialTheme.shapes.small)
-            .clickable(enabled = day.nightId != null) { onDaySelected(day.date) },
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = MaterialTheme.shapes.small,
+            ),
+        shape = MaterialTheme.shapes.small,
+        color = backgroundColor,
+        onClick = { if (day.nightId != null) onDaySelected(day.date) },
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text(text = day.date.day.toString())
+            Text(
+                text = day.date.dayOfMonth.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = textColor,
+            )
             if (showAdvanced && day.score != null) {
                 Text(
                     text = day.score.toString(),
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = textColor.copy(alpha = 0.8f),
                 )
             }
         }
     }
 }
 
-@Composable
-private fun statusColors(status: NightStatus?): Pair<Color, Color> {
+private fun statusColor(status: NightStatus?): Color? {
     return when (status) {
-        NightStatus.SUCCESS -> MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.onSecondary
-        NightStatus.PARTIAL -> MaterialTheme.colorScheme.tertiary to MaterialTheme.colorScheme.onTertiary
-        NightStatus.FAIL -> MaterialTheme.colorScheme.error to MaterialTheme.colorScheme.onError
-        else -> MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
+        NightStatus.SUCCESS -> NeonColors.NeonGreen
+        NightStatus.PARTIAL -> NeonColors.StatusPartial
+        NightStatus.FAIL -> NeonColors.StatusFail
+        else -> null
     }
 }
 
@@ -283,12 +328,11 @@ private fun statusColors(status: NightStatus?): Pair<Color, Color> {
 private fun LegendRow() {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         legendEntries.forEach { entry ->
-            val (statusColor, _) = statusColors(entry.status)
             LegendItem(
-                color = statusColor,
+                color = entry.color,
                 label = stringResource(entry.labelRes),
             )
         }
@@ -304,18 +348,22 @@ private fun LegendItem(color: Color, label: String) {
         Box(
             modifier = Modifier
                 .size(12.dp)
-                .background(color, shape = MaterialTheme.shapes.small),
+                .background(color.copy(alpha = 0.3f), shape = MaterialTheme.shapes.small)
+                .border(1.dp, color.copy(alpha = 0.6f), MaterialTheme.shapes.small),
         )
-        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = NeonColors.TextSecondary,
+        )
     }
 }
 
 @Composable
 private fun WeeklyRecapCard(recap: WeeklyRecap) {
-    Surface(
-        color = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth(),
+    NeonCard(
+        glowColor = NeonColors.NeonPurple,
+        glowIntensity = 0.25f,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -324,6 +372,7 @@ private fun WeeklyRecapCard(recap: WeeklyRecap) {
             Text(
                 text = stringResource(Res.string.progress_weekly_title),
                 style = MaterialTheme.typography.titleLarge,
+                color = NeonColors.NeonPurple,
             )
             RecapStat(
                 text = stringResource(
@@ -356,7 +405,11 @@ private fun WeeklyRecapCard(recap: WeeklyRecap) {
 
 @Composable
 private fun RecapStat(text: String) {
-    Text(text = text, style = MaterialTheme.typography.bodyLarge)
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge,
+        color = NeonColors.TextSecondary,
+    )
 }
 
 @Composable
@@ -382,14 +435,12 @@ private fun NightDetailOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.85f))
+            .background(NeonColors.NeonDarkBackground.copy(alpha = 0.9f))
             .padding(20.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier.fillMaxWidth(),
+        NeonCard(
+            glowColor = statusColor(night.status) ?: NeonColors.NeonElectricBlue,
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -398,6 +449,7 @@ private fun NightDetailOverlay(
                 Text(
                     text = stringResource(Res.string.progress_detail_title),
                     style = MaterialTheme.typography.titleLarge,
+                    color = NeonColors.TextPrimary,
                 )
                 Text(
                     text = stringResource(
@@ -407,23 +459,20 @@ private fun NightDetailOverlay(
                             ?: stringResource(Res.string.progress_detail_not_available),
                     ),
                     style = MaterialTheme.typography.bodyLarge,
+                    color = NeonColors.TextSecondary,
                 )
                 night.score?.let { score ->
                     Text(
-                        text = stringResource(
-                            Res.string.progress_detail_score,
-                            score,
-                        ),
+                        text = stringResource(Res.string.progress_detail_score, score),
                         style = MaterialTheme.typography.bodyLarge,
+                        color = NeonColors.NeonYellow,
                     )
                 }
                 night.xpEarned?.let { xp ->
                     Text(
-                        text = stringResource(
-                            Res.string.progress_detail_xp,
-                            xp,
-                        ),
+                        text = stringResource(Res.string.progress_detail_xp, xp),
                         style = MaterialTheme.typography.bodyLarge,
+                        color = NeonColors.NeonGreen,
                     )
                 }
                 Text(
@@ -432,12 +481,16 @@ private fun NightDetailOverlay(
                         statusLabel(night.status),
                     ),
                     style = MaterialTheme.typography.bodyLarge,
+                    color = statusColor(night.status) ?: NeonColors.TextSecondary,
                 )
-                OutlinedButton(
+                NeonButton(
                     onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
+                    glowColor = NeonColors.NeonElectricBlue,
                 ) {
-                    Text(text = stringResource(Res.string.progress_detail_close))
+                    Text(
+                        text = stringResource(Res.string.progress_detail_close),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
             }
         }

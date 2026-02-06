@@ -1,6 +1,7 @@
 package com.example.kmpbackbone.ui.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,18 +10,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.CoachStyle
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonCard
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.OnboardingGoal
 import com.example.kmpbackbone.viewmodel.OnboardingStep
 import com.example.kmpbackbone.viewmodel.OnboardingUiState
@@ -59,8 +61,6 @@ import kmpbackbone.composeapp.generated.resources.list_separator
 import kmpbackbone.composeapp.generated.resources.onboarding_back
 import kmpbackbone.composeapp.generated.resources.onboarding_coach_placeholder
 import kmpbackbone.composeapp.generated.resources.onboarding_coach_title
-import kmpbackbone.composeapp.generated.resources.onboarding_goal_placeholder
-import kmpbackbone.composeapp.generated.resources.onboarding_goal_title
 import kmpbackbone.composeapp.generated.resources.onboarding_gamification_slide1_body
 import kmpbackbone.composeapp.generated.resources.onboarding_gamification_slide1_title
 import kmpbackbone.composeapp.generated.resources.onboarding_gamification_slide2_body
@@ -68,6 +68,8 @@ import kmpbackbone.composeapp.generated.resources.onboarding_gamification_slide2
 import kmpbackbone.composeapp.generated.resources.onboarding_gamification_slide3_body
 import kmpbackbone.composeapp.generated.resources.onboarding_gamification_slide3_title
 import kmpbackbone.composeapp.generated.resources.onboarding_gamification_title
+import kmpbackbone.composeapp.generated.resources.onboarding_goal_placeholder
+import kmpbackbone.composeapp.generated.resources.onboarding_goal_title
 import kmpbackbone.composeapp.generated.resources.onboarding_next
 import kmpbackbone.composeapp.generated.resources.onboarding_plan_active_days_label
 import kmpbackbone.composeapp.generated.resources.onboarding_plan_bedtime_label
@@ -107,28 +109,22 @@ fun OnboardingScreen(
     onActiveDayToggled: (DayOfWeek) -> Unit,
 ) {
     val step = remember(uiState.stepIndex) {
-        OnboardingStep.values().getOrElse(uiState.stepIndex) { OnboardingStep.WELCOME }
+        OnboardingStep.entries.getOrElse(uiState.stepIndex) { OnboardingStep.WELCOME }
     }
-    val stepCount = OnboardingStep.values().size
-    val gradient = Brush.verticalGradient(
-        listOf(
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-            MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-            MaterialTheme.colorScheme.background,
-        )
-    )
+    val stepCount = OnboardingStep.entries.size
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(gradient)
-            .padding(horizontal = 20.dp, vertical = 24.dp),
+    NeonGradientBackground(
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
     ) {
         if (uiState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.primary,
-            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(
+                    color = NeonColors.NeonElectricBlue,
+                )
+            }
         } else {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -167,12 +163,12 @@ private fun StepHeader(stepIndex: Int, stepCount: Int) {
         Text(
             text = stringResource(Res.string.app_name),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.NeonElectricBlue,
         )
         Text(
             text = stringResource(Res.string.onboarding_step_indicator, stepIndex, stepCount),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            color = NeonColors.TextSecondary,
         )
     }
 }
@@ -216,12 +212,12 @@ private fun WelcomeStep() {
         Text(
             text = stringResource(Res.string.onboarding_welcome_title),
             style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
         Text(
             text = stringResource(Res.string.onboarding_welcome_tagline),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f),
+            color = NeonColors.TextSecondary,
         )
     }
 }
@@ -241,7 +237,7 @@ private fun GoalStep(
         Text(
             text = stringResource(Res.string.onboarding_goal_title),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
         goals.chunked(2).forEach { rowGoals ->
             Row(
@@ -249,11 +245,12 @@ private fun GoalStep(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 rowGoals.forEach { goal ->
-                    SelectableCard(
+                    NeonSelectableCard(
                         modifier = Modifier.weight(1f),
                         title = stringResource(goalTitleRes(goal)),
                         selected = goal == selectedGoal,
                         onClick = { onGoalSelected(goal) },
+                        accentColor = NeonColors.NeonElectricBlue,
                     )
                 }
             }
@@ -267,18 +264,25 @@ private fun CoachStep(
     onCoachStyleSelected: (CoachStyle) -> Unit,
 ) {
     val styles = listOf(CoachStyle.CHILL, CoachStyle.HYPE, CoachStyle.STRICT)
+    val styleColors = mapOf(
+        CoachStyle.CHILL to NeonColors.NeonCyan,
+        CoachStyle.HYPE to NeonColors.NeonPink,
+        CoachStyle.STRICT to NeonColors.NeonOrange,
+    )
+
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = stringResource(Res.string.onboarding_coach_title),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
         styles.forEach { style ->
-            SelectableCard(
+            NeonSelectableCard(
                 title = stringResource(coachTitleRes(style)),
                 subtitle = stringResource(coachSampleRes(style)),
                 selected = style == selectedStyle,
                 onClick = { onCoachStyleSelected(style) },
+                accentColor = styleColors[style] ?: NeonColors.NeonElectricBlue,
             )
         }
     }
@@ -297,15 +301,15 @@ private fun PlanStep(
         Text(
             text = stringResource(Res.string.onboarding_plan_title),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
-        TimeAdjuster(
+        NeonTimeAdjuster(
             label = stringResource(Res.string.onboarding_plan_bedtime_label),
             time = bedtime,
             onMinus = { onBedtimeChanged(adjustTime(bedtime, -15)) },
             onPlus = { onBedtimeChanged(adjustTime(bedtime, 15)) },
         )
-        TimeAdjuster(
+        NeonTimeAdjuster(
             label = stringResource(Res.string.onboarding_plan_wake_label),
             time = wakeTime,
             onMinus = { onWakeTimeChanged(adjustTime(wakeTime, -15)) },
@@ -314,21 +318,27 @@ private fun PlanStep(
         Text(
             text = stringResource(Res.string.onboarding_plan_active_days_label),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(DayOfWeek.values()) { day ->
+            items(DayOfWeek.entries) { day ->
                 FilterChip(
                     selected = activeDays.contains(day),
                     onClick = { onActiveDayToggled(day) },
                     label = { Text(text = stringResource(dayLabelRes(day))) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = NeonColors.NeonElectricBlue.copy(alpha = 0.2f),
+                        selectedLabelColor = NeonColors.NeonElectricBlue,
+                        containerColor = NeonColors.NeonDarkSurfaceVariant,
+                        labelColor = NeonColors.TextSecondary,
+                    ),
                 )
             }
         }
         Text(
             text = stringResource(Res.string.onboarding_plan_tolerance_label),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            color = NeonColors.TextMuted,
         )
     }
 }
@@ -339,31 +349,33 @@ private fun GamificationStep() {
         Slide(
             title = stringResource(Res.string.onboarding_gamification_slide1_title),
             body = stringResource(Res.string.onboarding_gamification_slide1_body),
+            color = NeonColors.NeonGreen,
         ),
         Slide(
             title = stringResource(Res.string.onboarding_gamification_slide2_title),
             body = stringResource(Res.string.onboarding_gamification_slide2_body),
+            color = NeonColors.NeonYellow,
         ),
         Slide(
             title = stringResource(Res.string.onboarding_gamification_slide3_title),
             body = stringResource(Res.string.onboarding_gamification_slide3_body),
+            color = NeonColors.NeonPurple,
         ),
     )
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = stringResource(Res.string.onboarding_gamification_title),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             items(slides) { slide ->
-                Surface(
+                NeonCard(
                     modifier = Modifier
                         .width(240.dp)
                         .aspectRatio(1.1f),
-                    shape = RoundedCornerShape(24.dp),
-                    tonalElevation = 2.dp,
-                    color = MaterialTheme.colorScheme.surface,
+                    glowColor = slide.color,
+                    glowIntensity = 0.3f,
                 ) {
                     Column(
                         modifier = Modifier.padding(18.dp),
@@ -372,12 +384,12 @@ private fun GamificationStep() {
                         Text(
                             text = slide.title,
                             style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = slide.color,
                         )
                         Text(
                             text = slide.body,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                            color = NeonColors.TextSecondary,
                         )
                     }
                 }
@@ -404,18 +416,16 @@ private fun ReadyStep(uiState: OnboardingUiState) {
         Text(
             text = stringResource(Res.string.onboarding_ready_title),
             style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.NeonGreen,
         )
         Text(
             text = stringResource(Res.string.onboarding_ready_summary_title),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            tonalElevation = 2.dp,
-            color = MaterialTheme.colorScheme.surface,
+        NeonCard(
+            glowColor = NeonColors.NeonGreen,
+            glowIntensity = 0.25f,
         ) {
             Column(
                 modifier = Modifier.padding(18.dp),
@@ -456,12 +466,12 @@ private fun SummaryRow(label: String, value: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            color = NeonColors.TextSecondary,
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = NeonColors.TextPrimary,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.End,
         )
@@ -488,6 +498,10 @@ private fun OnboardingActions(
         else -> Res.string.onboarding_next
     }
     val onPrimary = if (step == OnboardingStep.READY) onComplete else onNext
+    val buttonColor = when (step) {
+        OnboardingStep.READY -> NeonColors.NeonGreen
+        else -> NeonColors.NeonElectricBlue
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -496,38 +510,54 @@ private fun OnboardingActions(
     ) {
         if (step != OnboardingStep.WELCOME) {
             TextButton(onClick = onBack) {
-                Text(text = stringResource(Res.string.onboarding_back))
+                Text(
+                    text = stringResource(Res.string.onboarding_back),
+                    color = NeonColors.TextSecondary,
+                )
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button(
+        NeonButton(
             onClick = onPrimary,
             enabled = canContinue,
+            glowColor = buttonColor,
+            modifier = Modifier.weight(2f),
         ) {
-            Text(text = stringResource(primaryLabel))
+            Text(
+                text = stringResource(primaryLabel),
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
 }
 
 @Composable
-private fun SelectableCard(
+private fun NeonSelectableCard(
     title: String,
     subtitle: String? = null,
     selected: Boolean,
     onClick: () -> Unit,
+    accentColor: androidx.compose.ui.graphics.Color,
     modifier: Modifier = Modifier,
 ) {
-    val borderColor = if (selected) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+    val borderColor = when {
+        selected -> accentColor
+        else -> NeonColors.Outline
     }
+    val backgroundColor = when {
+        selected -> accentColor.copy(alpha = 0.1f)
+        else -> NeonColors.NeonDarkSurface
+    }
+
     Surface(
-        modifier = modifier,
+        modifier = modifier
+            .border(
+                width = if (selected) 2.dp else 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(20.dp),
+            ),
         shape = RoundedCornerShape(20.dp),
-        tonalElevation = if (selected) 4.dp else 1.dp,
-        color = MaterialTheme.colorScheme.surface,
-        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
+        color = backgroundColor,
         onClick = onClick,
     ) {
         Column(
@@ -537,13 +567,13 @@ private fun SelectableCard(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (selected) accentColor else NeonColors.TextPrimary,
             )
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    color = NeonColors.TextSecondary,
                 )
             }
         }
@@ -551,7 +581,7 @@ private fun SelectableCard(
 }
 
 @Composable
-private fun TimeAdjuster(
+private fun NeonTimeAdjuster(
     label: String,
     time: LocalTime,
     onMinus: () -> Unit,
@@ -561,25 +591,46 @@ private fun TimeAdjuster(
         Text(
             text = label,
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = NeonColors.TextPrimary,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedButton(onClick = onMinus) {
-                Text(text = stringResource(Res.string.symbol_minus))
-            }
+            NeonTimeButton(
+                text = stringResource(Res.string.symbol_minus),
+                onClick = onMinus,
+            )
             Text(
                 text = formatTime(time),
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = NeonColors.NeonElectricBlue,
             )
-            OutlinedButton(onClick = onPlus) {
-                Text(text = stringResource(Res.string.symbol_plus))
-            }
+            NeonTimeButton(
+                text = stringResource(Res.string.symbol_plus),
+                onClick = onPlus,
+            )
         }
+    }
+}
+
+@Composable
+private fun NeonTimeButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        color = NeonColors.NeonElectricBlue.copy(alpha = 0.1f),
+        contentColor = NeonColors.NeonElectricBlue,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+        )
     }
 }
 
@@ -636,4 +687,5 @@ private fun dayLabelRes(day: DayOfWeek): StringResource {
 private data class Slide(
     val title: String,
     val body: String,
+    val color: androidx.compose.ui.graphics.Color,
 )

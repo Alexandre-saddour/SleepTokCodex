@@ -12,15 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -34,13 +28,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.CoachStyle
 import com.example.domain.model.NightResult
 import com.example.domain.model.NightStatus
 import com.example.domain.result.DomainError
+import com.example.kmpbackbone.ui.components.AnimatedCounter
+import com.example.kmpbackbone.ui.components.NeonBadge
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonCard
+import com.example.kmpbackbone.ui.components.NeonConfetti
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.components.NeonScoreRing
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.NightResultUiEvent
 import com.example.kmpbackbone.viewmodel.NightResultUiState
 import com.example.kmpbackbone.viewmodel.NightResultViewModel
@@ -59,10 +61,13 @@ import kmpbackbone.composeapp.generated.resources.night_result_label_in_progress
 import kmpbackbone.composeapp.generated.resources.night_result_label_partial
 import kmpbackbone.composeapp.generated.resources.night_result_label_success
 import kmpbackbone.composeapp.generated.resources.night_result_loading
+import kmpbackbone.composeapp.generated.resources.night_result_next_milestone
 import kmpbackbone.composeapp.generated.resources.night_result_partial_chill
 import kmpbackbone.composeapp.generated.resources.night_result_partial_hype
 import kmpbackbone.composeapp.generated.resources.night_result_partial_strict
 import kmpbackbone.composeapp.generated.resources.night_result_score_label
+import kmpbackbone.composeapp.generated.resources.night_result_share
+import kmpbackbone.composeapp.generated.resources.night_result_share_coming_soon
 import kmpbackbone.composeapp.generated.resources.night_result_shield_available
 import kmpbackbone.composeapp.generated.resources.night_result_shield_used
 import kmpbackbone.composeapp.generated.resources.night_result_streak_label
@@ -78,9 +83,6 @@ import kmpbackbone.composeapp.generated.resources.night_result_xp_streak_multipl
 import kmpbackbone.composeapp.generated.resources.night_result_xp_talent_bonus
 import kmpbackbone.composeapp.generated.resources.night_result_xp_talent_multiplier
 import kmpbackbone.composeapp.generated.resources.night_result_xp_total
-import kmpbackbone.composeapp.generated.resources.night_result_share
-import kmpbackbone.composeapp.generated.resources.night_result_share_coming_soon
-import kmpbackbone.composeapp.generated.resources.night_result_next_milestone
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -116,18 +118,16 @@ fun NightResultScreen(
     onContinue: () -> Unit,
     onUseShield: () -> Unit,
 ) {
-    val background = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.background,
-            MaterialTheme.colorScheme.surfaceVariant,
-        ),
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(background)
-            .padding(20.dp),
+    NeonGradientBackground(
+        modifier = Modifier.padding(20.dp),
     ) {
+        // Confetti overlay for success
+        val showConfetti = uiState.result?.status == NightStatus.SUCCESS
+        NeonConfetti(
+            isActive = showConfetti,
+            modifier = Modifier.fillMaxSize(),
+        )
+
         when {
             uiState.isLoading -> LoadingState()
             uiState.error != null -> ErrorState(uiState.error)
@@ -148,10 +148,13 @@ private fun LoadingState() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = NeonColors.NeonElectricBlue,
+        )
         Text(
             text = stringResource(Res.string.night_result_loading),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextSecondary,
             modifier = Modifier.padding(top = 12.dp),
         )
     }
@@ -174,6 +177,7 @@ private fun ErrorState(error: DomainError) {
         Text(
             text = stringResource(message),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.StatusFail,
             textAlign = TextAlign.Center,
         )
     }
@@ -187,6 +191,7 @@ private fun ResultContent(
 ) {
     val result = uiState.result ?: return
     val statusLabel = statusLabel(result.status)
+    val statusColor = statusColor(result.status)
     val coachMessage = coachMessage(result.status, uiState.coachStyle)
     val shieldPrompt = result.status == NightStatus.FAIL && uiState.shieldAvailable && !uiState.shieldUsed
 
@@ -197,18 +202,30 @@ private fun ResultContent(
         Text(
             text = statusLabel,
             style = MaterialTheme.typography.headlineMedium,
+            color = statusColor,
         )
-        ScoreRing(score = result.score)
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            NeonScoreRing(score = result.score)
+        }
+
         Text(
             text = stringResource(Res.string.night_result_score_label, result.score),
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextSecondary,
         )
-        CoachMessageCard(message = coachMessage)
+
+        CoachMessageCard(message = coachMessage, statusColor = statusColor)
+
         StreakCard(
             streakBefore = result.streakBefore,
             streakAfter = result.streakAfter,
             shieldUsed = uiState.shieldUsed,
         )
+
         BreakdownCard(result = result)
 
         uiState.nextMilestone?.let { milestone ->
@@ -218,30 +235,39 @@ private fun ResultContent(
         if (shieldPrompt) {
             ShieldCard(charges = uiState.shieldCharges)
         }
+
         Spacer(modifier = Modifier.weight(1f))
+
         if (uiState.isApplying) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = NeonColors.NeonElectricBlue,
+                )
             }
         } else {
             if (shieldPrompt) {
-                OutlinedButton(
+                NeonSecondaryButton(
                     onClick = onUseShield,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
+                    color = NeonColors.NeonCyan,
                 ) {
-                    Text(text = stringResource(Res.string.night_result_use_shield_cta))
+                    Text(
+                        text = stringResource(Res.string.night_result_use_shield_cta),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
             }
-            Button(
+            NeonButton(
                 onClick = onContinue,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                glowColor = statusColor,
             ) {
-                Text(text = stringResource(Res.string.night_result_continue_cta))
+                Text(
+                    text = stringResource(Res.string.night_result_continue_cta),
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             ShareButtonTeaser()
@@ -250,40 +276,36 @@ private fun ResultContent(
 }
 
 @Composable
-private fun ScoreRing(score: Int) {
-    val progress = (score.coerceIn(0, 100)) / 100f
-    Box(
-        modifier = Modifier
-            .size(140.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = CircleShape,
-            ),
-        contentAlignment = Alignment.Center,
+private fun NeonSecondaryButton(
+    onClick: () -> Unit,
+    color: Color,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        shape = RoundedCornerShape(18.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = color,
+        ),
     ) {
-        CircularProgressIndicator(
-            progress = { progress },
-            strokeWidth = 8.dp,
-            color = MaterialTheme.colorScheme.tertiary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier.size(120.dp),
-        )
-        Text(
-            text = score.toString(),
-            style = MaterialTheme.typography.headlineMedium,
-        )
+        content()
     }
 }
 
 @Composable
-private fun CoachMessageCard(message: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(18.dp),
+private fun CoachMessageCard(message: String, statusColor: Color) {
+    NeonCard(
+        glowColor = statusColor,
+        glowIntensity = 0.25f,
     ) {
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextPrimary,
             modifier = Modifier.padding(16.dp),
         )
     }
@@ -295,22 +317,34 @@ private fun StreakCard(
     streakAfter: Int,
     shieldUsed: Boolean,
 ) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        shape = RoundedCornerShape(18.dp),
+    NeonCard(
+        glowColor = NeonColors.NeonGreen,
+        glowIntensity = 0.2f,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.night_result_streak_label, streakBefore, streakAfter),
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.night_result_streak_label, streakBefore, streakAfter),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = NeonColors.TextPrimary,
+                )
+                NeonBadge(
+                    text = streakAfter.toString(),
+                    color = NeonColors.NeonGreen,
+                )
+            }
             if (shieldUsed) {
                 Text(
                     text = stringResource(Res.string.night_result_shield_used),
                     style = MaterialTheme.typography.labelLarge,
+                    color = NeonColors.NeonCyan,
                 )
             }
         }
@@ -320,8 +354,8 @@ private fun StreakCard(
 @Composable
 private fun ShieldCard(charges: Int) {
     Surface(
-        color = MaterialTheme.colorScheme.secondary,
-        contentColor = MaterialTheme.colorScheme.onSecondary,
+        color = NeonColors.NeonCyan.copy(alpha = 0.15f),
+        contentColor = NeonColors.NeonCyan,
         shape = RoundedCornerShape(16.dp),
     ) {
         Text(
@@ -334,11 +368,9 @@ private fun ShieldCard(charges: Int) {
 
 @Composable
 private fun MilestoneCard(milestone: Int) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
-        shape = RoundedCornerShape(16.dp),
+    NeonCard(
+        glowColor = NeonColors.NeonPurple,
+        glowIntensity = 0.3f,
     ) {
         Row(
             modifier = Modifier
@@ -349,7 +381,7 @@ private fun MilestoneCard(milestone: Int) {
             Text(
                 text = stringResource(Res.string.night_result_next_milestone, milestone),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = NeonColors.NeonPurple,
             )
         }
     }
@@ -367,7 +399,7 @@ private fun ShareButtonTeaser() {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                disabledContentColor = NeonColors.TextMuted,
             ),
         ) {
             Text(text = stringResource(Res.string.night_result_share))
@@ -375,7 +407,7 @@ private fun ShareButtonTeaser() {
         Text(
             text = stringResource(Res.string.night_result_share_coming_soon),
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            color = NeonColors.TextMuted,
             modifier = Modifier.padding(top = 4.dp),
         )
     }
@@ -384,21 +416,34 @@ private fun ShareButtonTeaser() {
 @Composable
 private fun BreakdownCard(result: NightResult) {
     var expanded by remember { mutableStateOf(false) }
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(18.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { expanded = !expanded },
+
+    NeonCard(
+        glowColor = NeonColors.NeonYellow,
+        glowIntensity = 0.2f,
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.night_result_breakdown_title),
-                style = MaterialTheme.typography.titleLarge,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.night_result_breakdown_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = NeonColors.TextPrimary,
+                )
+                Text(
+                    text = if (expanded) "-" else "+",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = NeonColors.NeonYellow,
+                )
+            }
             if (expanded) {
                 BreakdownRow(
                     label = stringResource(Res.string.night_result_xp_base),
@@ -431,10 +476,27 @@ private fun BreakdownCard(result: NightResult) {
                     ),
                 )
             }
-            BreakdownRow(
-                label = stringResource(Res.string.night_result_xp_total),
-                value = result.xpBreakdown.totalXp,
-            )
+            // Total with animated counter
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(Res.string.night_result_xp_total),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = NeonColors.NeonYellow,
+                )
+                AnimatedCounter(
+                    targetValue = result.xpBreakdown.totalXp,
+                    durationMillis = 1500,
+                ) { currentValue ->
+                    Text(
+                        text = "+$currentValue XP",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = NeonColors.NeonYellow,
+                    )
+                }
+            }
         }
     }
 }
@@ -445,8 +507,16 @@ private fun BreakdownRow(label: String, value: Int) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        Text(text = value.toString(), style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextSecondary,
+        )
+        Text(
+            text = value.toString(),
+            style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextPrimary,
+        )
     }
 }
 
@@ -456,8 +526,16 @@ private fun BreakdownRowText(label: String, value: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        Text(text = value, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextSecondary,
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            color = NeonColors.TextPrimary,
+        )
     }
 }
 
@@ -469,6 +547,16 @@ private fun statusLabel(status: NightStatus): String {
         NightStatus.FAIL -> stringResource(Res.string.night_result_label_fail)
         NightStatus.IN_PROGRESS -> stringResource(Res.string.night_result_label_in_progress)
         NightStatus.VOID -> stringResource(Res.string.night_result_label_fail)
+    }
+}
+
+private fun statusColor(status: NightStatus): Color {
+    return when (status) {
+        NightStatus.SUCCESS -> NeonColors.NeonGreen
+        NightStatus.PARTIAL -> NeonColors.StatusPartial
+        NightStatus.FAIL -> NeonColors.StatusFail
+        NightStatus.IN_PROGRESS -> NeonColors.NeonElectricBlue
+        NightStatus.VOID -> NeonColors.StatusFail
     }
 }
 

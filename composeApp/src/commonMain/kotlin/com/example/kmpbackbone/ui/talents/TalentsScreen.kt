@@ -6,58 +6,66 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.TalentBranch
-import com.example.kmpbackbone.viewmodel.TalentsUiState
+import com.example.kmpbackbone.ui.components.NeonBadge
+import com.example.kmpbackbone.ui.components.NeonButton
+import com.example.kmpbackbone.ui.components.NeonGradientBackground
+import com.example.kmpbackbone.ui.components.NeonSectionHeader
+import com.example.kmpbackbone.ui.components.NeonTalentCard
+import com.example.kmpbackbone.ui.theme.NeonColors
 import com.example.kmpbackbone.viewmodel.TalentNodeUi
+import com.example.kmpbackbone.viewmodel.TalentsUiState
 import kmpbackbone.composeapp.generated.resources.Res
-import kmpbackbone.composeapp.generated.resources.talents_loading
-import kmpbackbone.composeapp.generated.resources.talents_title
-import kmpbackbone.composeapp.generated.resources.talents_points_available
-import kmpbackbone.composeapp.generated.resources.talents_unlock
-import kmpbackbone.composeapp.generated.resources.talents_unlocked
-import kmpbackbone.composeapp.generated.resources.talents_locked
 import kmpbackbone.composeapp.generated.resources.branch_discipline
+import kmpbackbone.composeapp.generated.resources.branch_insight
 import kmpbackbone.composeapp.generated.resources.branch_streak
 import kmpbackbone.composeapp.generated.resources.branch_style
-import kmpbackbone.composeapp.generated.resources.branch_insight
-import kmpbackbone.composeapp.generated.resources.talent_d1_name
 import kmpbackbone.composeapp.generated.resources.talent_d1_desc
-import kmpbackbone.composeapp.generated.resources.talent_d2_name
+import kmpbackbone.composeapp.generated.resources.talent_d1_name
 import kmpbackbone.composeapp.generated.resources.talent_d2_desc
-import kmpbackbone.composeapp.generated.resources.talent_d3_name
+import kmpbackbone.composeapp.generated.resources.talent_d2_name
 import kmpbackbone.composeapp.generated.resources.talent_d3_desc
-import kmpbackbone.composeapp.generated.resources.talent_s1_name
-import kmpbackbone.composeapp.generated.resources.talent_s1_desc
-import kmpbackbone.composeapp.generated.resources.talent_s2_name
-import kmpbackbone.composeapp.generated.resources.talent_s2_desc
-import kmpbackbone.composeapp.generated.resources.talent_s3_name
-import kmpbackbone.composeapp.generated.resources.talent_s3_desc
-import kmpbackbone.composeapp.generated.resources.talent_t1_name
-import kmpbackbone.composeapp.generated.resources.talent_t1_desc
-import kmpbackbone.composeapp.generated.resources.talent_t2_name
-import kmpbackbone.composeapp.generated.resources.talent_t2_desc
-import kmpbackbone.composeapp.generated.resources.talent_t3_name
-import kmpbackbone.composeapp.generated.resources.talent_t3_desc
-import kmpbackbone.composeapp.generated.resources.talent_i1_name
+import kmpbackbone.composeapp.generated.resources.talent_d3_name
 import kmpbackbone.composeapp.generated.resources.talent_i1_desc
-import kmpbackbone.composeapp.generated.resources.talent_i2_name
+import kmpbackbone.composeapp.generated.resources.talent_i1_name
 import kmpbackbone.composeapp.generated.resources.talent_i2_desc
-import kmpbackbone.composeapp.generated.resources.talent_i3_name
+import kmpbackbone.composeapp.generated.resources.talent_i2_name
 import kmpbackbone.composeapp.generated.resources.talent_i3_desc
+import kmpbackbone.composeapp.generated.resources.talent_i3_name
+import kmpbackbone.composeapp.generated.resources.talent_s1_desc
+import kmpbackbone.composeapp.generated.resources.talent_s1_name
+import kmpbackbone.composeapp.generated.resources.talent_s2_desc
+import kmpbackbone.composeapp.generated.resources.talent_s2_name
+import kmpbackbone.composeapp.generated.resources.talent_s3_desc
+import kmpbackbone.composeapp.generated.resources.talent_s3_name
+import kmpbackbone.composeapp.generated.resources.talent_t1_desc
+import kmpbackbone.composeapp.generated.resources.talent_t1_name
+import kmpbackbone.composeapp.generated.resources.talent_t2_desc
+import kmpbackbone.composeapp.generated.resources.talent_t2_name
+import kmpbackbone.composeapp.generated.resources.talent_t3_desc
+import kmpbackbone.composeapp.generated.resources.talent_t3_name
 import kmpbackbone.composeapp.generated.resources.talents_cost
-import org.jetbrains.compose.resources.stringResource
+import kmpbackbone.composeapp.generated.resources.talents_loading
+import kmpbackbone.composeapp.generated.resources.talents_locked
+import kmpbackbone.composeapp.generated.resources.talents_points_available
+import kmpbackbone.composeapp.generated.resources.talents_title
+import kmpbackbone.composeapp.generated.resources.talents_unlock
+import kmpbackbone.composeapp.generated.resources.talents_unlocked
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TalentsScreen(
@@ -65,36 +73,44 @@ fun TalentsScreen(
     onUnlock: (String) -> Unit,
     onRefresh: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    NeonGradientBackground(
+        modifier = Modifier.padding(20.dp),
     ) {
-        Text(
-            text = stringResource(Res.string.talents_title),
-            style = MaterialTheme.typography.headlineMedium,
-        )
-        Text(
-            text = stringResource(Res.string.talents_points_available, uiState.availablePoints),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        if (uiState.isLoading) {
-            CircularProgressIndicator()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
             Text(
-                text = stringResource(Res.string.talents_loading),
-                style = MaterialTheme.typography.bodyLarge,
+                text = stringResource(Res.string.talents_title),
+                style = MaterialTheme.typography.headlineMedium,
+                color = NeonColors.TextPrimary,
             )
-        } else {
-            val talentsByBranch = uiState.talents.groupBy { it.talent.branch }
-            TalentBranch.values().forEach { branch ->
-                TalentBranchSection(
-                    branch = branch,
-                    talents = talentsByBranch[branch].orEmpty(),
-                    onUnlock = onUnlock,
-                    isUnlocking = uiState.isUnlocking,
+            NeonBadge(
+                text = stringResource(Res.string.talents_points_available, uiState.availablePoints),
+                color = NeonColors.NeonYellow,
+            )
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    color = NeonColors.NeonElectricBlue,
                 )
+                Text(
+                    text = stringResource(Res.string.talents_loading),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = NeonColors.TextSecondary,
+                )
+            } else {
+                val talentsByBranch = uiState.talents.groupBy { it.talent.branch }
+                TalentBranch.entries.forEach { branch ->
+                    TalentBranchSection(
+                        branch = branch,
+                        talents = talentsByBranch[branch].orEmpty(),
+                        onUnlock = onUnlock,
+                        isUnlocking = uiState.isUnlocking,
+                    )
+                }
             }
         }
     }
@@ -107,17 +123,20 @@ private fun TalentBranchSection(
     onUnlock: (String) -> Unit,
     isUnlocking: Boolean,
 ) {
+    val branchColor = branchColor(branch)
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(
+        NeonSectionHeader(
             text = stringResource(branchLabel(branch)),
-            style = MaterialTheme.typography.titleLarge,
+            accentColor = branchColor,
         )
         talents.sortedBy { it.talent.tier.ordinal }.forEach { node ->
-            TalentCard(
+            NeonTalentCardItem(
                 node = node,
+                branchColor = branchColor,
                 onUnlock = onUnlock,
                 isUnlocking = isUnlocking,
             )
@@ -126,58 +145,69 @@ private fun TalentBranchSection(
 }
 
 @Composable
-private fun TalentCard(
+private fun NeonTalentCardItem(
     node: TalentNodeUi,
+    branchColor: Color,
     onUnlock: (String) -> Unit,
     isUnlocking: Boolean,
 ) {
     val talent = node.talent
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.medium,
+
+    NeonTalentCard(
+        title = stringResource(talentNameRes(talent.nameKey)),
+        description = stringResource(talentDescRes(talent.descriptionKey)),
+        branchColor = branchColor,
+        isUnlocked = node.isUnlocked,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(talentNameRes(talent.nameKey)),
-                style = MaterialTheme.typography.titleLarge,
+                text = stringResource(Res.string.talents_cost, talent.costPoints),
+                style = MaterialTheme.typography.labelLarge,
+                color = NeonColors.TextSecondary,
             )
-            Text(
-                text = stringResource(talentDescRes(talent.descriptionKey)),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(Res.string.talents_cost, talent.costPoints),
-                    style = MaterialTheme.typography.labelLarge,
+            when {
+                node.isUnlocked -> NeonBadge(
+                    text = stringResource(Res.string.talents_unlocked),
+                    color = branchColor,
                 )
-                when {
-                    node.isUnlocked -> Text(
-                        text = stringResource(Res.string.talents_unlocked),
+                node.isUnlockable -> NeonButton(
+                    onClick = { onUnlock(talent.id) },
+                    enabled = !isUnlocking,
+                    glowColor = branchColor,
+                    modifier = Modifier.padding(start = 8.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.talents_unlock),
                         style = MaterialTheme.typography.labelLarge,
                     )
-                    node.isUnlockable -> Button(
-                        onClick = { onUnlock(talent.id) },
-                        enabled = !isUnlocking,
-                    ) {
-                        Text(text = stringResource(Res.string.talents_unlock))
-                    }
-                    else -> OutlinedButton(
-                        onClick = {},
-                        enabled = false,
-                    ) {
-                        Text(text = stringResource(Res.string.talents_locked))
-                    }
+                }
+                else -> Surface(
+                    color = NeonColors.NeonDarkSurfaceVariant,
+                    contentColor = NeonColors.TextMuted,
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.talents_locked),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
                 }
             }
         }
+    }
+}
+
+private fun branchColor(branch: TalentBranch): Color {
+    return when (branch) {
+        TalentBranch.DISCIPLINE -> NeonColors.BranchDiscipline
+        TalentBranch.STREAK -> NeonColors.BranchStreak
+        TalentBranch.STYLE -> NeonColors.BranchStyle
+        TalentBranch.INSIGHT -> NeonColors.BranchInsight
     }
 }
 
